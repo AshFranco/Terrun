@@ -14,6 +14,11 @@ Formato:
 
 ---
 
+## 2026-11-10 — Ashley — Verificación del nombre Terrun y CTZ-92
+- Hecho: push inicial a `AshFranco/Terrun`; verificación de dominios (RDAP), tiendas y marcas; historia CTZ-92 para Diana (decidir la marca comercial antes del 11/12); URL de clonado corregida en el README.
+- Evidencia: `docs/producto/nombre-comercial.md`.
+- Siguiente paso: Diana ejecuta CTZ-92 en el S4; mientras tanto se trabaja con el nombre Terrun.
+
 ## 2026-11-10 — Ashley — Nombre del producto: Terrun (D-12)
 - Hecho: nombre aplicado en HLD, LLD, guía, README, backlog, estándares y scripts; carpeta del repo renombrada a `terrun`; HLD y LLD regenerados; commit inicial en `main`.
 - Evidencia: `docs/entregables/HLD-Terrun.pdf`, `docs/entregables/LLD-Terrun.pdf`.

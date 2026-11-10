@@ -16,8 +16,8 @@ Proyecto final de la asignatura **Construcción de Software** · Entrega: 20 de 
 ## Empezar
 
 ```bash
-git clone git@github-personal:AshFranco/terrun.git   # o la URL de tu cuenta
-cd terrun
+git clone git@github.com:AshFranco/Terrun.git
+cd Terrun
 ./scripts/configurar-entorno.sh
 ```
 
