@@ -1,0 +1,24 @@
+#!/bin/sh
+# Rechaza commits que atribuyan autoría a herramientas de IA.
+# Política del equipo: los commits los firman las personas.
+# Se activa con ./scripts/configurar-entorno.sh (core.hooksPath .githooks).
+
+MSG_FILE="$1"
+
+if grep -qiE '^[[:space:]]*Co-authored-by:.*(claude|anthropic|copilot|chatgpt|openai|gemini|cursor|codeium|noreply@anthropic)' "$MSG_FILE"; then
+    echo ""
+    echo "  COMMIT RECHAZADO: el mensaje incluye un 'Co-authored-by' de una herramienta de IA."
+    echo "  Elimina esa línea y vuelve a intentarlo."
+    echo ""
+    exit 1
+fi
+
+if grep -qiE '(Generated with|Created by|Generado con).*(Claude|Copilot|ChatGPT|Gemini|Cursor)' "$MSG_FILE"; then
+    echo ""
+    echo "  COMMIT RECHAZADO: el mensaje incluye una firma automática de herramienta de IA."
+    echo "  Elimina esa línea y vuelve a intentarlo."
+    echo ""
+    exit 1
+fi
+
+exit 0

@@ -1,0 +1,40 @@
+# Contexto personal del asistente de código (cada quien crea el suyo)
+CLAUDE.local.md
+CLAUDE.md
+.claude/
+
+# Secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.keystore
+google-services.json
+GoogleService-Info.plist
+
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+TestResults/
+
+# Node / Expo
+node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/ios/
+mobile/android/
+*.tsbuildinfo
+npm-debug.log*
+
+# Sistema y editores
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.worktrees/
+
+# Python (scripts de documentación)
+__pycache__/
+.venv/

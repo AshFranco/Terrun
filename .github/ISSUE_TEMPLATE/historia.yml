@@ -1,0 +1,48 @@
+name: Historia de usuario
+description: Funcionalidad del backlog (docs/03-BACKLOG.md)
+title: "CTZ-XX: "
+labels: [historia]
+body:
+  - type: input
+    id: id
+    attributes:
+      label: ID del backlog
+      placeholder: CTZ-40
+    validations: { required: true }
+  - type: dropdown
+    id: sprint
+    attributes:
+      label: Sprint
+      options: [S0, S1, S2, S3, S4, S5, S6, S7, S8, QA1, QA2]
+    validations: { required: true }
+  - type: dropdown
+    id: responsable
+    attributes:
+      label: Responsable
+      options: [Ashley, Diana, Jorge, Rowlis, Rangelis, Jaime]
+    validations: { required: true }
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+      placeholder: Como [rol] quiero [acción] para [beneficio]
+    validations: { required: true }
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      value: |
+        - [ ]
+        - [ ]
+    validations: { required: true }
+  - type: input
+    id: lld
+    attributes:
+      label: Secciones del LLD
+      placeholder: "§4.2, §3.2 Territorio"
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options: ['P0 - imprescindible para la demo', 'P1 - nivel de mercado', 'P2 - después de la entrega']
+    validations: { required: true }

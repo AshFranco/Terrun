@@ -1,0 +1,24 @@
+#!/bin/sh
+# Verificaciones antes de cada commit.
+
+if [ -z "$(git config user.name)" ] || [ -z "$(git config user.email)" ]; then
+    echo "  COMMIT RECHAZADO: configura git user.name y user.email (ver CONTRIBUTING.md)."
+    exit 1
+fi
+
+# Archivos que nunca deben subirse
+PROHIBIDOS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)(\.env(\..*)?|CLAUDE(\.local)?\.md|.*\.pem|.*\.p12|.*\.keystore|google-services\.json|GoogleService-Info\.plist)$' | grep -v '\.env\.example$')
+if [ -n "$PROHIBIDOS" ]; then
+    echo "  COMMIT RECHAZADO: estos archivos no deben subirse al repositorio:"
+    echo "$PROHIBIDOS" | sed 's/^/    - /'
+    exit 1
+fi
+
+# Rama protegida
+RAMA=$(git symbolic-ref --short HEAD 2>/dev/null)
+if [ "$RAMA" = "main" ] && [ -z "$PERMITIR_MAIN" ]; then
+    echo "  COMMIT RECHAZADO: no se hace commit directo en main. Crea una rama: git switch -c feat/CTZ-XX-..."
+    exit 1
+fi
+
+exit 0

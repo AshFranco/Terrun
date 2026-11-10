@@ -1,0 +1,26 @@
+name: Politica de commits
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  autoria:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rechazar atribucion de herramientas de IA
+        run: |
+          RANGO="origin/${{ github.base_ref }}..HEAD"
+          if git log --format='%B' "$RANGO" | grep -qiE '^[[:space:]]*Co-authored-by:.*(claude|anthropic|copilot|chatgpt|openai|gemini|cursor|codeium)|(Generated with|Created by|Generado con).*(Claude|Copilot|ChatGPT|Gemini|Cursor)'; then
+            echo "::error::Hay commits con atribucion a herramientas de IA (ver CONTRIBUTING.md)."
+            exit 1
+          fi
+      - name: Rechazar archivos prohibidos
+        run: |
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep -E '(^|/)(\.env(\..*)?|CLAUDE(\.local)?\.md)$' | grep -v '\.env\.example$'; then
+            echo "::error::El PR incluye archivos que no deben subirse."
+            exit 1
+          fi
