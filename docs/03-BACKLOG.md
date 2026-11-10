@@ -2,7 +2,7 @@
 
 **Dueña:** Diana (Product Owner). **Prioridades:** P0 = imprescindible para la demo · P1 = nivel de mercado · P2 = posterior a la entrega.
 
-Cada historia tiene un ID `CTZ-NN` que se usa en ramas, commits y PR. Las referencias "LLD §x" indican qué leer antes de empezar. Este archivo es el **plan**; el estado del sprint en curso vive en `docs/ESTADO.md`.
+Cada historia tiene un ID `CTZ-NN` (los IDs nuevos se agregan al final de la numeración, sin renumerar) que se usa en ramas, commits y PR. Las referencias "LLD §x" indican qué leer antes de empezar. Este archivo es el **plan**; el estado del sprint en curso vive en `docs/ESTADO.md`.
 
 Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, los P1 de menor prioridad pasan a P2 sin discusión. El orden de los P1 lo ajusta Diana con la encuesta a corredores (CTZ-25).
 
@@ -100,6 +100,7 @@ Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, lo
 | CTZ-56 | Google Sign-In en P-03 | Rowlis | P1 | CTZ-52 | Funciona en Android e iOS |
 | CTZ-57 | Nivel y XP en P-15 y en P-09 | Rowlis | P1 | CTZ-51 | Barra de progreso al siguiente nivel |
 | CTZ-58 | Aceptación del P0 completo y apertura de las cuentas de Google Play y Apple Developer | Diana | P0 | CTZ-53 | Acta de aceptación en `docs/sprints/S4.md` |
+| CTZ-92 | Decidir la marca comercial definitiva antes de armar la ficha de tienda (ver `docs/producto/nombre-comercial.md`) | Diana | P1 | CTZ-25 | Búsqueda en App Store, Google Play, USPTO, EUIPO y ONAPI; @usuario de Instagram disponible; dominio elegido; decisión en `DECISIONES.md` a más tardar el 11/12 |
 | CTZ-59 | Regresión completa del P0 | Rangelis | P0 | CTZ-53 | Informe con defectos por severidad |
 | CTZ-60 | Campo: robo de zona entre 2 usuarios | Jaime | P1 | CTZ-54 | El robo y la notificación ocurren como en MT-10 |
 
@@ -112,7 +113,7 @@ Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, lo
 | CTZ-63 | Builds EAS (perfiles qa/prod, ícono, splash), prueba interna en Google Play y TestFlight | Ashley + Jorge | P1 | CTZ-58 | El equipo instala la app desde la tienda |
 | CTZ-64 | Push en la app: permisos, recepción y navegación por enlace interno | Jorge | P1 | CTZ-62 | Tocar "te robaron la zona" abre P-13 |
 | CTZ-65 | P-14 feed, P-16 perfil de otro, P-18 seguidores, P-19 buscar, kudos y comentarios en P-11, P-27 notificaciones | Rowlis | P1 | CTZ-61 | Funciona con perfiles públicos y privados |
-| CTZ-66 | Ficha de tienda (textos y capturas) y política de privacidad publicada en una URL | Diana | P1 | CTZ-27 | URL pública lista para las tiendas |
+| CTZ-66 | Ficha de tienda (textos y capturas) y política de privacidad publicada en una URL | Diana | P1 | CTZ-27, CTZ-92 | URL pública lista para las tiendas |
 | CTZ-67 | Pruebas de social y visibilidad (matriz LLD §7.2) | Rangelis | P1 | CTZ-61 | Ninguna fuga de datos privados |
 | CTZ-68 | Campo: instalación desde la tienda y push real en los 3 dispositivos | Jaime | P1 | CTZ-63 | Evidencia en `docs/qa/` |
 
