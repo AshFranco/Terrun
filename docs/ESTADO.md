@@ -17,7 +17,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 - ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
 
 ### Diana — Product Owner
-- ⬜ **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`).
+- 🔄 **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Ashley preparó la página (`survey/`); falta publicarla en Netlify y compartir el link.*
 - ⬜ **CTZ-07** Confirmar con Jorge y Rowlis que dominan React (supuesto S-01). *Urgente: condiciona el stack de la app.*
 - ⬜ **CTZ-06** Cargar el backlog en GitHub Projects. *Depende de CTZ-02.*
 

@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!--page-->
+<title>Encuesta Terrun</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Encuesta para corredores de Santo Domingo: ayúdanos a crear Terrun, la app donde cada carrera conquista zonas de tu ciudad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: hero, then a two-column stage on wide screens (sticky phone demo left, survey right); one column on phones. */
+:root {
+  --bg: #edf1ee;
+  --surface: #ffffff;
+  --surface-2: #f5f8f6;
+  --ink: #13201b;
+  --muted: #556660;
+  --line: #cfd9d4;
+  --zone: #0b8a79;
+  --zone-ink: #ffffff;
+  --progress: #e09a12;
+  --route: #d8462a;
+  --map-bg: #e2e9e5;
+  --street: #ffffff;
+  --street-minor: #f4f7f5;
+  --casing: #c6d1cc;
+  --hex: #8fa49b;
+  --cell-off: #e6ece9;
+  --danger: #b4321f;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1512; --surface: #15201c; --surface-2: #1a2723; --ink: #e3ebe7; --muted: #94a59d; --line: #2b3a34;
+    --zone: #2fc2ac; --zone-ink: #06201b; --progress: #f2b53a; --route: #ff6b4e; --map-bg: #111c18; --street: #2c3b35;
+    --street-minor: #22302b; --casing: #0a1210; --hex: #4d645b; --cell-off: #24332e; --danger: #ff7a66; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1512; --surface: #15201c; --surface-2: #1a2723; --ink: #e3ebe7; --muted: #94a59d; --line: #2b3a34;
+  --zone: #2fc2ac; --zone-ink: #06201b; --progress: #f2b53a; --route: #ff6b4e; --map-bg: #111c18; --street: #2c3b35;
+  --street-minor: #22302b; --casing: #0a1210; --hex: #4d645b; --cell-off: #24332e; --danger: #ff7a66; color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+}
+[hidden] { display: none !important; }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--zone); outline-offset: 2px; border-radius: 6px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 28px 8px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 30px; height: 30px; flex: none; }
+.wordmark {
+  font-family: var(--font-display); font-stretch: 125%; font-weight: 900;
+  font-size: 22px; letter-spacing: -0.02em; text-transform: lowercase;
+}
+.motto { font-family: var(--font-data); font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-left: auto; }
+.hero h1 {
+  font-family: var(--font-display); font-stretch: 118%; font-weight: 850;
+  font-size: clamp(38px, 7.4vw, 76px); line-height: 0.98; letter-spacing: -0.03em;
+  margin: 34px 0 18px; max-width: 13ch; text-wrap: balance;
+}
+.hero h1 em { font-style: normal; color: var(--zone); }
+.lead { font-size: clamp(17px, 2vw, 19px); max-width: 58ch; margin: 0 0 20px; color: var(--ink); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 22px; padding: 0; list-style: none; font-family: var(--font-data); font-size: 13px; color: var(--muted); }
+.facts li { display: flex; align-items: center; gap: 7px; }
+.facts li::before { content: ""; width: 9px; height: 10px; background: var(--zone); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.cta {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  background: var(--ink); color: var(--bg); font-weight: 700; font-size: 16px;
+  padding: 13px 20px; border-radius: 999px;
+}
+.cta:hover { background: var(--zone); color: var(--zone-ink); }
+
+/* ---------- stage ---------- */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; padding-block: 36px 56px; }
+@media (min-width: 920px) {
+  .stage { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .demo-col { position: sticky; top: 20px; }
+}
+.demo-col { display: grid; gap: 18px; justify-items: center; min-width: 0; }
+.section-label { font-family: var(--font-data); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; justify-self: start; }
+
+/* phone */
+.phone {
+  width: min(300px, 100%); border-radius: 44px; padding: 10px;
+  background: #0b0f0e; box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 24px 48px -22px rgba(10, 30, 24, .45);
+}
+.screen { position: relative; border-radius: 35px; overflow: hidden; aspect-ratio: 9 / 18.6; background: var(--map-bg); }
+.screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.notch { position: absolute; top: 8px; left: 50%; translate: -50% 0; width: 84px; height: 22px; background: #0b0f0e; border-radius: 999px; z-index: 3; }
+.hud {
+  position: absolute; z-index: 2; left: 10px; right: 10px; top: 38px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent); border-radius: 16px; padding: 9px 12px 10px;
+  box-shadow: 0 6px 18px -10px rgba(0,0,0,.35);
+}
+.hud-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; color: var(--muted); font-weight: 600; }
+.rec { display: inline-flex; align-items: center; gap: 6px; color: var(--route); text-transform: uppercase; letter-spacing: .06em; font-family: var(--font-data); font-size: 10px; }
+.rec::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.hud-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 4px; }
+.stat b { display: block; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 20px; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.stat span { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.sheet {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+  background: var(--surface); border-radius: 20px 20px 0 0; padding: 8px 14px 18px;
+  box-shadow: 0 -8px 22px -14px rgba(0,0,0,.4);
+}
+.sheet::before { content: ""; display: block; width: 36px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 8px; }
+.sheet-row { display: flex; gap: 12px; align-items: center; }
+.sheet svg { width: 62px; height: 62px; flex: none; }
+.sheet-txt { min-width: 0; }
+.sheet-title { font-weight: 700; font-size: 14px; line-height: 1.25; }
+.sheet-sub { font-size: 12px; color: var(--muted); }
+.pill { display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 999px; background: var(--cell-off); color: var(--muted); }
+.pill.prog { background: color-mix(in srgb, var(--progress) 22%, transparent); color: color-mix(in srgb, var(--progress) 60%, var(--ink)); }
+.pill.done { background: var(--zone); color: var(--zone-ink); }
+.toast {
+  position: absolute; z-index: 4; left: 14px; right: 14px; bottom: 112px;
+  background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.35; font-weight: 600;
+  padding: 9px 12px; border-radius: 12px; opacity: 0; translate: 0 8px; transition: opacity .3s, translate .3s;
+}
+.toast.show { opacity: 1; translate: 0 0; }
+.toast.win { background: var(--zone); color: var(--zone-ink); }
+.demo-off .hud, .demo-off .sheet { display: none; }
+.demo-fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); font-size: 14px; }
+.demo-controls { display: flex; gap: 8px; }
+.btn-ghost {
+  font: 600 14px var(--font-body); color: var(--ink); background: transparent; cursor: pointer;
+  border: 1.5px solid var(--line); border-radius: 999px; padding: 7px 14px;
+}
+.btn-ghost:hover { border-color: var(--ink); }
+.demo-caption { font-size: 12.5px; color: var(--muted); text-align: center; max-width: 34ch; margin: 0; }
+
+/* rules */
+.rules { display: grid; gap: 14px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; }
+.rule { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; }
+.rule svg { width: 34px; height: 38px; }
+.rule h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.rule p { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+
+/* ---------- survey ---------- */
+.survey { min-width: 0; }
+.survey h2 {
+  font-family: var(--font-display); font-stretch: 115%; font-weight: 850;
+  font-size: clamp(28px, 4vw, 40px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 8px;
+}
+.survey-intro { color: var(--muted); margin: 0 0 18px; max-width: 60ch; }
+.progress {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 10px 12px; display: grid; gap: 6px;
+}
+.progress-txt { display: flex; justify-content: space-between; font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+.progress-txt b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.progress-bar { height: 8px; border-radius: 8px; background: var(--cell-off); overflow: hidden; }
+.progress-bar i { display: block; height: 100%; width: 0; background: var(--zone); border-radius: 8px; transition: width .35s; }
+.preview-note { font-size: 13px; background: color-mix(in srgb, var(--progress) 18%, var(--surface)); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; }
+
+form { display: grid; gap: 14px; }
+fieldset {
+  margin: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
+  padding: 16px 16px 18px; min-width: 0;
+}
+fieldset.invalid { border-color: var(--danger); }
+legend { padding: 0; float: left; width: 100%; font-weight: 700; font-size: 17px; line-height: 1.35; text-wrap: balance; }
+legend .qn { display: block; font-family: var(--font-data); font-weight: 600; font-size: 11.5px; color: var(--muted); letter-spacing: .06em; margin-bottom: 3px; }
+legend + * { clear: both; }
+.hint { font-size: 13.5px; color: var(--muted); margin: 4px 0 0; }
+.err { color: var(--danger); font-size: 13.5px; font-weight: 600; margin: 10px 0 0; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opt span {
+  display: inline-block; padding: 9px 15px; border-radius: 999px; border: 1.5px solid var(--line);
+  background: var(--surface-2); font-weight: 600; font-size: 15px; cursor: pointer; transition: background .15s, border-color .15s;
+}
+.opt span:hover { border-color: var(--muted); }
+.opt input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.opt input:focus-visible + span { outline: 3px solid var(--zone); outline-offset: 2px; }
+
+/* hex scale */
+.scale { margin-top: 14px; }
+.hexes { display: flex; gap: 6px; }
+.hexes .opt { flex: 1; max-width: 64px; }
+.hexes .opt span {
+  display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1.1; padding: 0; border: 0; border-radius: 0;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--cell-off); font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 20px;
+}
+.hexes .opt input:checked + span { background: var(--zone); color: var(--zone-ink); }
+.hexes .opt span:hover { background: color-mix(in srgb, var(--zone) 25%, var(--cell-off)); }
+.scale-ends { display: flex; justify-content: space-between; max-width: calc(64px * 5 + 24px); font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+
+textarea, input[type="text"], input[type="email"] {
+  width: 100%; margin-top: 12px; font: 16px var(--font-body); color: var(--ink);
+  background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 12px;
+}
+textarea { min-height: 88px; resize: vertical; }
+textarea:focus, input:focus { outline: none; border-color: var(--zone); }
+
+/* ranking */
+.rank { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.rank button {
+  display: inline-flex; align-items: center; gap: 8px; font: 600 15px var(--font-body); color: var(--ink);
+  background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer;
+}
+.rank button .n {
+  display: grid; place-items: center; width: 24px; height: 26px; font-family: var(--font-display); font-weight: 800; font-size: 13px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: var(--cell-off); color: var(--muted);
+}
+.rank button[aria-pressed="true"] { border-color: var(--ink); }
+.rank button[aria-pressed="true"] .n { background: var(--zone); color: var(--zone-ink); }
+.rank-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 13.5px; color: var(--muted); }
+.linkish { font: 600 13.5px var(--font-body); color: var(--ink); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+.privacy { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+.submit {
+  justify-self: start; font: 700 17px var(--font-body); color: var(--zone-ink); background: var(--zone);
+  border: 0; border-radius: 999px; padding: 15px 26px; cursor: pointer;
+}
+.submit:hover { filter: brightness(1.08); }
+.submit:disabled { opacity: .6; cursor: progress; }
+.form-error { color: var(--danger); font-weight: 600; margin: 0; }
+
+/* thanks */
+.thanks { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 20px; display: grid; gap: 12px; justify-items: start; }
+.thanks svg { width: 74px; height: 82px; }
+.thanks h3 { font-family: var(--font-display); font-stretch: 115%; font-weight: 850; font-size: 28px; line-height: 1.05; margin: 0; }
+.thanks p { margin: 0; max-width: 52ch; }
+.share { display: flex; flex-wrap: wrap; gap: 8px; }
+.share a, .share button { text-decoration: none; }
+.badge-hex { transform-origin: 50% 50%; animation: pop .7s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+footer { border-top: 1px solid var(--line); padding-block: 20px 32px; font-size: 13px; color: var(--muted); }
+footer p { margin: 0; max-width: 80ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+<!--/head-->
+</head>
+<body>
+<!--body-->
+<header class="wrap hero">
+  <div class="brand">
+    <svg viewBox="0 0 30 34" aria-hidden="true"><polygon points="15,1 29,9 29,25 15,33 1,25 1,9" fill="var(--zone)"/><polygon points="15,9 22,13 22,21 15,25 8,21 8,13" fill="var(--bg)"/></svg>
+    <span class="wordmark">terrun</span>
+    <span class="motto">Conquista tu zona</span>
+  </div>
+  <h1>Cada carrera <em>pinta</em> tu ciudad.</h1>
+  <p class="lead">Estamos creando Terrun, una app para correr en la que el mapa de Santo Domingo se divide en zonas y cada zona se conquista corriendo. Antes de construirla queremos saber cómo corres tú.</p>
+  <ul class="facts">
+    <li>12 preguntas</li>
+    <li>Unos 3 minutos</li>
+    <li>No pedimos tu nombre</li>
+  </ul>
+  <a class="cta" href="#encuesta">Responder la encuesta <span aria-hidden="true">↓</span></a>
+</header>
+
+<main class="wrap stage">
+  <section class="demo-col" aria-labelledby="demo-title">
+    <p class="section-label" id="demo-title">Así se ve una conquista</p>
+    <div class="phone">
+      <div class="screen" id="demo">
+        <canvas id="map" aria-label="Mapa de ejemplo de Piantini con zonas hexagonales. Una carrera por la avenida Winston Churchill toca varias zonas y una segunda carrera conquista la zona de la Churchill con Gustavo Mejía Ricart." role="img"></canvas>
+        <div class="notch" aria-hidden="true"></div>
+        <div class="hud" aria-hidden="true">
+          <div class="hud-top"><span class="rec" id="hud-run">Carrera 1</span><span id="hud-where">Av. Winston Churchill</span></div>
+          <div class="hud-stats">
+            <div class="stat"><b id="hud-km">0,00</b><span>km</span></div>
+            <div class="stat"><b id="hud-time">0:00</b><span>tiempo</span></div>
+            <div class="stat"><b id="hud-zones">0</b><span>zonas</span></div>
+          </div>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <div class="sheet" aria-hidden="true">
+          <div class="sheet-row">
+            <svg viewBox="-52 -52 104 104" id="mini"></svg>
+            <div class="sheet-txt">
+              <div class="sheet-title" id="sheet-title">Zona en Piantini</div>
+              <div class="sheet-sub" id="sheet-sub">0 de 7 sub-celdas</div>
+              <span class="pill" id="sheet-pill">Libre</span>
+            </div>
+          </div>
+        </div>
+        <div class="demo-fallback" id="demo-fallback" hidden>El mapa de ejemplo no pudo cargar. La encuesta funciona igual.</div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <button type="button" class="btn-ghost" id="demo-pause">Pausar</button>
+      <button type="button" class="btn-ghost" id="demo-replay">Repetir</button>
+    </div>
+    <p class="demo-caption">Calles reales de Piantini y alrededores. Las carreras son ejemplos.</p>
+
+    <ul class="rules">
+      <li class="rule">
+        <svg viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--hex)" stroke-width="2"/></svg>
+        <div><h3>La ciudad es un panal de zonas</h3><p>Cada zona es un hexágono de unos 350 metros de ancho, dividido en 7 sub-celdas.</p></div>
+      </li>
+      <li class="rule">
+        <svg viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="var(--progress)" fill-opacity=".35" stroke="var(--progress)" stroke-width="2"/></svg>
+        <div><h3>Pisa 5 de 7 y es tuya</h3><p>Las sub-celdas se suman entre carreras. Pasar por la avenida no basta: hay que meterse en el barrio.</p></div>
+      </li>
+      <li class="rule">
+        <svg viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="var(--zone)" stroke="var(--zone)" stroke-width="2"/></svg>
+        <div><h3>Defiéndela</h3><p>Si otro corredor pisa más sub-celdas que tú en los últimos 30 días, la zona pasa a ser suya. Quien domina más zonas de un barrio es su rey o reina.</p></div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="survey" id="encuesta" aria-labelledby="survey-title">
+    <h2 id="survey-title">Cuéntanos cómo corres</h2>
+    <p class="survey-intro">Tus respuestas deciden qué construimos primero. Las preguntas 3 y 4 son opcionales.</p>
+    <p class="preview-note" id="preview-note" hidden>Vista previa: desde aquí las respuestas no se guardan. Para responder de verdad, usa el link público de la encuesta.</p>
+
+    <div class="progress" aria-hidden="true">
+      <div class="progress-txt"><span>Respondidas <b id="prog-n">0</b> de 12</span><span id="prog-label">Zona libre</span></div>
+      <div class="progress-bar"><i id="prog-bar"></i></div>
+    </div>
+
+    <form name="runner-survey" id="survey" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="runner-survey">
+      <input type="hidden" name="form_version" value="v1">
+      <p hidden><label>No llenes este campo: <input name="bot-field" id="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+      <fieldset data-q="runs_per_week" data-required>
+        <legend><span class="qn">Pregunta 1</span>¿Cuántas veces por semana corres?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="runs_per_week" id="q1-1" value="1"><span>1</span></label>
+          <label class="opt"><input type="radio" name="runs_per_week" id="q1-2" value="2_3"><span>2 a 3</span></label>
+          <label class="opt"><input type="radio" name="runs_per_week" id="q1-3" value="4_5"><span>4 a 5</span></label>
+          <label class="opt"><input type="radio" name="runs_per_week" id="q1-4" value="6_plus"><span>6 o más</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="current_app" data-required>
+        <legend><span class="qn">Pregunta 2</span>¿Qué app usas hoy para correr?</legend>
+        <p class="hint">Si usas varias, elige la principal.</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="current_app" id="q2-1" value="strava"><span>Strava</span></label>
+          <label class="opt"><input type="radio" name="current_app" id="q2-2" value="nike_run_club"><span>Nike Run Club</span></label>
+          <label class="opt"><input type="radio" name="current_app" id="q2-3" value="garmin_connect"><span>Garmin Connect</span></label>
+          <label class="opt"><input type="radio" name="current_app" id="q2-4" value="adidas_running"><span>Adidas Running</span></label>
+          <label class="opt"><input type="radio" name="current_app" id="q2-5" value="none"><span>Ninguna</span></label>
+          <label class="opt"><input type="radio" name="current_app" id="q2-6" value="other"><span>Otra</span></label>
+        </div>
+        <input type="text" name="current_app_other" id="q2-other" placeholder="¿Cuál?" maxlength="80" hidden aria-label="Nombre de la otra app">
+      </fieldset>
+
+      <fieldset data-q="app_likes">
+        <legend><span class="qn">Pregunta 3 · opcional</span>¿Qué es lo que <strong>más</strong> valoras de esa app?</legend>
+        <p class="hint">Si no usas ninguna, cuéntanos qué te haría usar una.</p>
+        <textarea name="app_likes" id="q3" maxlength="600" aria-label="Lo que más valoras"></textarea>
+      </fieldset>
+
+      <fieldset data-q="app_missing">
+        <legend><span class="qn">Pregunta 4 · opcional</span>¿Qué te molesta o qué le falta?</legend>
+        <textarea name="app_missing" id="q4" maxlength="600" aria-label="Lo que te molesta o le falta"></textarea>
+      </fieldset>
+
+      <fieldset data-q="runs_with_phone" data-required>
+        <legend><span class="qn">Pregunta 5</span>¿Corres con el teléfono encima?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="runs_with_phone" id="q5-1" value="always"><span>Siempre</span></label>
+          <label class="opt"><input type="radio" name="runs_with_phone" id="q5-2" value="sometimes_watch"><span>A veces, uso reloj</span></label>
+          <label class="opt"><input type="radio" name="runs_with_phone" id="q5-3" value="never"><span>Nunca</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="conquest_interest" data-required>
+        <legend><span class="qn">Pregunta 6</span>¿Te motivaría conquistar zonas de tu ciudad y defenderlas de otros corredores?</legend>
+        <div class="scale">
+          <div class="hexes">
+            <label class="opt"><input type="radio" name="conquest_interest" id="q6-1" value="1"><span>1</span></label>
+            <label class="opt"><input type="radio" name="conquest_interest" id="q6-2" value="2"><span>2</span></label>
+            <label class="opt"><input type="radio" name="conquest_interest" id="q6-3" value="3"><span>3</span></label>
+            <label class="opt"><input type="radio" name="conquest_interest" id="q6-4" value="4"><span>4</span></label>
+            <label class="opt"><input type="radio" name="conquest_interest" id="q6-5" value="5"><span>5</span></label>
+          </div>
+          <div class="scale-ends"><span>Nada</span><span>Muchísimo</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="compete_mode" data-required>
+        <legend><span class="qn">Pregunta 7</span>¿Cómo preferirías competir?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="compete_mode" id="q7-1" value="solo"><span>Solo</span></label>
+          <label class="opt"><input type="radio" name="compete_mode" id="q7-2" value="club"><span>Con mi club</span></label>
+          <label class="opt"><input type="radio" name="compete_mode" id="q7-3" value="both"><span>Las dos cosas</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="feature_ranking" data-required>
+        <legend><span class="qn">Pregunta 8</span>Ordena por importancia para ti</legend>
+        <p class="hint">Toca las 7 opciones empezando por la que más te importa.</p>
+        <ul class="rank" id="rank">
+          <li><button type="button" data-key="metrics" aria-pressed="false"><span class="n"></span>Métricas y ritmo</button></li>
+          <li><button type="button" data-key="territory_map" aria-pressed="false"><span class="n"></span>Mapa de territorio</button></li>
+          <li><button type="button" data-key="leaderboards" aria-pressed="false"><span class="n"></span>Rankings</button></li>
+          <li><button type="button" data-key="monthly_challenges" aria-pressed="false"><span class="n"></span>Retos mensuales</button></li>
+          <li><button type="button" data-key="achievements" aria-pressed="false"><span class="n"></span>Logros</button></li>
+          <li><button type="button" data-key="social_feed" aria-pressed="false"><span class="n"></span>Feed social</button></li>
+          <li><button type="button" data-key="clubs" aria-pressed="false"><span class="n"></span>Clubes</button></li>
+        </ul>
+        <div class="rank-tools"><span id="rank-status">0 de 7 ordenadas</span><button type="button" class="linkish" id="rank-reset">Empezar de nuevo</button></div>
+        <input type="hidden" name="feature_ranking" id="q8">
+      </fieldset>
+
+      <fieldset data-q="route_privacy_concern" data-required>
+        <legend><span class="qn">Pregunta 9</span>¿Te preocupa que otras personas vean tus rutas?</legend>
+        <div class="scale">
+          <div class="hexes">
+            <label class="opt"><input type="radio" name="route_privacy_concern" id="q9-1" value="1"><span>1</span></label>
+            <label class="opt"><input type="radio" name="route_privacy_concern" id="q9-2" value="2"><span>2</span></label>
+            <label class="opt"><input type="radio" name="route_privacy_concern" id="q9-3" value="3"><span>3</span></label>
+            <label class="opt"><input type="radio" name="route_privacy_concern" id="q9-4" value="4"><span>4</span></label>
+            <label class="opt"><input type="radio" name="route_privacy_concern" id="q9-5" value="5"><span>5</span></label>
+          </div>
+          <div class="scale-ends"><span>Nada</span><span>Mucho</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="voice_cues" data-required>
+        <legend><span class="qn">Pregunta 10</span>¿Usarías avisos de voz en cada kilómetro mientras corres?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="voice_cues" id="q10-1" value="yes"><span>Sí</span></label>
+          <label class="opt"><input type="radio" name="voice_cues" id="q10-2" value="no"><span>No</span></label>
+          <label class="opt"><input type="radio" name="voice_cues" id="q10-3" value="indifferent"><span>Me da igual</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="premium_price" data-required>
+        <legend><span class="qn">Pregunta 11</span>¿Pagarías por funciones premium?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="premium_price" id="q11-1" value="no"><span>No</span></label>
+          <label class="opt"><input type="radio" name="premium_price" id="q11-2" value="up_to_3"><span>Hasta US$3 al mes</span></label>
+          <label class="opt"><input type="radio" name="premium_price" id="q11-3" value="up_to_5"><span>Hasta US$5 al mes</span></label>
+          <label class="opt"><input type="radio" name="premium_price" id="q11-4" value="more_than_5"><span>Más de US$5</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset data-q="beta_tester" data-required>
+        <legend><span class="qn">Pregunta 12</span>¿Te gustaría probar la app antes que nadie, entre diciembre y enero?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="beta_tester" id="q12-1" value="yes"><span>Sí, quiero ser tester</span></label>
+          <label class="opt"><input type="radio" name="beta_tester" id="q12-2" value="no"><span>No, gracias</span></label>
+        </div>
+        <input type="email" name="beta_email" id="q12-email" placeholder="tu.correo@gmail.com" autocomplete="email" maxlength="120" hidden aria-label="Correo de Google para la invitación">
+        <p class="hint" id="q12-hint" hidden>Usa el correo de tu cuenta de Google o de Apple: por ahí llega la invitación a la versión de prueba.</p>
+      </fieldset>
+
+      <p class="privacy">Usamos tus respuestas solo para el proyecto final de la asignatura Construcción de Software y, si te apuntas como tester, para enviarte la invitación. No compartimos tu correo con nadie.</p>
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+      <button type="submit" class="submit" id="submit">Enviar respuestas</button>
+    </form>
+
+    <div class="thanks" id="thanks" hidden tabindex="-1">
+      <svg viewBox="0 0 74 82" aria-hidden="true"><g class="badge-hex"><polygon points="37,2 72,21 72,61 37,80 2,61 2,21" fill="var(--zone)"/><path d="M23 42 l10 10 l19 -21" fill="none" stroke="var(--zone-ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
+      <h3>Zona conquistada.</h3>
+      <p id="thanks-msg">Gracias. Tu respuesta quedó guardada y nos ayuda a decidir qué construimos primero.</p>
+      <p>¿Corres con un grupo? Pásales la encuesta: mientras más corredores respondan, mejor sale la app.</p>
+      <div class="share">
+        <a class="cta" id="share-wa" href="https://wa.me/" target="_blank" rel="noopener">Compartir por WhatsApp</a>
+        <button type="button" class="btn-ghost" id="share-copy">Copiar link</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Terrun es el proyecto final de la asignatura Construcción de Software. Calles y barrios © colaboradores de OpenStreetMap (ODbL). Malla de zonas H3. Las carreras del mapa son ejemplos.</p>
+</footer>
+
+<script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
+<script src="map-data.js"></script>
+<script>
+/* ===================== Survey ===================== */
+(function () {
+  const form = document.getElementById('survey');
+  const $ = id => document.getElementById(id);
+  const isLive = /\.netlify\.app$/.test(location.hostname); // add the custom domain here if one is connected
+  if (!isLive) $('preview-note').hidden = false;
+
+  const QUESTIONS = ['runs_per_week', 'current_app', 'app_likes', 'app_missing', 'runs_with_phone', 'conquest_interest',
+    'compete_mode', 'feature_ranking', 'route_privacy_concern', 'voice_cues', 'premium_price', 'beta_tester'];
+  const LEVELS = ['Zona libre', 'Zona libre', 'En progreso', 'En progreso', 'En progreso', 'En progreso', 'En progreso',
+    'Casi tuya', 'Casi tuya', 'Casi tuya', 'Casi tuya', 'Casi tuya', 'Zona conquistada'];
+
+  // conditional fields
+  const other = $('q2-other'), email = $('q12-email'), emailHint = $('q12-hint');
+  form.addEventListener('change', e => {
+    if (e.target.name === 'current_app') { other.hidden = e.target.value !== 'other'; if (!other.hidden) other.focus(); }
+    if (e.target.name === 'beta_tester') { const yes = e.target.value === 'yes'; email.hidden = !yes; emailHint.hidden = !yes; if (yes) email.focus(); }
+  });
+
+  // ranking
+  const rankInput = $('q8'), order = [];
+  const rankButtons = [...document.querySelectorAll('#rank button')];
+  function renderRank() {
+    rankButtons.forEach(b => {
+      const i = order.indexOf(b.dataset.key);
+      b.setAttribute('aria-pressed', i >= 0 ? 'true' : 'false');
+      b.querySelector('.n').textContent = i >= 0 ? i + 1 : '';
+      b.setAttribute('aria-label', b.textContent.trim() + (i >= 0 ? ', puesto ' + (i + 1) : ', sin ordenar'));
+    });
+    rankInput.value = order.length === rankButtons.length ? order.join('>') : '';
+    $('rank-status').textContent = order.length === rankButtons.length ? 'Listo, las 7 en orden' : `${order.length} de 7 ordenadas`;
+    update();
+  }
+  rankButtons.forEach(b => b.addEventListener('click', () => {
+    const i = order.indexOf(b.dataset.key);
+    if (i >= 0) order.splice(i, 1); else order.push(b.dataset.key);
+    renderRank();
+  }));
+  $('rank-reset').addEventListener('click', () => { order.length = 0; renderRank(); });
+
+  function answered(q) {
+    const data = new FormData(form), v = (data.get(q) || '').toString().trim();
+    if (q === 'current_app' && v === 'other') return other.value.trim() !== '';
+    if (q === 'beta_tester' && v === 'yes') return email.checkValidity() && email.value.trim() !== '';
+    return v !== '';
+  }
+  function update() {
+    const n = QUESTIONS.filter(answered).length;
+    $('prog-n').textContent = n;
+    $('prog-bar').style.width = (n / 12 * 100) + '%';
+    $('prog-label').textContent = LEVELS[n];
+    document.querySelectorAll('fieldset.invalid').forEach(fs => { if (answered(fs.dataset.q)) clearError(fs); });
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+
+  function clearError(fs) { fs.classList.remove('invalid'); const e = fs.querySelector('.err'); if (e) e.remove(); }
+  function setError(fs, msg) {
+    clearError(fs); fs.classList.add('invalid');
+    const p = document.createElement('p'); p.className = 'err'; p.textContent = msg; fs.appendChild(p);
+  }
+  function validate() {
+    let first = null;
+    document.querySelectorAll('fieldset[data-required]').forEach(fs => {
+      const q = fs.dataset.q;
+      if (answered(q)) { clearError(fs); return; }
+      const v = new FormData(form).get(q);
+      let msg = 'Elige una opción.';
+      if (q === 'feature_ranking') msg = 'Toca las 7 opciones para ordenarlas.';
+      else if (q === 'current_app' && v === 'other') msg = 'Escribe el nombre de la app.';
+      else if (q === 'beta_tester' && v === 'yes') msg = 'Escribe un correo válido para enviarte la invitación.';
+      setError(fs, msg); first = first || fs;
+    });
+    return first;
+  }
+
+  const errorBox = $('form-error'), submitBtn = $('submit');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    errorBox.hidden = true;
+    const bad = validate();
+    if (bad) {
+      errorBox.textContent = 'Falta responder alguna pregunta. Las marcamos en rojo.'; errorBox.hidden = false;
+      bad.scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
+    }
+    if (!isLive) { showThanks(true); return; }
+    submitBtn.disabled = true; submitBtn.textContent = 'Enviando…';
+    try {
+      const body = new URLSearchParams(new FormData(form)).toString();
+      const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      showThanks(false);
+    } catch (err) {
+      errorBox.textContent = 'No pudimos enviar tus respuestas. Revisa tu conexión e inténtalo otra vez; lo que llenaste sigue aquí.';
+      errorBox.hidden = false; submitBtn.disabled = false; submitBtn.textContent = 'Enviar respuestas';
+    }
+  });
+
+  const shareUrl = isLive ? location.origin + location.pathname : '';
+  function showThanks(preview) {
+    form.hidden = true; document.querySelector('.progress').hidden = true;
+    if (preview) $('thanks-msg').textContent = 'Así se ve el final de la encuesta. Esta vista previa no guardó tu respuesta.';
+    const text = 'Estoy ayudando a crear Terrun, una app para conquistar zonas de Santo Domingo corriendo. Responde la encuesta, son 3 minutos' + (shareUrl ? ': ' + shareUrl : '.');
+    $('share-wa').href = 'https://wa.me/?text=' + encodeURIComponent(text);
+    $('share-copy').hidden = !shareUrl;
+    const t = $('thanks'); t.hidden = false; t.focus({ preventScroll: true });
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('share-copy').addEventListener('click', e => {
+    const btn = e.currentTarget;
+    navigator.clipboard.writeText(shareUrl).then(() => { btn.textContent = 'Link copiado'; },
+      () => { btn.textContent = shareUrl; });
+  });
+  renderRank();
+})();
+
+/* ===================== Conquest demo ===================== */
+(function () {
+  const D = window.TERRUN_MAP, stage = document.getElementById('demo');
+  const $ = id => document.getElementById(id);
+  if (!D || !window.h3) {
+    stage.classList.add('demo-off'); $('demo-fallback').hidden = false;
+    document.querySelector('.demo-controls').hidden = true; return;
+  }
+  const ZONE_RES = 9, CELL_RES = 10, THRESHOLD = 5, STEP_M = 10, PACE_S_PER_KM = 340;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const R = 6371008.8, rad = d => d * Math.PI / 180;
+  const hav = (a, b) => { const x = Math.sin(rad(b[0] - a[0]) / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(rad(b[1] - a[1]) / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
+  function densify(path) {
+    const out = [path[0]], dist = [0];
+    for (let i = 1; i < path.length; i++) {
+      const a = path[i - 1], b = path[i], n = Math.max(1, Math.ceil(hav(a, b) / STEP_M));
+      for (let k = 1; k <= n; k++) { const p = [a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]; dist.push(dist[dist.length - 1] + hav(out[out.length - 1], p)); out.push(p); }
+    }
+    return { pts: out, dist };
+  }
+  const childPos = c => typeof h3.cellToChildPos === 'function' ? h3.cellToChildPos(c, ZONE_RES) : h3.cellToChildren(h3.cellToParent(c, ZONE_RES), CELL_RES).indexOf(c);
+  const stepOf = p => { const c = h3.latLngToCell(p[0], p[1], CELL_RES); return { z: h3.cellToParent(c, ZONE_RES), pos: childPos(c), cell: c }; };
+
+  // ---- simulate both runs once ----
+  const run1 = densify(D.churchill);
+  run1.steps = run1.pts.map(stepOf);
+  const sim = new Map();
+  const add = (m, s) => { if (!m.has(s.z)) m.set(s.z, new Map()); m.get(s.z).set(s.pos, s.cell); };
+  run1.steps.forEach(s => add(sim, s));
+  const after1 = { touched: sim.size, max: Math.max(...[...sim.values()].map(m => m.size)), done: [...sim.values()].filter(m => m.size >= THRESHOLD).length };
+  const target = h3.latLngToCell(D.cross[0], D.cross[1], ZONE_RES);
+  const targetBefore = (sim.get(target) || new Map()).size;
+  const center = h3.cellToLatLng(target);
+  const missing = h3.cellToChildren(target, CELL_RES).map(c => ({ pos: childPos(c), ll: h3.cellToLatLng(c) }))
+    .filter(k => !(sim.get(target) || new Map()).has(k.pos) && k.pos !== 0)
+    .sort((a, b) => Math.atan2(a.ll[0] - center[0], a.ll[1] - center[1]) - Math.atan2(b.ll[0] - center[0], b.ll[1] - center[1]));
+  const stops = missing.slice(0, Math.max(THRESHOLD + 1 - targetBefore, 3)).map(k => k.ll);
+  const run2 = densify([D.cross, ...stops, center, D.cross]);
+  run2.steps = run2.pts.map(stepOf);
+  run2.steps.forEach(s => add(sim, s));
+  const targetAfter = sim.get(target).size;
+  let barrio = 'Piantini', bd = Infinity;
+  for (const p of D.places) { const d = hav(center, [p[1], p[2]]); if (d < bd) { bd = d; barrio = p[0]; } }
+
+  const [S, W, N, E] = D.view;
+  const zones = h3.polygonToCells([[S - .004, W - .004], [S - .004, E + .004], [N + .004, E + .004], [N + .004, W - .004]], ZONE_RES);
+
+  // ---- canvas + projection (fit run 1 between the HUD and the bottom sheet) ----
+  const canvas = $('map'), ctx = canvas.getContext('2d');
+  let C = {}, proj = null, base = null, dpr = 1;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function readColors() { ['map-bg', 'street', 'street-minor', 'casing', 'hex', 'progress', 'zone', 'route', 'ink', 'muted', 'surface', 'cell-off'].forEach(k => C[k] = css('--' + k)); }
+  function layout() {
+    const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return false;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    const hud = stage.querySelector('.hud'), sheet = stage.querySelector('.sheet');
+    const top = hud.offsetTop + hud.offsetHeight + 14, bottom = h - sheet.offsetHeight - 14;
+    const lats = D.churchill.map(p => p[0]), lons = D.churchill.map(p => p[1]);
+    const lat0 = (Math.min(...lats) + Math.max(...lats)) / 2, lon0 = (Math.min(...lons) + Math.max(...lons)) / 2;
+    const mLat = 111320, mLon = 111320 * Math.cos(rad(lat0));
+    const spanY = (Math.max(...lats) - Math.min(...lats)) * mLat, spanX = (Math.max(...lons) - Math.min(...lons)) * mLon;
+    const k = Math.min((bottom - top) / spanY, (w - 40) / spanX);
+    const cx = w / 2, cy = (top + bottom) / 2;
+    proj = p => [(cx + (p[1] - lon0) * mLon * k) * dpr, (cy - (p[0] - lat0) * mLat * k) * dpr];
+    return true;
+  }
+  function pathOf(ring) { ctx.beginPath(); ring.forEach((p, i) => { const [x, y] = proj(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); }
+  function buildBase() {
+    base = document.createElement('canvas'); base.width = canvas.width; base.height = canvas.height;
+    const b = base.getContext('2d'), keep = ctx;
+    b.fillStyle = C['map-bg']; b.fillRect(0, 0, base.width, base.height);
+    b.lineCap = 'round'; b.lineJoin = 'round';
+    for (const pass of ['casing', 'fill']) {
+      for (const cls of [2, 1, 0]) {
+        for (const s of D.streets) {
+          if (s[0] !== cls) continue;
+          b.beginPath();
+          for (let i = 1; i < s.length; i += 2) { const [x, y] = proj([s[i], s[i + 1]]); i === 1 ? b.moveTo(x, y) : b.lineTo(x, y); }
+          const w = (cls === 0 ? 5 : cls === 1 ? 3.4 : 2) * dpr;
+          b.strokeStyle = pass === 'casing' ? C.casing : (cls === 2 ? C['street-minor'] : C.street);
+          b.lineWidth = pass === 'casing' ? w + 1.6 * dpr : w; b.stroke();
+        }
+      }
+    }
+    b.strokeStyle = C.hex; b.globalAlpha = .55; b.lineWidth = 1 * dpr;
+    for (const z of zones) { b.beginPath(); h3.cellToBoundary(z).forEach((p, i) => { const [x, y] = proj(p); i ? b.lineTo(x, y) : b.moveTo(x, y); }); b.closePath(); b.stroke(); }
+    b.globalAlpha = 1;
+    b.font = `600 ${9 * dpr}px Figtree, system-ui, sans-serif`; b.fillStyle = C.muted; b.textAlign = 'center';
+    for (const p of D.places) {
+      const [x, y] = proj([p[1], p[2]]), label = p[0].toUpperCase(), half = b.measureText(label).width / 2 + 4 * dpr;
+      if (x - half > 0 && x + half < base.width && y > 0 && y < base.height) b.fillText(label, x, y);
+    }
+    void keep;
+  }
+
+  // ---- animation state ----
+  const visits = new Map();
+  let phase = 'run1', i1 = 0, i2 = 0, t0 = 0, paused = false, pausedAt = 0, raf = 0, flash = 0;
+  const DUR = { run1: 7600, pause1: 3000, run2: 4200, hold: 5200 };
+  const count = z => (visits.get(z) || new Map()).size;
+  function applyTo(steps, from, to) { for (let i = from; i < to; i++) add(visits, steps[i]); }
+
+  function draw() {
+    if (!proj) return;
+    ctx.drawImage(base, 0, 0);
+    for (const [z, cells] of visits) {
+      const n = cells.size, done = n >= THRESHOLD;
+      pathOf(h3.cellToBoundary(z));
+      ctx.globalAlpha = done ? .42 : .14 + n * .05; ctx.fillStyle = done ? C.zone : C.progress; ctx.fill();
+      ctx.globalAlpha = 1; ctx.lineWidth = (done ? 2.2 : 1.4) * dpr; ctx.strokeStyle = done ? C.zone : C.progress; ctx.stroke();
+      for (const cell of cells.values()) {
+        pathOf(h3.cellToBoundary(cell)); ctx.globalAlpha = .45; ctx.fillStyle = done ? C.zone : C.progress; ctx.fill(); ctx.globalAlpha = 1;
+      }
+    }
+    if (flash > 0) {
+      pathOf(h3.cellToBoundary(target)); ctx.lineWidth = (2 + 8 * flash) * dpr; ctx.globalAlpha = flash * .6; ctx.strokeStyle = C.zone; ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    const line = (pts, n) => { if (n < 2) return; ctx.beginPath(); for (let i = 0; i < n; i++) { const [x, y] = proj(pts[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.strokeStyle = C.route; ctx.lineWidth = 3.2 * dpr; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); };
+    line(run1.pts, i1); line(run2.pts, i2);
+    let head = null;
+    if (phase === 'run1' && i1 > 0) head = run1.pts[i1 - 1];
+    if (phase === 'run2' && i2 > 0) head = run2.pts[i2 - 1];
+    if (head) { const [x, y] = proj(head); ctx.beginPath(); ctx.arc(x, y, 6.5 * dpr, 0, Math.PI * 2); ctx.fillStyle = C.surface; ctx.fill(); ctx.beginPath(); ctx.arc(x, y, 4.2 * dpr, 0, Math.PI * 2); ctx.fillStyle = C.route; ctx.fill(); }
+  }
+
+  const fmtKm = m => (m / 1000).toFixed(2).replace('.', ',');
+  const fmtTime = m => { const s = Math.round(m / 1000 * PACE_S_PER_KM); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  function renderHud() {
+    const second = phase === 'run2' || (phase === 'hold');
+    const dist = second ? run2.dist[Math.max(0, i2 - 1)] : run1.dist[Math.max(0, i1 - 1)];
+    $('hud-run').textContent = second ? 'Carrera 2' : 'Carrera 1';
+    $('hud-where').textContent = second ? 'Vuelta por ' + barrio : 'Av. Winston Churchill';
+    $('hud-km').textContent = fmtKm(dist); $('hud-time').textContent = fmtTime(dist);
+    $('hud-zones').textContent = second ? new Set(run2.steps.slice(0, i2).map(s => s.z)).size : new Set(run1.steps.slice(0, i1).map(s => s.z)).size;
+    const n = count(target), done = n >= THRESHOLD;
+    $('sheet-title').textContent = 'Zona en ' + barrio;
+    $('sheet-sub').textContent = `${n} de 7 sub-celdas · necesitas 5`;
+    const pill = $('sheet-pill'); pill.className = 'pill' + (done ? ' done' : n ? ' prog' : '');
+    pill.textContent = done ? 'Conquistada' : n ? 'En progreso' : 'Libre';
+    const r = 15, pts = [[0, 0]];
+    for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; pts.push([Math.cos(a) * r * Math.sqrt(3), Math.sin(a) * r * Math.sqrt(3)]); }
+    const hex = (cx, cy) => Array.from({ length: 6 }, (_, k) => { const a = k * Math.PI / 3; return `${(cx + Math.cos(a) * (r - 1)).toFixed(1)},${(cy + Math.sin(a) * (r - 1)).toFixed(1)}`; }).join(' ');
+    const have = visits.get(target) || new Map();
+    $('mini').innerHTML = pts.map((p, i) => `<polygon points="${hex(p[0], p[1])}" fill="${have.has(i) ? (done ? C.zone : C.progress) : C['cell-off']}" stroke="${C.surface}" stroke-width="2"/>`).join('');
+  }
+  const toast = $('toast');
+  function say(text, win) { toast.textContent = text; toast.classList.toggle('win', !!win); toast.classList.toggle('show', !!text); }
+
+  function reset() {
+    visits.clear(); i1 = 0; i2 = 0; phase = 'run1'; flash = 0; t0 = performance.now(); say('');
+  }
+  function finalState() {
+    visits.clear(); applyTo(run1.steps, 0, run1.steps.length); applyTo(run2.steps, 0, run2.steps.length);
+    i1 = run1.pts.length; i2 = run2.pts.length; phase = 'hold';
+    say(`Zona conquistada en ${barrio}: ${targetAfter} de 7 sub-celdas, sumando las dos carreras.`, true);
+  }
+  function tick(now) {
+    raf = 0; if (paused) return;
+    const t = now - t0;
+    if (phase === 'run1') {
+      const n = Math.min(run1.pts.length, Math.ceil(run1.pts.length * t / DUR.run1));
+      applyTo(run1.steps, i1, n); i1 = n;
+      if (n >= run1.pts.length) { phase = 'pause1'; t0 = now;
+        say(`Carrera 1: tocaste ${after1.touched} zonas y no conquistaste ninguna. En ninguna pisaste más de ${after1.max} de 7.`); }
+    } else if (phase === 'pause1') {
+      if (t > DUR.pause1) { phase = 'run2'; t0 = now; say('Carrera 2: una vuelta por dentro de la zona.'); }
+    } else if (phase === 'run2') {
+      const n = Math.min(run2.pts.length, Math.ceil(run2.pts.length * t / DUR.run2));
+      const was = count(target) >= THRESHOLD;
+      applyTo(run2.steps, i2, n); i2 = n;
+      if (!was && count(target) >= THRESHOLD) { flash = 1; say(`¡Zona conquistada! ${barrio}, ${count(target)} de 7`, true); }
+      if (n >= run2.pts.length) { phase = 'hold'; t0 = now;
+        say(`Zona conquistada en ${barrio}: pasó de ${targetBefore} a ${targetAfter} de 7 sumando las dos carreras.`, true); }
+    } else if (phase === 'hold') {
+      if (t > DUR.hold) reset();
+    }
+    flash = Math.max(0, flash - 0.025);
+    draw(); renderHud();
+    if (visible) raf = requestAnimationFrame(tick);
+  }
+
+  let visible = true;
+  function start() { if (!raf && !paused && visible && !reduceMotion) raf = requestAnimationFrame(tick); }
+  function redraw() { readColors(); if (layout()) { buildBase(); draw(); renderHud(); } }
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) { if (pausedAt) { t0 += performance.now() - pausedAt; pausedAt = 0; } start(); } else if (!paused) pausedAt = performance.now(); }).observe(stage);
+  new ResizeObserver(() => redraw()).observe(stage);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+  const pauseBtn = $('demo-pause');
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused; pauseBtn.textContent = paused ? 'Reanudar' : 'Pausar';
+    if (paused) pausedAt = performance.now(); else { t0 += performance.now() - pausedAt; pausedAt = 0; start(); }
+  });
+  $('demo-replay').addEventListener('click', () => {
+    paused = false; pauseBtn.textContent = 'Pausar'; pausedAt = 0;
+    if (reduceMotion) { finalState(); draw(); renderHud(); return; }
+    reset(); start();
+  });
+
+  if (reduceMotion) { pauseBtn.hidden = true; finalState(); redraw(); }
+  else { reset(); redraw(); start(); }
+})();
+</script>
+<!--/body-->
+</body>
+</html>
