@@ -9,15 +9,15 @@ Meta: 15 respuestas antes del 18/11. Se comparte por WhatsApp.
 - **Vista previa para el equipo:** https://claude.ai/artifact/LQkKUP9vBAPeFSR3CWamos (privado; compartir desde *Share*). Desde ahí las respuestas **no** se guardan.
 - **Mapa:** `python3 scripts/build_survey_map.py <export-de-overpass.json>` regenera `survey/map-data.js`.
 
-### Publicar (una sola vez)
+### Publicación
 
-1. En https://app.netlify.com: *Add new site* → *Import an existing project* → GitHub → `AshFranco/Terrun`. Netlify lee `netlify.toml` (publica la carpeta `survey/`, sin comando de build).
-2. *Site configuration* → *Change site name*: `terrun-encuesta` (queda `https://terrun-encuesta.netlify.app`).
-3. *Forms* → *Enable form detection* y luego *Deploys* → *Trigger deploy*. Sin este paso Netlify no registra el formulario.
-4. Probar: responder una vez desde el teléfono, ver la respuesta en *Forms* → `runner-survey` y borrarla.
-5. *Forms* → *Form notifications*: agregar un aviso por correo para cada respuesta nueva (opcional).
+- **Link público:** https://terrun-encuesta.netlify.app (publicado el 11/11 desde el commit `d941fcf`).
+- **Panel:** https://app.netlify.com/projects/terrun-encuesta → *Forms* → `runner-survey` (cuenta personal de Ashley).
+- Configuración del sitio: detección de formularios activada y protección de acceso desactivada; si no, los corredores ven un error 401.
+- Prueba hecha el 11/11: una respuesta enviada, recibida con todos los campos y borrada.
+- El sitio **no** está conectado al repo: los cambios en `survey/` se publican a mano desde la raíz del repo con `netlify deploy --prod --no-build --dir survey --site terrun-encuesta`.
 
-Cada merge a `main` vuelve a publicar la página. Si se conecta un dominio propio, hay que agregarlo en `isLive` dentro de `survey/index.html`; si no, la página se queda en modo vista previa.
+Si se conecta un dominio propio, hay que agregarlo en `isLive` dentro de `survey/index.html`; si no, la página se queda en modo vista previa.
 
 ## Campos (para el análisis)
 
