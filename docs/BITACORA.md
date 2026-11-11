@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-11 — Diana — CTZ-07 y CTZ-05 Confirmación del stack React y difusión de la encuesta
+- Hecho: confirmado con Jorge y Rowlis que se sienten cómodos trabajando con React + TypeScript y React Native + Expo (queda validado el supuesto S-01 y resuelto el bloqueo de front). Enlace de la encuesta (`https://terrun-encuesta.netlify.app`) compartido con los corredores; ya está circulando y recibiendo respuestas.
+- Evidencia: `docs/DECISIONES.md` (D-15), panel de Netlify Forms (`runner-survey`).
+- Decisiones: D-15.
+- Siguiente paso: alcanzar las 15 respuestas antes del 18/11 para analizarlas en el S1 (CTZ-25) y cargar el backlog en GitHub Projects (CTZ-06) al completarse CTZ-02.
+
 ## 2026-11-11 — Ashley — Guía del primer día (onboarding con Claude Code)
 - Hecho: `docs/05-PRIMER-DIA.md`, con el texto que cada integrante pega en Claude Code para clonar, correr `configurar-entorno.sh`, leer los documentos en orden, revisar las herramientas de su rol y seguir la guía al pie de la letra. Enlazado desde el README y la guía §2; el README clona en la carpeta `terrun`.
 - Evidencia: `docs/05-PRIMER-DIA.md`.

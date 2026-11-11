@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
 > **Weekly:** viernes 13 de noviembre · **Próximo hito:** entrega del HLD y el LLD, miércoles 11 de noviembre
-> **Última actualización:** 11/11/2026 — Ashley
+> **Última actualización:** 11/11/2026 — Diana
 
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
 
@@ -17,8 +17,8 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 - ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
 
 ### Diana — Product Owner
-- 🔄 **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Publicada en https://terrun-encuesta.netlify.app; falta que Diana comparta el link (meta: 15 respuestas antes del 18/11).*
-- ⬜ **CTZ-07** Confirmar con Jorge y Rowlis que dominan React (supuesto S-01). *Urgente: condiciona el stack de la app.*
+- 🔄 **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Publicada en https://terrun-encuesta.netlify.app y compartida con los corredores; circulando y recibiendo respuestas (meta: 15 respuestas antes del 18/11).*
+- 👀 **CTZ-07** Confirmar con Jorge y Rowlis que dominan React (supuesto S-01). *Confirmado con ambos y registrado en `docs/DECISIONES.md` (D-15).*
 - ⬜ **CTZ-06** Cargar el backlog en GitHub Projects. *Depende de CTZ-02.*
 
 ### Jorge — Front, núcleo técnico
@@ -38,8 +38,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 
 | Desde | Bloqueo | Afecta a | Responsable de resolverlo |
 |---|---|---|---|
-| 10/11 | El repo aún no existe en GitHub | CTZ-03, CTZ-06, CTZ-08 | Ashley (CTZ-02) |
-| 10/11 | Falta confirmar que Jorge y Rowlis dominan React | Toda la app | Diana (CTZ-07) |
+| 10/11 | Falta invitar al equipo y proteger `main` en GitHub | CTZ-03, CTZ-06, CTZ-08 | Ashley (CTZ-02) |
 
 ## Avance del sprint
 

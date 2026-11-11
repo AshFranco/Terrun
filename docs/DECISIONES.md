@@ -4,7 +4,7 @@ Toda decisión que cambie el alcance, las reglas del juego, el stack o el proces
 
 | ID | Fecha | Decisión | Motivo | Decidió |
 |---|---|---|---|---|
-| D-01 | 10/11/2026 | La app se construye con React Native + Expo (TypeScript) | Una sola base para iOS y Android, GPS en segundo plano real, publicación en tiendas con EAS, aprovecha la experiencia React del equipo front. Pendiente de confirmar con CTZ-07 | Ashley |
+| D-01 | 10/11/2026 | La app se construye con React Native + Expo (TypeScript) | Una sola base para iOS y Android, GPS en segundo plano real, publicación en tiendas con EAS, aprovecha la experiencia React del equipo front. Confirmado en CTZ-07 (D-15) | Ashley |
 | D-02 | 10/11/2026 | Backend en .NET 10 + EF Core, con PostgreSQL + PostGIS | Experiencia previa (FuelTrack): JWT, CI, Docker y despliegue ya probados | Ashley |
 | D-03 | 10/11/2026 | Zona = hexágono H3 de resolución 9; 7 sub-celdas de resolución 10 | Área casi uniforme y jerarquía exacta de 7 hijas | Equipo |
 | D-04 | 10/11/2026 | Conquista personal: al menos 5 de 7 sub-celdas, acumulado entre carreras (parámetro) | Premia explorar la zona a fondo, no solo atravesarla | Ashley (aprobado) |
@@ -18,3 +18,4 @@ Toda decisión que cambie el alcance, las reglas del juego, el stack o el proces
 | D-12 | 10/11/2026 | El producto se llama **Terrun** (*terra* + *run*); "Conquista tu zona" queda como lema. Repo, solución .NET (`Terrun.*`) y deep link (`terrun://`) usan el nombre nuevo | Nombre corto, internacional y pronunciable en español e inglés. Pendiente verificar disponibilidad en tiendas, dominio y redes | Equipo |
 | D-13 | 11/11/2026 | **Barrios sobre la malla de zonas:** el hexágono sigue siendo lo que se conquista; cada zona pertenece a un barrio real y quien domina más zonas de un barrio es su rey o reina. Límites de barrios cargados como datos (ONE, OSM o manual) | Identidad local ("rey de Naco") sin perder la justicia de la malla H3. OpenStreetMap solo tiene el punto con el nombre de los barrios, no sus límites (verificado el 11/11) | Ashley |
 | D-14 | 11/11/2026 | La encuesta a corredores es una página propia (`survey/`) publicada en **Netlify** y sus respuestas se guardan en **Netlify Forms**, en vez de Google Forms | Muestra la mecánica de conquista mientras se responde; no pide iniciar sesión y exporta a CSV. Gratis hasta 100 respuestas al mes | Ashley |
+| D-15 | 11/11/2026 | Confirmado el supuesto S-01: Jorge y Rowlis se sienten cómodos con React + TypeScript y usarán React Native + Expo | Validado directamente con ambos desarrolladores front (CTZ-07); queda en firme D-01 sin necesidad de reevaluar Flutter | Diana, Jorge, Rowlis |
