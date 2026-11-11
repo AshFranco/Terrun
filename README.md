@@ -15,9 +15,13 @@ Proyecto final de la asignatura **Construcción de Software** · Entrega: 20 de 
 
 ## Empezar
 
+Con Claude Code: sigue [`docs/05-PRIMER-DIA.md`](docs/05-PRIMER-DIA.md), que clona, configura y revisa tu entorno en una sesión.
+
+A mano:
+
 ```bash
-git clone git@github.com:AshFranco/Terrun.git
-cd Terrun
+git clone git@github.com:AshFranco/Terrun.git terrun
+cd terrun
 ./scripts/configurar-entorno.sh
 ```
 
@@ -35,6 +39,7 @@ Después lee, en este orden:
 | [`docs/02-LLD.md`](docs/02-LLD.md) | Diseño de bajo nivel: tablas, API, algoritmos, pantallas |
 | [`docs/03-BACKLOG.md`](docs/03-BACKLOG.md) | Historias CTZ-01 a CTZ-91 por sprint y responsable |
 | [`docs/04-ESTANDARES-DESARROLLO.md`](docs/04-ESTANDARES-DESARROLLO.md) | Reglas de código: idioma, nombres, glosario, pruebas |
+| [`docs/05-PRIMER-DIA.md`](docs/05-PRIMER-DIA.md) | Texto para que Claude Code prepare tu entorno el primer día |
 | [`docs/BITACORA.md`](docs/BITACORA.md) | Histórico de trabajo |
 | [`docs/DECISIONES.md`](docs/DECISIONES.md) | Decisiones del proyecto |
 | [`docs/sprints/`](docs/sprints/) | Compromiso y resultado de cada sprint |
