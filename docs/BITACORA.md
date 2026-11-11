@@ -14,6 +14,13 @@ Formato:
 
 ---
 
+## 2026-11-11 — Ashley — CTZ-05 Página de la encuesta a corredores
+- Hecho: página `survey/index.html` con las 12 preguntas, barra de avance, escalas en hexágonos, orden por toques en la pregunta 8 y una demo animada en un teléfono: la carrera 1 por la Churchill toca 10 zonas sin conquistar ninguna y la carrera 2 conquista la zona de la Churchill con Gustavo Mejía Ricart. Respuestas en Netlify Forms; `netlify.toml` y `scripts/build_survey_map.py`.
+- Evidencia: vista previa https://claude.ai/artifact/LQkKUP9vBAPeFSR3CWamos; capturas en Chrome sin desborde horizontal; sintaxis del script verificada.
+- Decisiones: D-14.
+- Publicación: https://terrun-encuesta.netlify.app (Netlify CLI, cuenta personal). Detección de formularios activada y protección de acceso desactivada. Respuesta de prueba recibida con los 16 campos y borrada.
+- Siguiente paso: Diana comparte el link por WhatsApp (meta: 15 respuestas antes del 18/11).
+
 ## 2026-11-11 — Ashley — Barrios y rey o reina del barrio (D-13)
 - Hecho: mapa interactivo con calles reales de Piantini y Naco y la malla H3; simulación: la Churchill completa (2,47 km) toca 10 zonas y no conquista ninguna (máximo 4 de 7); explorar la zona de la Churchill con Gustavo Mejía Ricart la lleva de 3 a 6 sub-celdas. Se adopta el modelo híbrido: HLD y LLD v1.1 (41 tablas, 116 operaciones, MT-19 y MT-20, P-34) e historias CTZ-93 a CTZ-95.
 - Evidencia: https://claude.ai/artifact/6V5ai7dURvwS2tfVbFrY1e (privado; compartir desde *Share*), `docs/02-LLD.md` §2.3, §4.3.

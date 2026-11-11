@@ -1,6 +1,44 @@
 # Encuesta a corredores (CTZ-05)
 
-Publicar en Google Forms y compartir por WhatsApp. Meta: 15 respuestas antes del 18/11.
+Meta: 15 respuestas antes del 18/11. Se comparte por WhatsApp.
+
+## Dónde vive
+
+- **Página:** `survey/index.html`, con una demo animada de cómo se conquista una zona (calles reales de Piantini, `survey/map-data.js`). Es una sola página en HTML, CSS y JavaScript, sin build.
+- **Respuestas:** las guarda **Netlify Forms** (formulario `runner-survey`). Nadie tiene que iniciar sesión para responder. Las respuestas se ven y se descargan en CSV desde el panel de Netlify, en *Forms*. El plan gratis guarda hasta 100 respuestas al mes.
+- **Vista previa para el equipo:** https://claude.ai/artifact/LQkKUP9vBAPeFSR3CWamos (privado; compartir desde *Share*). Desde ahí las respuestas **no** se guardan.
+- **Mapa:** `python3 scripts/build_survey_map.py <export-de-overpass.json>` regenera `survey/map-data.js`.
+
+### Publicación
+
+- **Link público:** https://terrun-encuesta.netlify.app (publicado el 11/11 desde el commit `d941fcf`).
+- **Panel:** https://app.netlify.com/projects/terrun-encuesta → *Forms* → `runner-survey` (cuenta personal de Ashley).
+- Configuración del sitio: detección de formularios activada y protección de acceso desactivada; si no, los corredores ven un error 401.
+- Prueba hecha el 11/11: una respuesta enviada, recibida con todos los campos y borrada.
+- El sitio **no** está conectado al repo: los cambios en `survey/` se publican a mano desde la raíz del repo con `netlify deploy --prod --no-build --dir survey --site terrun-encuesta`.
+
+Si se conecta un dominio propio, hay que agregarlo en `isLive` dentro de `survey/index.html`; si no, la página se queda en modo vista previa.
+
+## Campos (para el análisis)
+
+| # | Campo | Valores |
+|---|---|---|
+| 1 | `runs_per_week` | `1`, `2_3`, `4_5`, `6_plus` |
+| 2 | `current_app`, `current_app_other` | `strava`, `nike_run_club`, `garmin_connect`, `adidas_running`, `none`, `other` + texto |
+| 3 | `app_likes` | texto (opcional) |
+| 4 | `app_missing` | texto (opcional) |
+| 5 | `runs_with_phone` | `always`, `sometimes_watch`, `never` |
+| 6 | `conquest_interest` | `1` a `5` |
+| 7 | `compete_mode` | `solo`, `club`, `both` |
+| 8 | `feature_ranking` | las 7 claves en orden, de más a menos importante, separadas por `>`: `metrics`, `territory_map`, `leaderboards`, `monthly_challenges`, `achievements`, `social_feed`, `clubs` |
+| 9 | `route_privacy_concern` | `1` a `5` |
+| 10 | `voice_cues` | `yes`, `no`, `indifferent` |
+| 11 | `premium_price` | `no`, `up_to_3`, `up_to_5`, `more_than_5` |
+| 12 | `beta_tester`, `beta_email` | `yes` + correo, `no` |
+
+`form_version` (hoy `v1`) cambia si se modifican las preguntas, para no mezclar versiones en el análisis. El correo de los testers es dato personal: no se copia al repositorio.
+
+## Preguntas
 
 1. ¿Cuántas veces por semana corres? (1 · 2–3 · 4–5 · 6 o más)
 2. ¿Qué app usas hoy? (Strava · Nike Run Club · Garmin Connect · Adidas Running · Ninguna · Otra)

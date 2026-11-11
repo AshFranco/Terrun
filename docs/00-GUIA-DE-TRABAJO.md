@@ -8,7 +8,7 @@ Este archivo define **cómo trabaja el equipo** y es la primera lectura obligato
 - Stack: app **React Native + Expo (TypeScript)** en `mobile/`; API **.NET 10 + EF Core** en `backend/`; **PostgreSQL + PostGIS**.
 - Asignatura: Construcción de Software. Sprints semanales de **viernes a viernes**, con weekly cada viernes.
 - **Congelamiento de código: miércoles 6 de enero de 2027.** Entrega final: **miércoles 20 de enero de 2027**.
-- Diseño completo en `docs/01-HLD.md` y `docs/02-LLD.md` (39 tablas, 112 operaciones de API, 33 pantallas).
+- Diseño completo en `docs/01-HLD.md` y `docs/02-LLD.md` (41 tablas, 116 operaciones de API, 34 pantallas).
 
 ## 2. Mapa de documentos
 

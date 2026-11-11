@@ -1,0 +1,11 @@
+# Netlify site for the runner survey (CTZ-05). Static page, no build step.
+# Form submissions are stored by Netlify Forms (form name: runner-survey).
+[build]
+  publish = "survey"
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
