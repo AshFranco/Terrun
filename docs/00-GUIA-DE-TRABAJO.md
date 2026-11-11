@@ -19,6 +19,7 @@ Este archivo define **cómo trabaja el equipo** y es la primera lectura obligato
 | `docs/02-LLD.md` | Diseño de bajo nivel: tablas, API, algoritmos, pantallas | Ashley (contrato de API) |
 | `docs/03-BACKLOG.md` | Todas las historias del proyecto, por sprint y persona | Diana (PO) |
 | `docs/04-ESTANDARES-DESARROLLO.md` | Reglas de código: idioma, nombres por capa, glosario, pruebas, formato | Ashley |
+| `docs/05-PRIMER-DIA.md` | Texto para que Claude Code clone, configure y revise el entorno de cada integrante | Ashley |
 | `docs/ESTADO.md` | **Lo que toca ahora**: sprint en curso, tareas por persona, bloqueos | Cada persona marca lo suyo; Ashley lo rehace en cada planificación |
 | `docs/BITACORA.md` | Histórico: qué se hizo, quién, cuándo y con qué evidencia | Cada persona al cerrar una sesión de trabajo |
 | `docs/DECISIONES.md` | Decisiones tomadas (técnicas o de producto) con fecha y motivo | Quien toma la decisión |

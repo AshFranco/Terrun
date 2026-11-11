@@ -14,6 +14,11 @@ Formato:
 
 ---
 
+## 2026-11-11 — Ashley — Guía del primer día (onboarding con Claude Code)
+- Hecho: `docs/05-PRIMER-DIA.md`, con el texto que cada integrante pega en Claude Code para clonar, correr `configurar-entorno.sh`, leer los documentos en orden, revisar las herramientas de su rol y seguir la guía al pie de la letra. Enlazado desde el README y la guía §2; el README clona en la carpeta `terrun`.
+- Evidencia: `docs/05-PRIMER-DIA.md`.
+- Siguiente paso: Ashley invita al equipo (CTZ-02) y comparte el documento en el grupo.
+
 ## 2026-11-11 — Ashley — Cierre del día: estado del S0
 - Hecho hoy: PR #2 (barrios, HLD y LLD v1.1, D-13) y PR #3 (encuesta a corredores, D-14) mergeados a `main`. Encuesta en línea en https://terrun-encuesta.netlify.app con 0 respuestas (la de prueba se borró).
 - Estado por tarea:
