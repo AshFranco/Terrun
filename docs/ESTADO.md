@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
 > **Weekly:** viernes 13 de noviembre · **Próximo hito:** entrega del HLD y el LLD, miércoles 11 de noviembre
-> **Última actualización:** 10/11/2026 — Ashley
+> **Última actualización:** 11/11/2026 — Ashley
 
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
 
@@ -12,7 +12,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 
 ### Ashley — Scrum Master + Backend
 - 🔄 **CTZ-01** Entregar HLD y LLD (mié 11/11). Documentos generados en `docs/entregables/`; falta entregarlos.
-- ⬜ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Bloquea a CTZ-03, CTZ-06 y CTZ-08.*
+- 🔄 **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Repo creado (`AshFranco/Terrun`, PR #1 a #3 mergeados); falta invitar al equipo y proteger `main`. Bloquea a CTZ-03, CTZ-06 y CTZ-08.*
 - ⬜ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Depende de CTZ-02.*
 - ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
 

@@ -14,6 +14,20 @@ Formato:
 
 ---
 
+## 2026-11-11 — Ashley — Cierre del día: estado del S0
+- Hecho hoy: PR #2 (barrios, HLD y LLD v1.1, D-13) y PR #3 (encuesta a corredores, D-14) mergeados a `main`. Encuesta en línea en https://terrun-encuesta.netlify.app con 0 respuestas (la de prueba se borró).
+- Estado por tarea:
+  - CTZ-01 🔄 Entregar el HLD y el LLD **v1.0** hoy (están en Descargas; la v1.1 con barrios vive en `docs/entregables/`). Anotar aquí las observaciones del profesor.
+  - CTZ-02 🔄 Repo creado; falta invitar al equipo como colaboradores y proteger `main` (en repo privado requiere GitHub Pro, gratis con el Student Developer Pack). Activar "Automatically delete head branches".
+  - CTZ-03 ⬜ Esqueleto del backend .NET 10. Es la siguiente tarea de Ashley; depende de CTZ-02.
+  - CTZ-04 ⬜ Cuentas en Neon, Render y Expo.
+  - CTZ-05 🔄 Diana comparte el link por WhatsApp; meta: 15 respuestas antes del 18/11.
+  - CTZ-07 ⬜ Diana confirma con Jorge y Rowlis que dominan React (supuesto S-01). Es lo más urgente del S0.
+  - CTZ-06 y CTZ-08 a CTZ-12 ⬜ Sin empezar.
+- Pendiente técnico: traducir al inglés los scripts `generar_diagramas.py`, `generar_documentos.py` y `configurar-entorno.sh` (D-11).
+- Evidencia: `git log origin/main` (merge `469a558`); panel de Netlify → *Forms* → `runner-survey`.
+- Siguiente paso: weekly del viernes 13/11. Antes, cerrar CTZ-01 y CTZ-02.
+
 ## 2026-11-11 — Ashley — CTZ-05 Página de la encuesta a corredores
 - Hecho: página `survey/index.html` con las 12 preguntas, barra de avance, escalas en hexágonos, orden por toques en la pregunta 8 y una demo animada en un teléfono: la carrera 1 por la Churchill toca 10 zonas sin conquistar ninguna y la carrera 2 conquista la zona de la Churchill con Gustavo Mejía Ricart. Respuestas en Netlify Forms; `netlify.toml` y `scripts/build_survey_map.py`.
 - Evidencia: vista previa https://claude.ai/artifact/LQkKUP9vBAPeFSR3CWamos; capturas en Chrome sin desborde horizontal; sintaxis del script verificada.
