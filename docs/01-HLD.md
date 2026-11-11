@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Alto Nivel (HLD)
 asignatura: Construcción de Software
-version: 1.0
+version: 1.1
 fecha: 11 de noviembre de 2026
 ---
 
@@ -11,6 +11,7 @@ fecha: 11 de noviembre de 2026
 | Versión | Fecha | Descripción | Responsable |
 |---|---|---|---|
 | 1.0 | 11/11/2026 | Versión inicial para aprobación del proyecto | Ashley (Scrum Master) / Diana (Product Owner) |
+| 1.1 | 11/11/2026 | Barrios sobre la malla de zonas: rey o reina del barrio (D-13) | Ashley |
 
 **Equipo**
 
@@ -53,7 +54,7 @@ Terrun convierte la ciudad en un tablero de juego. El mapa real está dividido e
 | Requisito del curso | Cómo lo cumple el proyecto |
 |---|---|
 | Sistema o aplicación con un fin específico, construido en equipo | App para motivar la actividad física mediante la conquista de zonas reales; equipo de 6 con roles Scrum |
-| Ingresar o capturar datos y almacenarlos en una BD de su elección | Captura GPS, actividades, territorio, interacciones sociales; PostgreSQL + PostGIS (39 tablas) |
+| Ingresar o capturar datos y almacenarlos en una BD de su elección | Captura GPS, actividades, territorio, interacciones sociales; PostgreSQL + PostGIS (41 tablas) |
 | Publicación mediante web service o app store | API REST publicada como servicio web (Render) y app distribuida por Google Play (prueba interna/cerrada) y App Store (TestFlight) |
 | HLD aprobado antes de la fecha establecida | Este documento (11/11/2026), acompañado del LLD |
 | Weeklys de avance e impedimentos por sprint | Sprints semanales de viernes a viernes con weekly cada viernes (§11) |
@@ -71,6 +72,8 @@ Terrun convierte la ciudad en un tablero de juego. El mapa real está dividido e
 | Dominio | Propiedad competitiva de una zona: la tiene el usuario con más puntos de zona en los últimos 30 días |
 | Punto de zona | Una sub-celda distinta recorrida en una actividad dentro de esa zona |
 | Robo | Cambio de dueño de una zona cuando otro usuario supera los puntos del dueño actual |
+| Barrio | Área con nombre real de la ciudad (Naco, Piantini…) que agrupa zonas; no se conquista directamente |
+| Rey o reina del barrio | El usuario que domina más zonas de un barrio |
 | XP | Puntos de experiencia que determinan el nivel del usuario |
 | P0 / P1 / P2 | Prioridades: P0 imprescindible para la demo, P1 nivel de mercado, P2 posterior a la entrega |
 
@@ -86,7 +89,7 @@ El diseño cubre 13 módulos. Todos tienen modelo de datos y endpoints definidos
 | M2 | Perfil y preferencias | Perfil público, datos físicos para calorías, unidades, auto-pausa, avisos de voz, privacidad, zonas de privacidad | P0 / P1 |
 | M3 | Actividades | Grabación GPS en primer y segundo plano, pausa y auto-pausa, distancia, ritmo, elevación, calorías, splits por km, historial, récords personales, exportación GPX | P0 |
 | M4 | Equipamiento | Registro de zapatillas, kilometraje acumulado, aviso de cambio | P1 |
-| M5 | Territorio | Mapa de zonas, conquista personal (5 de 7), dominio competitivo de 30 días, robos y defensas, historial de la zona | P0 / P1 |
+| M5 | Territorio | Mapa de zonas, conquista personal (5 de 7), dominio competitivo de 30 días, robos y defensas, historial de la zona, barrios con rey o reina | P0 / P1 |
 | M6 | Social | Seguir usuarios, feed de actividades, kudos, comentarios, bloqueo, reportes | P1 |
 | M7 | Clubes | Crear y unirse a clubes, territorio y ranking del club | P1 |
 | M8 | Gamificación | XP y niveles, rachas, logros, retos mensuales | P1 |
@@ -166,6 +169,7 @@ El equipo cuenta con un grupo de corredores que responderá una encuesta durante
 | RF-33 | Un moderador revisa reportes y actividades sospechosas, y las aprueba o rechaza | M12 | P1 |
 | RF-34 | Un administrador gestiona parámetros del motor, logros y retos | M13 | P0 / P1 |
 | RF-35 | El sistema registra en auditoría las acciones sensibles | M12 | P1 |
+| RF-36 | Cada zona pertenece a un barrio real; el sistema muestra los barrios en el mapa, su rey o reina (quien domina más zonas del barrio) y el ranking del barrio, y notifica cuando alguien gana o pierde ese título | M5 | P1 |
 
 ## 4.2 Requisitos no funcionales
 
@@ -273,7 +277,16 @@ El mundo se divide en hexágonos H3 de **resolución 9** (≈0,105 km²). Cada z
 | Saltos de posición | más de 200 m en menos de 5 s | El tramo se descarta |
 | Superposición temporal | dos actividades del mismo usuario que se solapan | La segunda se rechaza |
 
-## 6.5 Experiencia (XP), niveles y rachas
+## 6.5 Barrios: rey o reina del barrio (D-13)
+
+Las zonas son hexágonos porque así el juego es justo y funciona en cualquier ciudad, pero la gente piensa en barrios. Por eso cada zona pertenece a un **barrio real** (Naco, Piantini, Evaristo Morales…):
+
+- El hexágono sigue siendo lo único que se conquista y se domina.
+- El **rey o reina del barrio** es quien domina más zonas de ese barrio, con un mínimo de 3 (`territory.min_zones_for_ruler`); con un empate se queda quien tenía el título.
+- Ganar o perder el título genera una notificación y una entrada en el ranking del barrio.
+- Los límites de los barrios se cargan como datos (fuente oficial de la ONE si está disponible; si no, OpenStreetMap o límites dibujados por el equipo). Una zona sin barrio sigue funcionando normalmente.
+
+## 6.6 Experiencia (XP), niveles y rachas
 
 | Evento | XP inicial |
 |---|---|

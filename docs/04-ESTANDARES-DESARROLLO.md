@@ -51,6 +51,8 @@ Un concepto tiene **un solo nombre** en todas las capas. No se inventan sinónim
 | Robo de una zona | `Steal` (evento `stolen`) | `zone_event` | `stolen` |
 | Puntos de zona | `ZonePoints` | — (se calcula) | `points` |
 | Zona de privacidad | `PrivacyZone` | `privacy_zone` | `privacyZones` |
+| Barrio | `Neighborhood` | `neighborhood` | `neighborhood` |
+| Rey o reina del barrio | `NeighborhoodRuler` (`ruler`) | `neighborhood_ruler` | `ruler` |
 | Seguimiento | `Follow` | `follow` | `follow` |
 | Club | `Club` | `club` | `club` |
 | Logro | `Achievement` | `achievement` | `achievement` |
