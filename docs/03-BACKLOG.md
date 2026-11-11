@@ -82,6 +82,7 @@ Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, lo
 | CTZ-45 | P-23 rankings | Rowlis | P0 | CTZ-42 | Cambio de métrica y de alcance sin recargar la pantalla |
 | CTZ-46 | P-06 permisos y onboarding (explicación del permiso de ubicación) | Rowlis + Jorge | P0 | CTZ-33 | Textos aprobados por Diana; denegar el permiso no rompe la app |
 | CTZ-47 | Demo interna con 3 corredores del grupo; ajustar parámetros | Diana | P1 | CTZ-44 | Cambios en `DECISIONES.md` |
+| CTZ-93 | Conseguir los límites de los barrios del Distrito Nacional (ONE; si no, OpenStreetMap o dibujados por el equipo) en GeoJSON | Diana | P1 | — | Archivo en `docs/producto/barrios/` con fuente y licencia; al menos Piantini, Naco, Evaristo Morales, Serrallés, Paraíso, Bella Vista |
 | CTZ-48 | Verificar a mano los casos MT del motor junto con Ashley | Rangelis | P0 | CTZ-40 | Los cálculos a mano coinciden con las pruebas |
 | CTZ-49 | Campo: conquistar 3 zonas reales y comparar con el mapa | Jaime | P0 | CTZ-43 | Evidencia con capturas en `docs/qa/` |
 
@@ -124,6 +125,8 @@ Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, lo
 | CTZ-69 | M7: clubes, miembros y territorio del club | Ashley | P1 | CTZ-50 | Siempre queda al menos un admin por club |
 | CTZ-70 | Logros (evaluación de reglas), rachas, retos y trabajos `ChallengeCloseJob` y `LeaderboardSnapshotJob` | Ashley | P1 | CTZ-51 | Los 20 logros de CTZ-37 cargados y probados |
 | CTZ-71 | Mapa del territorio del club en P-21 | Jorge | P1 | CTZ-69 | Mismo estilo que P-07 |
+| CTZ-94 | Barrios en el backend: tablas, importador, asignación de zonas, rey o reina, 4 endpoints (LLD §2.3, §4.3) | Ashley | P1 | CTZ-50, CTZ-93 | MT-19 y MT-20 en verde; zonas sin barrio siguen funcionando |
+| CTZ-95 | Capa de barrios en P-07 y pantalla P-34 (detalle de barrio con su rey o reina y ranking) | Jorge (mapa) + Rowlis (pantalla) | P1 | CTZ-94 | Nombres y límites visibles al acercar el mapa; título visible en el perfil |
 | CTZ-72 | P-20/P-21/P-22 clubes, P-24 logros y nivel, P-25/P-26 retos | Rowlis | P1 | CTZ-69, CTZ-70 | Flujo de unirse con aprobación |
 | CTZ-73 | Crear el club del grupo de corredores y el primer reto de enero | Diana | P1 | CTZ-72 | Club con al menos 10 miembros |
 | CTZ-74 | Pruebas de clubes, logros y retos | Rangelis + Jaime | P1 | CTZ-72 | Informe del sprint |

@@ -116,7 +116,7 @@ def componentes():
     caja(ax, 5.45, 0.65, 4.2, 0.75, "Trabajos en segundo plano",
          "procesar actividad · dominio nocturno · push · rankings", "#FFFFFF", VERDE, fs=8.5, subfs=7.2)
     # BD
-    caja(ax, 10.6, 3.6, 2.2, 1.8, "PostgreSQL 16\n+ PostGIS", "Neon (gestionado)\n39 tablas", NARANJA_CLARO, NARANJA, fs=9.5)
+    caja(ax, 10.6, 3.6, 2.2, 1.8, "PostgreSQL 16\n+ PostGIS", "Neon (gestionado)\n41 tablas", NARANJA_CLARO, NARANJA, fs=9.5)
     caja(ax, 10.6, 1.4, 2.2, 1.3, "Almacén de\nobjetos (R2)", "fotos de perfil\ny de club", NARANJA_CLARO, NARANJA, fs=9)
     flecha(ax, 4.3, 3.9, 5.2, 3.9, "HTTPS\nJSON + JWT", off=(0, 0.4), doble=True)
     flecha(ax, 9.8, 4.5, 10.6, 4.5, "EF Core\nNpgsql", off=(0, 0.4), doble=True)

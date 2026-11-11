@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-11 — Ashley — Barrios y rey o reina del barrio (D-13)
+- Hecho: mapa interactivo con calles reales de Piantini y Naco y la malla H3; simulación: la Churchill completa (2,47 km) toca 10 zonas y no conquista ninguna (máximo 4 de 7); explorar la zona de la Churchill con Gustavo Mejía Ricart la lleva de 3 a 6 sub-celdas. Se adopta el modelo híbrido: HLD y LLD v1.1 (41 tablas, 116 operaciones, MT-19 y MT-20, P-34) e historias CTZ-93 a CTZ-95.
+- Evidencia: https://claude.ai/artifact/6V5ai7dURvwS2tfVbFrY1e (privado; compartir desde *Share*), `docs/02-LLD.md` §2.3, §4.3.
+- Decisiones: D-13.
+- Siguiente paso: Diana busca la fuente de límites de barrios (CTZ-93).
+
 ## 2026-11-10 — Ashley — Verificación del nombre Terrun y CTZ-92
 - Hecho: push inicial a `AshFranco/Terrun`; verificación de dominios (RDAP), tiendas y marcas; historia CTZ-92 para Diana (decidir la marca comercial antes del 11/12); URL de clonado corregida en el README.
 - Evidencia: `docs/producto/nombre-comercial.md`.

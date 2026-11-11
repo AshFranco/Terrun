@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.0
+version: 1.1
 fecha: 11 de noviembre de 2026
 ---
 
@@ -11,6 +11,7 @@ fecha: 11 de noviembre de 2026
 | Versión | Fecha | Descripción | Responsable |
 |---|---|---|---|
 | 1.0 | 11/11/2026 | Versión inicial: modelo de datos, contrato de API, algoritmos y estructura de código | Ashley (Scrum Master) |
+| 1.1 | 11/11/2026 | Barrios (D-13): tablas `neighborhood` y `neighborhood_ruler`, columna `zone.neighborhood_id`, 4 endpoints, algoritmo del rey o reina, pantalla P-34 | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v1.0**. Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -152,12 +153,14 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
-| `zone` | `h3 bigint` (res 9), `polygon geography(Polygon)`, `center geography(Point)`, `city varchar(80)`, `country char(2)`, `total_conquerors int`, `created_at` | PK `h3`; GIST (`polygon`); se crea bajo demanda |
+| `zone` | `h3 bigint` (res 9), `polygon geography(Polygon)`, `center geography(Point)`, `neighborhood_id uuid null`, `city varchar(80)`, `country char(2)`, `total_conquerors int`, `created_at` | PK `h3`; FK `neighborhood_id`; GIST (`polygon`); se crea bajo demanda y se asigna al barrio que contiene su `center` |
+| `neighborhood` | `id uuid`, `name varchar(80)`, `slug citext`, `city varchar(80)`, `country char(2)`, `boundary geography(MultiPolygon)`, `source neighborhood_source` (one, osm, manual), `created_at`, `updated_at` | UK (`country`, `city`, `slug`); GIST (`boundary`) |
+| `neighborhood_ruler` | `neighborhood_id uuid`, `ruler_id uuid null`, `zones_owned int`, `ruler_since timestamptz`, `recalculated_at`, `version int` | PK/FK `neighborhood_id`; índice (`ruler_id`) |
 | `cell_visit` | `id bigint identity`, `user_id uuid`, `activity_id uuid`, `zone_h3 bigint`, `cell_h3 bigint` (res 10), `position smallint` (0–6), `visit_date date` | UK (`activity_id`, `cell_h3`); índices (`zone_h3`, `visit_date`), (`user_id`, `zone_h3`); base del cálculo de dominio |
 | `zone_progress` | `user_id uuid`, `zone_h3 bigint`, `cell_mask smallint` (bits 0–6), `visited_cells smallint` (columna generada: bits en 1), `first_visit_at`, `last_visit_at` | PK (`user_id`, `zone_h3`); CHECK `cell_mask` entre 0 y 127 |
 | `conquest` | `id uuid`, `user_id uuid`, `zone_h3 bigint`, `activity_id uuid`, `conquered_at` | UK (`user_id`, `zone_h3`): una conquista por usuario y zona |
 | `zone_ownership` | `zone_h3 bigint`, `owner_id uuid null`, `owner_club_id uuid null`, `owner_points int`, `owned_since timestamptz`, `recalculated_at`, `version int` | PK/FK `zone_h3`; índice (`owner_id`); `version` para concurrencia optimista |
-| `zone_event` | `id bigint identity`, `zone_h3 bigint`, `type zone_event_type` (ownership_gained, stolen, defended, lost_inactivity), `user_id uuid null`, `previous_owner_id uuid null`, `activity_id uuid null`, `points int`, `occurred_at` | Índices (`zone_h3`, `occurred_at` desc), (`previous_owner_id`) |
+| `zone_event` | `id bigint identity`, `zone_h3 bigint`, `type zone_event_type` (ownership_gained, stolen, defended, lost_inactivity, ruler_gained, ruler_lost), `user_id uuid null`, `previous_owner_id uuid null`, `activity_id uuid null`, `points int`, `occurred_at` | Índices (`zone_h3`, `occurred_at` desc), (`previous_owner_id`) |
 
 ### M6 — Social
 
@@ -197,7 +200,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
 | `push_device` | `id uuid`, `user_id uuid`, `expo_token text`, `platform device_platform` (android, ios), `is_active bool`, `last_used_at`, `created_at` | UK `expo_token` |
-| `notification` | `id uuid`, `user_id uuid`, `type notification_type` (zone_stolen, zone_owned, kudos, comment, new_follower, follow_request, achievement, challenge_completed, challenge_new, club, system), `title varchar(80)`, `body varchar(200)`, `data jsonb` (enlace interno), `read_at`, `push_sent_at`, `push_attempts smallint`, `created_at` | Índices (`user_id`, `created_at` desc), parcial (`created_at`) WHERE `push_sent_at IS NULL`. Funciona como *outbox* del envío push |
+| `notification` | `id uuid`, `user_id uuid`, `type notification_type` (zone_stolen, zone_owned, neighborhood_ruler_gained, neighborhood_ruler_lost, kudos, comment, new_follower, follow_request, achievement, challenge_completed, challenge_new, club, system), `title varchar(80)`, `body varchar(200)`, `data jsonb` (enlace interno), `read_at`, `push_sent_at`, `push_attempts smallint`, `created_at` | Índices (`user_id`, `created_at` desc), parcial (`created_at`) WHERE `push_sent_at IS NULL`. Funciona como *outbox* del envío push |
 
 ### M12 — Moderación y auditoría
 
@@ -212,7 +215,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 |---|---|---|
 | `system_setting` | `key varchar(80)`, `value jsonb`, `description text`, `is_public bool`, `updated_by uuid`, `updated_at` | PK `key`; los parámetros con `is_public = true` se exponen a la app |
 
-**Total: 39 tablas.**
+**Total: 41 tablas.**
 
 ## 2.4 Parámetros iniciales del sistema
 
@@ -223,6 +226,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | `territory.ownership_window_days` | 30 | Ventana de los puntos de dominio |
 | `territory.min_ownership_points` | 3 | Puntos mínimos para ser dueño |
 | `territory.densify_step_m` | 10 | Paso de interpolación de la ruta |
+| `territory.min_zones_for_ruler` | 3 | Zonas dominadas mínimas para ser rey o reina de un barrio |
 | `anticheat.max_accuracy_m` | 30 | Precisión GPS máxima aceptada |
 | `anticheat.max_speed_kmh` | 25 | Velocidad máxima de un tramo |
 | `anticheat.min_pace_s_per_km` | 150 | Ritmo sostenido sospechoso (2:30 min/km) |
@@ -318,6 +322,9 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 | GET | `/me/conquests` | aut | Zonas conquistadas (paginado, con la actividad que las conquistó) | P0 |
 | GET | `/me/owned-zones` | aut | Zonas que domino, con margen de puntos y fecha de vencimiento | P1 |
 | GET | `/users/{id}/territory` | aut | Territorio de otro usuario (zonas dominadas) | P1 |
+| GET | `/neighborhoods?bbox=` | aut | Barrios del área visible (GeoJSON) con su rey o reina | P1 |
+| GET | `/neighborhoods/{id}` | aut | Detalle: rey o reina, top 10 por zonas dominadas, mis zonas en el barrio | P1 |
+| GET | `/me/neighborhoods` | aut | Barrios donde tengo zonas, mi posición y los títulos que tengo | P1 |
 
 ### Social (M6)
 
@@ -401,10 +408,11 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 | GET / POST / PUT / DELETE | `/admin/challenges[/{id}]` | adm | Administra los retos | P1 |
 | GET | `/admin/audit-log` | adm | Consulta la auditoría (filtros por usuario, acción y fecha) | P1 |
 | POST | `/admin/legal` | adm | Publica una nueva versión de un documento legal | P1 |
+| POST | `/admin/neighborhoods/import` | adm | Carga límites de barrios (GeoJSON) y reasigna las zonas existentes | P1 |
 | GET | `/settings/public` | pub | Parámetros que usa la app (auto-pausa, umbral de conquista) | P0 |
 | GET | `/health` | pub | Salud de la API y de la base de datos | P0 |
 
-**Total: 112 operaciones** (104 filas, más los cuatro métodos de cada uno de los dos CRUD de administración).
+**Total: 116 operaciones** (108 filas, más los cuatro métodos de cada uno de los dos CRUD de administración).
 
 ## 3.3 Ejemplos de contrato
 
@@ -567,6 +575,21 @@ recalculateOwnership(zone):
   owner_club = club with most points summed across its active members
 ```
 
+**Rey o reina del barrio.** Cada vez que una zona cambia de dueño se recalcula su barrio:
+
+```text
+recalculateRuler(neighborhood):
+  SELECT ... FROM neighborhood_ruler WHERE neighborhood_id = n FOR UPDATE
+  counts = SELECT owner_id, COUNT(*) FROM zone_ownership JOIN zone ON zone.h3 = zone_ownership.zone_h3
+           WHERE zone.neighborhood_id = n AND owner_id IS NOT NULL GROUP BY owner_id
+  best   = owner with most zones; tie: current ruler keeps the title
+  if best.zones < territory.min_zones_for_ruler: best = none
+  if best != current ruler:
+     UPDATE neighborhood_ruler(ruler_id = best, ruler_since = now, version += 1)
+     INSERT zone_event(ruler_gained / ruler_lost)
+     notify(best, "neighborhood_ruler_gained"); notify(previous, "neighborhood_ruler_lost")
+```
+
 Un **trabajo nocturno** (`NightlyOwnershipJob`, 03:00 hora de Santo Domingo) recalcula las zonas cuyo dueño tiene visitas que salen de la ventana ese día. Así se pierde el territorio que no se defiende.
 
 ## 4.4 Progresión
@@ -641,6 +664,7 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 | P-31 | Privacidad y zonas de privacidad (`settings/privacy-zones`) | `/me/privacy-zones`, `/me/blocked-users` | Jorge | P1 |
 | P-32 | Cuenta (`settings/account`) | `/me/password`, `/me/export`, `DELETE /me`, `/me/consents` | Rowlis | P1 |
 | P-33 | Reportar, modal (`report`) | `/reports` | Rowlis | P1 |
+| P-34 | Detalle de barrio (`neighborhood/[id]`) y capa de barrios en P-07 | `/neighborhoods`, `/neighborhoods/{id}`, `/me/neighborhoods` | Jorge (capa del mapa) / Rowlis (pantalla) | P1 |
 | ADM | Moderación y administración | `/admin/*` (vía Swagger durante el curso) | Ashley | P1 |
 
 # 6. Trabajos en segundo plano
@@ -732,6 +756,8 @@ Cada caso se calcula a mano y se documenta con su entrada y su resultado esperad
 | MT-16 | Récord de 5 km dentro de una carrera de 10 km | Se detecta la ventana de 5 km más rápida |
 | MT-17 | Nivel con `total_xp` exactamente en un límite de la curva | Nivel correcto en el límite |
 | MT-18 | Punto en una sub-celda cuyo padre geométrico parece ser otra zona | La zona se asigna por `cellToParent` |
+| MT-19 | A domina 3 zonas de Naco y B le roba una (B queda con 1) | A pierde el título (2 < 3 mínimo): evento `ruler_lost` |
+| MT-20 | Empate de zonas dominadas entre el rey actual y un retador | El rey actual conserva el título |
 
 # 10. Matriz de trazabilidad: tabla → endpoint → pantalla
 
@@ -754,7 +780,9 @@ Ninguna tabla queda sin uso: cada una se escribe o se lee desde al menos un endp
 | `split` | `ActivityProcessorJob` | `/activities/{id}/splits` | P-09, P-11 |
 | `personal_record` | `ActivityProcessorJob` | `/me/personal-records`, `/users/{id}` | P-15, P-29 |
 | `shoe` | `/me/shoes`, `ActivityProcessorJob` (km acumulados) | `/me/shoes`, `/activities/{id}` | P-08, P-12, P-28 |
-| `zone` | `ActivityProcessorJob` (bajo demanda) | `/zones`, `/zones/{h3}` | P-07, P-13 |
+| `zone` | `ActivityProcessorJob` (bajo demanda), `/admin/neighborhoods/import` (barrio) | `/zones`, `/zones/{h3}` | P-07, P-13 |
+| `neighborhood` | `/admin/neighborhoods/import` | `/neighborhoods`, `/neighborhoods/{id}`, `/me/neighborhoods` | P-07, P-13, P-34 |
+| `neighborhood_ruler` | `ActivityProcessorJob`, `NightlyOwnershipJob` | `/neighborhoods`, `/neighborhoods/{id}`, `/me/neighborhoods` | P-07, P-34, P-27 |
 | `cell_visit` | `ActivityProcessorJob` | Cálculo de dominio, `/zones/{h3}` (top 5) | P-13 |
 | `zone_progress` | `ActivityProcessorJob` | `/zones` (`myProgress`), `/zones/{h3}` | P-07, P-13 |
 | `conquest` | `ActivityProcessorJob` | `/me/conquests`, `/me/territory`, `/activities/{id}` | P-09, P-15 |
