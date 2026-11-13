@@ -43,7 +43,7 @@ docs(lld): add challenge standings endpoint
 
 - Uno por historia (`CTZ-XX`). Si pasa de ~400 líneas, se parte: un PR de 2.000 líneas no se revisa, se aprueba a ciegas.
 - Título en inglés con el formato de los commits; descripción en español usando la plantilla: qué resuelve, cómo probarlo, checklist de la Definition of Done.
-- **Revisores:** el backend lo revisa Jorge o Rowlis (como mínimo, lo que toca el contrato); el front lo revisa el otro dev front; todo cambio del contrato de API lo aprueba Ashley.
+- **Revisores:** el backend de Ashley lo revisa Jorge o Rowlis (como mínimo, lo que toca el contrato); el backend de Rowlis lo revisa Ashley; el front lo revisa el otro dev front; todo cambio del contrato de API lo aprueba Ashley.
 - El autor hace el merge (squash) después de la aprobación.
 
 ## Definition of Ready

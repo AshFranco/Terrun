@@ -12,6 +12,7 @@ fecha: 11 de noviembre de 2026
 |---|---|---|---|
 | 1.0 | 11/11/2026 | Versión inicial para aprobación del proyecto | Ashley (Scrum Master) / Diana (Product Owner) |
 | 1.1 | 11/11/2026 | Barrios sobre la malla de zonas: rey o reina del barrio (D-13) | Ashley |
+| 1.2 | 13/11/2026 | Ajuste de asignaciones: Rowlis se suma al backend en funciones puntuales; Jorge asume el sistema de diseño base (D-16) | Ashley |
 
 **Equipo**
 
@@ -20,7 +21,7 @@ fecha: 11 de noviembre de 2026
 | Ashley | Scrum Master | Ingeniera Full Stack — Backend, base de datos, motor de territorio, seguridad y despliegue |
 | Diana | Product Owner | Dueña del backlog, prioridades, criterios de aceptación, validación con usuarios y documentación |
 | Jorge | Equipo de desarrollo | Ingeniero Front — Grabación GPS, almacenamiento local, mapa y capa de territorio |
-| Rowlis | Equipo de desarrollo | Ingeniero Front — Experiencia de usuario: cuenta, perfil, social, clubes, gamificación |
+| Rowlis | Equipo de desarrollo | Ingeniero Front — Experiencia de usuario: cuenta, perfil, social, clubes, gamificación; apoyo al backend en funciones puntuales |
 | Rangelis | Equipo de desarrollo | QA — Plan y casos de prueba, pruebas de API, registro de defectos |
 | Jaime | Equipo de desarrollo | QA — Pruebas de campo, regresión, validación de cada sprint |
 
@@ -349,10 +350,10 @@ El nivel se calcula con una curva configurable (`level = f(total_xp)`). La **rac
 
 | Integrante | Responsabilidades |
 |---|---|
-| **Ashley — Scrum Master + Backend** | Facilita weeklys y elimina impedimentos; arquitectura; API .NET, base de datos y migraciones, motor de territorio, trabajos en segundo plano, seguridad, CI/CD y despliegue; revisa todo PR que toque el contrato de API |
+| **Ashley — Scrum Master + Backend** | Facilita weeklys y elimina impedimentos; arquitectura; asigna y revisa las funciones de backend de Rowlis; API .NET, base de datos y migraciones, motor de territorio, trabajos en segundo plano, seguridad, CI/CD y despliegue; revisa todo PR que toque el contrato de API |
 | **Diana — Product Owner** | Mantiene y prioriza el backlog en GitHub Projects; redacta criterios de aceptación; encuesta y relación con el grupo de corredores; acepta o rechaza historias; documentación funcional, términos y política de privacidad, ficha de tienda; presentación final |
-| **Jorge — Front: núcleo técnico** | Grabador GPS en primer y segundo plano, auto-pausa, almacenamiento local y cola de subida, mapa MapLibre y capa de hexágonos, detalle de zona, resumen de actividad, zonas de privacidad, exportación GPX, push |
-| **Rowlis — Front: experiencia** | Sistema de diseño, navegación, registro e inicio de sesión (correo, Google, Apple), perfil y preferencias, historial, feed y social, clubes, rankings, logros y retos, notificaciones, zapatillas, configuración y cuenta |
+| **Jorge — Front: núcleo técnico** | Sistema de diseño base y wireframes de P-01 a P-09; grabador GPS en primer y segundo plano, auto-pausa, almacenamiento local y cola de subida, mapa MapLibre y capa de hexágonos, detalle de zona, resumen de actividad, zonas de privacidad, exportación GPX, push |
+| **Rowlis — Front: experiencia + backend puntual** | Esqueleto de la app e investigación de GPS y MapLibre (S0); navegación, registro e inicio de sesión (correo, Google, Apple), perfil y preferencias, historial, feed y social, clubes, rankings, logros y retos, notificaciones, zapatillas, configuración y cuenta; funciones puntuales del backend que asigne Ashley |
 | **Rangelis — QA** | Plan de pruebas, casos por historia, pruebas de API, registro de defectos, informe de cierre por sprint |
 | **Jaime — QA** | Pruebas de campo en dispositivos reales, regresión, E2E con Maestro, coordinación de testers de la prueba cerrada |
 
@@ -363,7 +364,7 @@ El nivel se calcula con una curva configurable (`level = f(total_xp)`). La **rac
 | Arquitectura y contrato de API | Ashley | Ashley | Jorge, Rowlis | Todos |
 | Prioridad del backlog | Diana | Diana | Ashley | Todos |
 | Reglas del juego (parámetros) | Ashley | Diana | Equipo, corredores | Todos |
-| Diseño de pantallas | Rowlis | Diana | Jorge | Todos |
+| Diseño de pantallas | Jorge, Rowlis | Diana | Ashley | Todos |
 | Aprobación de calidad de un sprint | Rangelis, Jaime | Diana | Ashley | Todos |
 | Merge a `main` | Autor del PR | Ashley | Revisor | Todos |
 | Publicación en tiendas | Ashley | Diana | Jaime | Todos |

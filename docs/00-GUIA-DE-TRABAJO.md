@@ -31,12 +31,14 @@ Este archivo define **cómo trabaja el equipo** y es la primera lectura obligato
 
 | Persona | Rol | Carpeta que toca | No toca |
 |---|---|---|---|
-| **Ashley** | Scrum Master + Backend | `backend/`, `.github/`, `docs/02-LLD.md` (contrato) | `mobile/` salvo coordinación explícita |
+| **Ashley** | Scrum Master + Backend (lo fundamental) | `backend/`, `.github/`, `docs/02-LLD.md` (contrato). Asigna a Rowlis sus funciones de backend y revisa esos PR | `mobile/` salvo coordinación explícita |
 | **Diana** | Product Owner | `docs/03-BACKLOG.md`, `docs/DECISIONES.md`, `docs/producto/` | Código |
-| **Jorge** | Front — núcleo técnico | `mobile/src/recording`, `mobile/src/storage`, `mobile/src/map`, pantallas P-06 a P-09, P-11 (mapa/splits), P-13, P-31 | `backend/`; pantallas de Rowlis |
-| **Rowlis** | Front — experiencia | `mobile/app/(auth)`, `mobile/src/components`, `mobile/src/theme`, `mobile/src/i18n`, `mobile/src/api`, `mobile/src/state`, resto de pantallas | `backend/`; módulos de Jorge |
+| **Jorge** | Front — núcleo técnico | `mobile/src/recording`, `mobile/src/storage`, `mobile/src/map`, pantallas P-06 a P-09, P-11 (mapa/splits), P-13, P-31. En el S0, además, `mobile/src/theme` y `mobile/src/components` (CTZ-10: sistema de diseño y wireframes de P-01 a P-09) | `backend/`; pantallas de Rowlis |
+| **Rowlis** | Front — experiencia + backend puntual | `mobile/app/(auth)`, `mobile/src/components`, `mobile/src/theme`, `mobile/src/i18n`, `mobile/src/api`, `mobile/src/state`, resto de pantallas. En el S0, el esqueleto de la app (CTZ-08) y la investigación de GPS y MapLibre (CTZ-09). En `backend/`, solo las funciones puntuales que Ashley le asigne en el backlog | Lo fundamental del backend (arquitectura, modelo de datos y migraciones, motor de territorio, seguridad, CI/CD); módulos de Jorge |
 | **Rangelis** | QA — API y casos | `docs/qa/`, colección de pruebas de API | Código de producción |
 | **Jaime** | QA — campo y regresión | `docs/qa/`, pruebas E2E (Maestro) | Código de producción |
+
+Cambio de asignaciones (D-16, 13/11): Rowlis toma CTZ-08 y CTZ-09, Jorge toma CTZ-10 y Rowlis se suma al backend en funciones puntuales.
 
 Archivos compartidos (`README.md`, `.gitignore`, `mobile/package.json`, `mobile/app/_layout.tsx`): se cambian en un PR propio y se avisa en el grupo.
 

@@ -9,7 +9,7 @@ Proyecto final de la asignatura **Construcción de Software** · Entrega: 20 de 
 | Ashley | Scrum Master + Backend |
 | Diana | Product Owner |
 | Jorge | Front — núcleo técnico |
-| Rowlis | Front — experiencia |
+| Rowlis | Front — experiencia + backend puntual |
 | Rangelis | QA |
 | Jaime | QA |
 

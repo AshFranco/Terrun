@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-13 — Ashley — Ajuste de asignaciones del equipo (D-16)
+- Hecho: Rowlis toma CTZ-08 y CTZ-09 y Jorge toma CTZ-10; Rowlis se suma al backend en funciones puntuales. Actualizados la guía §3, el HLD y el LLD (v1.2, solo el markdown), `docs/sprints/S0.md`, el README, `CONTRIBUTING.md` (revisores) y `scripts/configurar-entorno.sh`.
+- Evidencia: `docs/DECISIONES.md` (D-16).
+- Decisiones: D-16.
+- Siguiente paso: Diana actualiza los responsables en `docs/03-BACKLOG.md` y `docs/ESTADO.md`; Ashley define qué funciones de backend toma Rowlis.
+
 ## 2026-11-11 — Ashley — Guía del primer día (onboarding con Claude Code)
 - Hecho: `docs/05-PRIMER-DIA.md`, con el texto que cada integrante pega en Claude Code para clonar, correr `configurar-entorno.sh`, leer los documentos en orden, revisar las herramientas de su rol y seguir la guía al pie de la letra. Enlazado desde el README y la guía §2; el README clona en la carpeta `terrun`.
 - Evidencia: `docs/05-PRIMER-DIA.md`.
