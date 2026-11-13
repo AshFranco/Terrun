@@ -15,10 +15,15 @@ Formato:
 ---
 
 ## 2026-11-13 — Ashley — Ajuste de asignaciones del equipo (D-16)
-- Hecho: Rowlis toma CTZ-08 y CTZ-09 y Jorge toma CTZ-10; Rowlis se suma al backend en funciones puntuales. Actualizados la guía §3, el HLD y el LLD (v1.2, solo el markdown), `docs/sprints/S0.md`, el README, `CONTRIBUTING.md` (revisores) y `scripts/configurar-entorno.sh`.
+- Hecho: Rowlis toma CTZ-08 y CTZ-09 y Jorge toma CTZ-10; Rowlis se suma al backend en funciones puntuales. Actualizados la guía §3, el LLD (v1.2), `docs/sprints/S0.md`, el README, `CONTRIBUTING.md` (revisores) y `scripts/configurar-entorno.sh`.
 - Evidencia: `docs/DECISIONES.md` (D-16).
 - Decisiones: D-16.
 - Siguiente paso: Diana actualiza los responsables en `docs/03-BACKLOG.md` y `docs/ESTADO.md`; Ashley define qué funciones de backend toma Rowlis.
+
+## 2026-11-13 — Ashley — HLD v1.2 de Diana incorporado al repo
+- Hecho: el HLD v1.2 de Diana (estructura oficial de la asignatura, 90 RF por módulos, diseño visual de Terrun) pasa a ser el entregable `docs/entregables/HLD-Terrun.docx` y su PDF, con D-16 aplicado, asteriscos sobrantes quitados y una errata corregida. `docs/01-HLD.md` se regeneró desde el docx como versión de lectura; `scripts/generar_documentos.py` ya no genera el HLD. Referencias a secciones viejas del HLD corregidas en el backlog y el plan de pruebas.
+- Evidencia: `docs/entregables/HLD-Terrun.pdf` (46 páginas).
+- Siguiente paso: revisar con Diana las observaciones de la revisión (riesgos y hitos que se cayeron, prioridades inconsistentes, cifras de la encuesta).
 
 ## 2026-11-11 — Ashley — Guía del primer día (onboarding con Claude Code)
 - Hecho: `docs/05-PRIMER-DIA.md`, con el texto que cada integrante pega en Claude Code para clonar, correr `configurar-entorno.sh`, leer los documentos en orden, revisar las herramientas de su rol y seguir la guía al pie de la letra. Enlazado desde el README y la guía §2; el README clona en la carpeta `terrun`.

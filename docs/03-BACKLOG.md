@@ -4,7 +4,7 @@
 
 Cada historia tiene un ID `CTZ-NN` (los IDs nuevos se agregan al final de la numeración, sin renumerar) que se usa en ramas, commits y PR. Las referencias "LLD §x" indican qué leer antes de empezar. Este archivo es el **plan**; el estado del sprint en curso vive en `docs/ESTADO.md`.
 
-Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, los P1 de menor prioridad pasan a P2 sin discusión. El orden de los P1 lo ajusta Diana con la encuesta a corredores (CTZ-25).
+Regla de recorte (HLD, Anexo C, riesgo R-02): si al 11 de diciembre el P0 no está completo, los P1 de menor prioridad pasan a P2 sin discusión. El orden de los P1 lo ajusta Diana con la encuesta a corredores (CTZ-25).
 
 ---
 
