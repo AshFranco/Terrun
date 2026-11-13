@@ -12,6 +12,7 @@ fecha: 11 de noviembre de 2026
 |---|---|---|---|
 | 1.0 | 11/11/2026 | Versión inicial: modelo de datos, contrato de API, algoritmos y estructura de código | Ashley (Scrum Master) |
 | 1.1 | 11/11/2026 | Barrios (D-13): tablas `neighborhood` y `neighborhood_ruler`, columna `zone.neighborhood_id`, 4 endpoints, algoritmo del rey o reina, pantalla P-34 | Ashley |
+| 1.2 | 13/11/2026 | Rowlis participa en `backend/` en funciones puntuales (D-16) | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v1.0**. Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -23,7 +24,7 @@ Este documento detalla la implementación del diseño descrito en el **HLD v1.0*
 
 ```text
 terrun/
-├── backend/          .NET 10 API (Ashley)
+├── backend/          .NET 10 API (Ashley; Rowlis en funciones puntuales)
 ├── mobile/           React Native + Expo app (Jorge, Rowlis)
 ├── docs/             HLD, LLD, backlog, estado, bitácora, QA
 ├── scripts/          utilidades (diagramas, documentos, configuración)

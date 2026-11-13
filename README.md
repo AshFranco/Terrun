@@ -9,7 +9,7 @@ Proyecto final de la asignatura **Construcción de Software** · Entrega: 20 de 
 | Ashley | Scrum Master + Backend |
 | Diana | Product Owner |
 | Jorge | Front — núcleo técnico |
-| Rowlis | Front — experiencia |
+| Rowlis | Front — experiencia + backend puntual |
 | Rangelis | QA |
 | Jaime | QA |
 
@@ -49,10 +49,12 @@ Después lee, en este orden:
 
 App React Native + Expo (TypeScript) · API .NET 10 + EF Core · PostgreSQL + PostGIS · H3 · MapLibre · Render · Neon · Expo EAS.
 
-## Regenerar el HLD y el LLD
+## Regenerar el LLD
+
+El HLD (`docs/entregables/HLD-Terrun.docx`) se edita en Word desde la v1.2 y no se regenera; `docs/01-HLD.md` es su versión de lectura.
 
 ```bash
 uv run --with matplotlib python scripts/generar_diagramas.py
 uv run --with python-docx python scripts/generar_documentos.py
-soffice --headless --convert-to pdf --outdir docs/entregables docs/entregables/*.docx
+soffice --headless --convert-to pdf --outdir docs/entregables docs/entregables/LLD-Terrun.docx
 ```
