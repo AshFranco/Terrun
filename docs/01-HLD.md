@@ -115,8 +115,8 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 ## 3.1 Requisitos funcionales
 
 **Leyenda de prioridades del alcance del MVP (congelación de código: 6 de enero):**
-- **P0 (Imprescindible — Núcleo del MVP):** los **17 requisitos obligatorios** que cubren el flujo completo de extremo a extremo (acceso, trackeo GPS sin internet, validación antitrampas, conquista 5 de 7 y disputa de zonas de 30 días).
-- **P1 (Importante — Complemento competitivo y social):** los **12 requisitos deseables** (acceso con Google, barrios, XP, logros, retos, clubes, rankings, muro y avisos) condicionales a tener cerrado el bloque P0.
+- **P0 (Imprescindible — Núcleo del MVP):** los requisitos obligatorios que cubren el flujo completo de extremo a extremo.
+- **P1 (Importante — Complemento competitivo y social):** los requisitos deseables condicionales a tener cerrado el bloque P0.
 
 ### Parte I — Funciones básicas de la aplicación
 
