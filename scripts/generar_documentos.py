@@ -1,4 +1,7 @@
-"""Convierte docs/01-HLD.md y docs/02-LLD.md a Word (.docx) en docs/entregables/.
+"""Convierte docs/02-LLD.md a Word (.docx) en docs/entregables/.
+
+El HLD ya no se genera aquí: desde la v1.2 el entregable docs/entregables/HLD-Terrun.docx
+tiene el diseño visual de Terrun y se edita en Word (docs/01-HLD.md es su versión de lectura).
 
 Uso:
   uv run --native-tls --with python-docx python scripts/generar_documentos.py
@@ -22,7 +25,6 @@ GRIS = RGBColor(0x55, 0x55, 0x55)
 ANCHO_UTIL_CM = 17.0  # carta con márgenes de 2.3 cm
 
 DOCUMENTOS = [
-    ("01-HLD.md", "HLD-Terrun.docx", "HLD"),
     ("02-LLD.md", "LLD-Terrun.docx", "LLD"),
 ]
 EQUIPO = "Ashley · Diana · Jorge · Rowlis · Rangelis · Jaime"

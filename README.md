@@ -8,8 +8,8 @@ Proyecto final de la asignatura **Construcción de Software** · Entrega: 20 de 
 |---|---|
 | Ashley | Scrum Master + Backend |
 | Diana | Product Owner |
-| Jorge | Front — núcleo técnico |
-| Rowlis | Front — experiencia |
+| Jorge | Front — experiencia de usuario y núcleo técnico |
+| Rowlis | Front — estructura y pantallas + backend puntual |
 | Rangelis | QA |
 | Jaime | QA |
 
@@ -35,7 +35,7 @@ Después lee, en este orden:
 
 | Documento | Contenido |
 |---|---|
-| [`docs/01-HLD.md`](docs/01-HLD.md) | Diseño de alto nivel (PDF en `docs/entregables/`) |
+| [`docs/01-HLD.md`](docs/01-HLD.md) | Diseño de alto nivel **v2.0** para este período académico / MVP (`docs/entregables/HLD-Terrun.docx` y `.pdf`). La versión extendida **v1.2** con anexos para alcance posterior al MVP se conserva en [`docs/01-HLD-v1.2-post-MVP.md`](docs/01-HLD-v1.2-post-MVP.md) y `docs/entregables/HLD-Terrun-v1.2-post-MVP.docx`. |
 | [`docs/02-LLD.md`](docs/02-LLD.md) | Diseño de bajo nivel: tablas, API, algoritmos, pantallas |
 | [`docs/03-BACKLOG.md`](docs/03-BACKLOG.md) | Historias CTZ-01 a CTZ-91 por sprint y responsable |
 | [`docs/04-ESTANDARES-DESARROLLO.md`](docs/04-ESTANDARES-DESARROLLO.md) | Reglas de código: idioma, nombres, glosario, pruebas |
@@ -49,10 +49,12 @@ Después lee, en este orden:
 
 App React Native + Expo (TypeScript) · API .NET 10 + EF Core · PostgreSQL + PostGIS · H3 · MapLibre · Render · Neon · Expo EAS.
 
-## Regenerar el HLD y el LLD
+## Regenerar el LLD
+
+El HLD (`docs/entregables/HLD-Terrun.docx`) se edita en Word desde la v1.2 y no se regenera; `docs/01-HLD.md` es su versión de lectura.
 
 ```bash
 uv run --with matplotlib python scripts/generar_diagramas.py
 uv run --with python-docx python scripts/generar_documentos.py
-soffice --headless --convert-to pdf --outdir docs/entregables docs/entregables/*.docx
+soffice --headless --convert-to pdf --outdir docs/entregables docs/entregables/LLD-Terrun.docx
 ```

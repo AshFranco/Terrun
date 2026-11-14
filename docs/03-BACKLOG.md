@@ -4,7 +4,7 @@
 
 Cada historia tiene un ID `CTZ-NN` (los IDs nuevos se agregan al final de la numeración, sin renumerar) que se usa en ramas, commits y PR. Las referencias "LLD §x" indican qué leer antes de empezar. Este archivo es el **plan**; el estado del sprint en curso vive en `docs/ESTADO.md`.
 
-Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, los P1 de menor prioridad pasan a P2 sin discusión. El orden de los P1 lo ajusta Diana con la encuesta a corredores (CTZ-25).
+Regla de recorte (HLD, Anexo C, riesgo R-03): si al 11 de diciembre el P0 no está completo, los P1 de menor prioridad pasan a P2 sin discusión. El orden de los P1 lo ajusta Diana con la encuesta a corredores (CTZ-25).
 
 ---
 
@@ -21,9 +21,9 @@ Regla de recorte (HLD §11.1): si al 11 de diciembre el P0 no está completo, lo
 | CTZ-05 | Enviar la encuesta al grupo de corredores (`docs/producto/encuesta-corredores.md`) | Diana | P0 | — | Formulario publicado y compartido; meta: 15 respuestas antes del 18/11 |
 | CTZ-06 | Cargar el backlog en GitHub Projects (un issue por historia, con etiqueta de sprint y responsable) | Diana | P1 | CTZ-02 | Tablero con columnas Pendiente / En curso / En revisión / Hecha |
 | CTZ-07 | Confirmar con Jorge y Rowlis que dominan React (supuesto S-01 del HLD) | Diana | P0 | — | Resultado en `DECISIONES.md` |
-| CTZ-08 | Esqueleto de la app: Expo SDK con TypeScript, Expo Router, pestañas vacías (Mapa, Feed, Grabar, Clubes, Perfil), TypeScript `strict`, ESLint (sin `any`) + Prettier, Jest, script `api:types`, carpetas `src/i18n/es.json` y `src/theme/` (estándares §5) | Jorge | P0 | CTZ-02 | `npx expo start` abre la app en Android e iOS; lint y pruebas en verde en la CI |
-| CTZ-09 | Investigación previa del GPS: configuración de expo-location + TaskManager y de MapLibre RN en un *development build* | Jorge | P0 | CTZ-08 | Nota en `docs/DECISIONES.md` con librerías, versiones y permisos necesarios |
-| CTZ-10 | Sistema de diseño base (colores, tipografía, espaciado, botón, tarjeta, campo de texto) y wireframes de P-01 a P-09 | Rowlis | P0 | — | Componentes en `mobile/src/components` y tokens en `mobile/src/theme`; wireframes enlazados en `docs/producto/` |
+| CTZ-08 | Esqueleto de la app: Expo SDK con TypeScript, Expo Router, pestañas vacías (Mapa, Feed, Grabar, Clubes, Perfil), TypeScript `strict`, ESLint (sin `any`) + Prettier, Jest, script `api:types`, carpetas `src/i18n/es.json` y `src/theme/` (estándares §5) | Rowlis | P0 | CTZ-02 | `npx expo start` abre la app en Android e iOS; lint y pruebas en verde en la CI |
+| CTZ-09 | Investigación previa del GPS: configuración de expo-location + TaskManager y de MapLibre RN en un *development build* | Rowlis | P0 | CTZ-08 | Nota en `docs/DECISIONES.md` con librerías, versiones y permisos necesarios |
+| CTZ-10 | Sistema de diseño base (colores, tipografía, espaciado, botón, tarjeta, campo de texto) y wireframes de P-01 a P-09 | Jorge | P0 | — | Componentes en `mobile/src/components` y tokens en `mobile/src/theme`; wireframes enlazados en `docs/producto/` |
 | CTZ-11 | Plan de pruebas v1 (`docs/qa/01-PLAN-PRUEBAS.md`): alcance, niveles, ambientes, criterios de entrada y salida por sprint | Rangelis | P0 | — | Revisado por Ashley y Diana |
 | CTZ-12 | Plan de pruebas de campo: inventario de dispositivos (modelo, sistema operativo), 2 rutas medidas (1 km y 5 km), checklist de batería y segundo plano | Jaime | P0 | — | `docs/qa/03-PRUEBAS-CAMPO.md` con las rutas y los dispositivos |
 

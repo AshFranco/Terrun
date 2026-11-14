@@ -1,432 +1,224 @@
 ---
-titulo: Terrun
+titulo: terrun
+lema: CONQUISTA TU ZONA · CADA CARRERA SUMA TERRITORIO
 subtitulo: Documento de Diseño de Alto Nivel (HLD)
 asignatura: Construcción de Software
-version: 1.1
-fecha: 11 de noviembre de 2026
+version: 2.0
+fecha: 13 de noviembre de 2026
 ---
 
-# Control del documento
+# Control de cambios y equipo
 
-| Versión | Fecha | Descripción | Responsable |
+> **Nota sobre versiones en el repositorio (`D-17`):** Esta **versión 2.0** (`docs/01-HLD.md` y `docs/entregables/HLD-Terrun.docx`) es el entregable oficial utilizado para **este período académico (alcance del MVP)** tras las observaciones del profesor. La **versión 1.2** extendida (con anexos completos y funcionalidades posteriores al MVP) se conserva en [`docs/01-HLD-v1.2-post-MVP.md`](01-HLD-v1.2-post-MVP.md) y `docs/entregables/HLD-Terrun-v1.2-post-MVP.docx`.
+
+| Versión | Fecha | Descripción del cambio | Autores |
 |---|---|---|---|
-| 1.0 | 11/11/2026 | Versión inicial para aprobación del proyecto | Ashley (Scrum Master) / Diana (Product Owner) |
-| 1.1 | 11/11/2026 | Barrios sobre la malla de zonas: rey o reina del barrio (D-13) | Ashley |
+| **1.2** | 11/11/2026 | Reestructuración según el índice oficial de la asignatura, definición de roles del equipo y priorización del alcance. | Diana (Product Owner) / Ashley (Scrum Master) |
+| **2.0** | 13/11/2026 | Versión académica concisa tras retroalimentación del profesor: uso del término *trackear*, acotación exclusiva al MVP y síntesis de funciones básicas y diferenciadoras. | Diana (Product Owner) / Ashley (Scrum Master) |
 
-**Equipo**
+## Equipo del proyecto
 
-| Integrante | Rol Scrum | Rol técnico |
+| Integrante | Rol en Scrum | Responsabilidad principal en el proyecto |
 |---|---|---|
-| Ashley | Scrum Master | Ingeniera Full Stack — Backend, base de datos, motor de territorio, seguridad y despliegue |
-| Diana | Product Owner | Dueña del backlog, prioridades, criterios de aceptación, validación con usuarios y documentación |
-| Jorge | Equipo de desarrollo | Ingeniero Front — Grabación GPS, almacenamiento local, mapa y capa de territorio |
-| Rowlis | Equipo de desarrollo | Ingeniero Front — Experiencia de usuario: cuenta, perfil, social, clubes, gamificación |
-| Rangelis | Equipo de desarrollo | QA — Plan y casos de prueba, pruebas de API, registro de defectos |
-| Jaime | Equipo de desarrollo | QA — Pruebas de campo, regresión, validación de cada sprint |
+| **Ashley** | Scrum Master | Coordinación ágil, arquitectura de servidor (Backend), base de datos espacial, motor de territorio, seguridad y despliegue. |
+| **Diana** | Product Owner | Visión del producto, priorización del Backlog, criterios de aceptación, validación con corredores y documentación. |
+| **Jorge** | Equipo de desarrollo | Desarrollo móvil (experiencia de usuario y núcleo técnico): diseño de pantallas, trackeo GPS, guardado sin internet y mapa interactivo. |
+| **Rowlis** | Equipo de desarrollo | Desarrollo móvil y apoyo al servidor: estructura base de la app, cuenta, perfil, muro de actividad, clubes, gamificación y rankings. |
+| **Rangelis** | Equipo de desarrollo | Aseguramiento de calidad (QA): plan de pruebas, casos de prueba por módulo, validación del servidor y seguimiento de defectos. |
+| **Jaime** | Equipo de desarrollo | Aseguramiento de calidad (QA): pruebas de campo corriendo en calle con teléfonos reales, regresión y validación por entrega. |
 
 # 1. Introducción
 
 ## 1.1 Propósito
 
-Este documento describe el diseño de alto nivel de **Terrun** (de *terra* + *run*), una aplicación móvil deportiva y gamificada para corredores. Define la visión del producto, el alcance, los actores, los requisitos de alto nivel, la arquitectura, las decisiones tecnológicas, la estrategia de seguridad, calidad y despliegue, y el plan de entrega. El detalle de implementación (modelo de datos completo, contrato de API, algoritmos y estructura de código) está en el documento complementario **LLD (Diseño de Bajo Nivel)**.
+El propósito de **Terrun** (*terra*, tierra, y *run*, correr) es resolver uno de los principales obstáculos del ejercicio urbano: **la falta de motivación y la monotonía**. Las aplicaciones deportivas tradicionales (como Strava o Nike Run Club) funcionan como bitácoras pasivas pensadas para quien busca récords de velocidad; para la mayoría de las personas, correr siempre por las mismas calles sin un estímulo inmediato provoca el abandono en las primeras semanas.
 
-## 1.2 Problema
+Bajo el lema **"Conquista tu zona · Cada carrera suma territorio"**, nuestra solución **transforma la ciudad real en un tablero de juego interactivo** donde cada salida a correr, trotar o caminar permite trackear el recorrido desde el teléfono, explorar, pintar y disputar zonas reales del mapa urbano, combinando la medición deportiva móvil con un juego de estrategia territorial y comunidad.
 
-Mantener la constancia en la actividad física es difícil: la mayoría de las personas abandona una rutina de carrera en las primeras semanas por falta de motivación. Las aplicaciones de running existentes registran métricas (distancia, ritmo), pero ofrecen poca motivación lúdica para salir a explorar y volver a correr.
+## 1.2 Público
 
-## 1.3 Solución
+La aplicación **Terrun** está dirigida a cuatro perfiles de usuarios urbanos:
 
-Terrun convierte la ciudad en un tablero de juego. El mapa real está dividido en **zonas hexagonales**. Cuando el usuario trota o corre y recorre una zona, la va **conquistando**; si otro corredor la recorre más que él, se la puede **arrebatar**. A esto se suman las funciones que los corredores esperan de una app de mercado: registro preciso de la actividad, métricas y récords, red social, clubes, retos, logros y rankings.
+1. **Corredores recreativos y principiantes:** personas que salen a caminar, trotar o correr y buscan una meta visual y alcanzable en cada salida (completar las calles de una zona cercana) en lugar de competir solo por velocidad.
+2. **Corredores frecuentes y competitivos:** deportistas constantes que buscan **defender el dominio** de sus zonas en los últimos 30 días, subir en el ranking y coronarse como **rey o reina de su barrio**.
+3. **Clubes de running y grupos de entrenamiento:** comunidades deportivas o grupos de amigos que unen los recorridos de sus integrantes para expandir el territorio dominado por su club.
+4. **Exploradores urbanos:** usuarios motivados por descubrir y coleccionar nuevas calles, parques y sectores de su ciudad.
 
-**Nombre y lema:** el producto se llama **Terrun**. La propuesta presentada en la asignatura, "Conquista tu zona", se conserva como lema de la app.
+## 1.3 Uso previsto
 
-**Propuesta de valor:** "Cada carrera suma territorio". Motiva a correr con frecuencia (defender tus zonas), a explorar rutas nuevas (conquistar zonas nuevas) y a correr en grupo (territorio de club).
+En la rutina del corredor, **Terrun** se utiliza únicamente con el teléfono móvil en cuatro momentos:
 
-## 1.4 Objetivos del producto
+1. **Antes de salir (estrategia en el mapa):** el corredor consulta el mapa de su sector para identificar qué zonas están libres, cuáles tiene en progreso y cuáles dominan otros corredores.
+2. **Durante la carrera (trackeo en segundo plano y sin internet):** inicia el trackeo en dos toques y bloquea la pantalla; la app registra la ruta por GPS en la memoria local, muestra métricas en vivo, aplica *auto-pausa* en paradas y emite avisos de voz por kilómetro.
+3. **Al terminar (validación y conquista):** el servidor filtra la señal GPS, descarta tramos en vehículo, calcula las métricas deportivas oficiales e ilumina las **zonas conquistadas**, los **robos de dominio**, el liderazgo por barrio y la experiencia (**XP**) ganada.
+4. **Entre entrenamientos (comunidad y seguimiento):** el usuario revisa el muro de actividad (*Feed*), el territorio de su club, los rankings, sus medallas y sus notificaciones.
 
-1. Registrar actividades de carrera con precisión comparable a las apps líderes del mercado, incluso con la pantalla bloqueada y sin conexión.
-2. Ofrecer una mecánica de territorio justa, verificable y resistente a trampas.
-3. Fomentar la constancia mediante gamificación (XP, niveles, rachas, logros, retos) y competencia social (rankings, dominio de zonas, clubes).
-4. Estar publicada y operativa para la entrega académica, y quedar preparada para su comercialización en App Store y Google Play.
+## 1.4 Lo que hacemos
 
-## 1.5 Requisitos de la asignatura y cómo se cumplen
+Construimos una plataforma compuesta por una aplicación móvil para **Android e iOS** y un servidor central con motor geoespacial propio:
 
-| Requisito del curso | Cómo lo cumple el proyecto |
+### 1. Malla hexagonal de dos niveles sobre la ciudad
+Dividimos el mapa urbano en **zonas hexagonales** de unos 174 m de lado (0,10 km²). Para evitar que alguien conquiste una zona solo cruzándola por una avenida, cada zona se compone internamente de **7 sub-celdas pequeñas** (1 central y 6 alrededor).
+
+![Cómo se divide una zona en 7 sub-celdas y cómo se conquista](diagramas/05-mecanica-h3.png)
+
+### 2. Exploración personal y competencia territorial
+- **Conquista permanente (5 de 7 sub-celdas):** al pisar al menos **5 de las 7 sub-celdas** de una zona (en una o varias salidas), el corredor la conquista para siempre en su historial personal.
+- **Dominio competitivo (30 días) y robo de zonas:** quien pise más sub-celdas dentro de una zona en los **últimos 30 días** es su **dueño actual**; si otro corredor supera esa marca reciente, **le roba la zona**.
+- **Barrios del polígono central:** agrupamos los hexágonos dentro de **6 barrios de Santo Domingo** (*Piantini, Naco, Evaristo Morales, Serrallés, Paraíso y Bella Vista*); quien domine más zonas activas dentro de un barrio recibe la corona de **rey o reina del barrio**.
+
+### 3. Medición deportiva móvil, juego limpio y comunidad
+Durante la carrera, el teléfono calcula en vivo el tiempo, la distancia y el ritmo; al finalizar, el servidor valida la ruta contra trampas en vehículo y calcula las métricas oficiales (*splits*, elevación y calorías), integrando clubes, muro de actividad con recorte de privacidad, niveles por **XP**, rachas, logros, retos y *rankings*.
+
+## 1.5 Acrónimos y definiciones
+
+| Término o sigla | Definición en el proyecto Terrun |
 |---|---|
-| Sistema o aplicación con un fin específico, construido en equipo | App para motivar la actividad física mediante la conquista de zonas reales; equipo de 6 con roles Scrum |
-| Ingresar o capturar datos y almacenarlos en una BD de su elección | Captura GPS, actividades, territorio, interacciones sociales; PostgreSQL + PostGIS (41 tablas) |
-| Publicación mediante web service o app store | API REST publicada como servicio web (Render) y app distribuida por Google Play (prueba interna/cerrada) y App Store (TestFlight) |
-| HLD aprobado antes de la fecha establecida | Este documento (11/11/2026), acompañado del LLD |
-| Weeklys de avance e impedimentos por sprint | Sprints semanales de viernes a viernes con weekly cada viernes (§11) |
-| Scrum Master por grupo | Ashley (Scrum Master), con Diana como Product Owner |
+| **MVP y P0 / P1** | **MVP:** Producto Mínimo Viable para la entrega académica. **P0:** requisito imprescindible del núcleo. **P1:** complemento competitivo y social sujeto al cierre de P0. |
+| **Actividad y Trackeo** | Salida a correr, trotar o caminar cuyo recorrido se registra (*trackea*) con el **GPS** (Sistema de Posicionamiento Global) del teléfono. |
+| **Zona y Sub-celda (H3)** | **Zona:** hexágono grande del mapa (Uber H3 nivel 9, unos 174 m de lado). **Sub-celda:** cada una de las **7 partes pequeñas** (H3 nivel 10) que forman el interior de una Zona. |
+| **Conquista (Regla 5 de 7)** | Logro personal **permanente** al pisar al menos **5 de las 7 sub-celdas** de una zona entre una o varias carreras. |
+| **Dominio (30 días) y Robo** | Propiedad **activa** de una zona: pertenece a quien sume más sub-celdas visitadas en los **últimos 30 días**. Si otro corredor supera esa marca, ocurre un **robo de zona**. |
+| **Barrio y Rey/Reina** | Cada uno de los 6 sectores del alcance inicial en Santo Domingo preasignados a los hexágonos del mapa; quien domine más zonas en él lidera el barrio. |
+| **Ritmo (Pace) y Split** | **Ritmo:** tiempo empleado por kilómetro (`min/km`) en movimiento. **Split:** parcial individual de cada kilómetro completado. |
+| **XP y Racha semanal** | **XP:** puntos de experiencia ganados por correr y conquistar zonas. **Racha:** semanas consecutivas completando al menos una actividad válida. |
+| **HLD / LLD / RF / RNF** | **HLD:** diseño de alto nivel. **LLD:** diseño técnico detallado. **RF:** requisito funcional. **RNF:** requisito no funcional o de calidad. |
+| **Scrum y QA** | **Scrum:** marco ágil de trabajo por *sprints*. **QA:** aseguramiento de calidad mediante pruebas automatizadas y de campo. |
+| **API / HTTPS / JWT** | **API:** interfaz de comunicación entre la app y el servidor sobre conexión cifrada (**HTTPS**) autenticada con tokens seguros (**JWT**). |
+| **Offline-first, GeoJSON y PostGIS** | **Offline-first:** guardado local en `SQLite` para trackear sin internet. **GeoJSON:** formato para dibujar hexágonos en el mapa. **PostGIS:** extensión espacial de PostgreSQL. |
+| **Ley 172-13** | Ley dominicana de protección de datos personales que rige el consentimiento informado y la privacidad de las rutas del corredor. |
 
-## 1.6 Definiciones
+# 2. Descripción general
 
-| Término | Definición |
-|---|---|
-| Actividad | Una sesión de carrera, trote o caminata registrada con GPS |
-| H3 | Sistema de indexación geoespacial jerárquico de celdas hexagonales (código abierto, creado por Uber) |
-| Zona | Celda hexagonal H3 de resolución 9 (≈0,105 km², ≈174 m de lado); unidad del territorio |
-| Sub-celda | Cada una de las 7 celdas H3 de resolución 10 que componen una zona |
-| Conquista | Hito personal: el usuario ha recorrido al menos 5 de las 7 sub-celdas de una zona (acumulado entre carreras) |
-| Dominio | Propiedad competitiva de una zona: la tiene el usuario con más puntos de zona en los últimos 30 días |
-| Punto de zona | Una sub-celda distinta recorrida en una actividad dentro de esa zona |
-| Robo | Cambio de dueño de una zona cuando otro usuario supera los puntos del dueño actual |
-| Barrio | Área con nombre real de la ciudad (Naco, Piantini…) que agrupa zonas; no se conquista directamente |
-| Rey o reina del barrio | El usuario que domina más zonas de un barrio |
-| XP | Puntos de experiencia que determinan el nivel del usuario |
-| P0 / P1 / P2 | Prioridades: P0 imprescindible para la demo, P1 nivel de mercado, P2 posterior a la entrega |
+## 2.1 Necesidades del usuario
 
-# 2. Alcance
-
-## 2.1 Dentro del alcance (diseñado completo)
-
-El diseño cubre 13 módulos. Todos tienen modelo de datos y endpoints definidos en el LLD; se construyen por prioridad (§11).
-
-| # | Módulo | Capacidades principales | Prioridad |
-|---|---|---|---|
-| M1 | Identidad y cuenta | Registro con correo, inicio de sesión con Google y Apple, verificación de correo, recuperación de contraseña, sesiones, eliminación de cuenta y exportación de datos, aceptación de términos | P0 / P1 |
-| M2 | Perfil y preferencias | Perfil público, datos físicos para calorías, unidades, auto-pausa, avisos de voz, privacidad, zonas de privacidad | P0 / P1 |
-| M3 | Actividades | Grabación GPS en primer y segundo plano, pausa y auto-pausa, distancia, ritmo, elevación, calorías, splits por km, historial, récords personales, exportación GPX | P0 |
-| M4 | Equipamiento | Registro de zapatillas, kilometraje acumulado, aviso de cambio | P1 |
-| M5 | Territorio | Mapa de zonas, conquista personal (5 de 7), dominio competitivo de 30 días, robos y defensas, historial de la zona, barrios con rey o reina | P0 / P1 |
-| M6 | Social | Seguir usuarios, feed de actividades, kudos, comentarios, bloqueo, reportes | P1 |
-| M7 | Clubes | Crear y unirse a clubes, territorio y ranking del club | P1 |
-| M8 | Gamificación | XP y niveles, rachas, logros, retos mensuales | P1 |
-| M9 | Rankings | Semanal, mensual, por ciudad, por club y entre amigos; histórico | P0 / P1 |
-| M10 | Notificaciones | Push y bandeja interna: zona robada, kudos, comentarios, retos, logros | P1 |
-| M11 | Integraciones | Exportar GPX (P1); importar desde Strava/Garmin y salud del dispositivo (P2) | P1 / P2 |
-| M12 | Moderación y antitrampas | Detección de actividades sospechosas, revisión de reportes, auditoría | P1 |
-| M13 | Configuración del motor | Parámetros del juego (umbral de conquista, ventana de dominio, límites antitrampas) sin valores fijos en el código | P0 |
-
-## 2.2 Fuera del alcance de la entrega académica (P2 — fase comercial)
-
-- Importación de actividades desde Strava, Garmin o archivos GPX/FIT.
-- Integración con Apple HealthKit y Android Health Connect (frecuencia cardíaca, pasos).
-- Fotos en actividades.
-- Temporadas competitivas con reinicio de territorio.
-- Planes de entrenamiento y suscripción premium.
-- Panel web de administración (durante el curso la moderación se opera desde la API documentada en Swagger).
-
-## 2.3 Validación con usuarios reales
-
-El equipo cuenta con un grupo de corredores que responderá una encuesta durante el Sprint 1. Sus respuestas ajustan el **orden** de las funcionalidades P1 (no el diseño). El mismo grupo es candidato a ser el primer club de la app y parte de los testers de la prueba cerrada de Google Play.
-
-# 3. Actores y sistemas externos
-
-![Diagrama de contexto](diagramas/01-contexto.png)
-
-| Actor / Sistema | Descripción | Interacción |
+| Tipo de usuario | Quién es | Qué necesita del sistema |
 |---|---|---|
-| Corredor | Usuario registrado de la app | Graba actividades, conquista zonas, interactúa socialmente, participa en clubes y retos |
-| Visitante | Persona sin cuenta | Ve la pantalla de bienvenida, se registra o inicia sesión |
-| Moderador | Corredor con permisos de moderación | Revisa reportes y actividades marcadas como sospechosas |
-| Administrador | Equipo del producto | Gestiona parámetros del motor, logros, retos y roles |
-| Google / Apple | Proveedores de identidad | Inicio de sesión federado (OIDC); la API valida el ID token |
-| Expo Push | Servicio de notificaciones | Entrega push a FCM (Android) y APNs (iOS) |
-| OpenStreetMap / MapTiler | Proveedor de mapa base | Teselas vectoriales del mapa |
-| Brevo / Resend | Proveedor de correo | Correos de verificación y recuperación |
-| App Store / Google Play | Tiendas | Distribución de la app |
+| **Corredor** | Usuario registrado que sale a caminar, trotar o correr con su teléfono. | • Iniciar el trackeo de su recorrido en dos toques.<br>• Medir su carrera con pantalla bloqueada y sin depender de internet.<br>• Conquistar y disputar zonas de su ciudad y su barrio sin trampas en vehículo.<br>• Compartir territorio con su club y seguir su avance en rankings, retos y medallas. |
+| **Visitante** | Persona que abre la app por primera vez sin cuenta. | • Comprender rápidamente la dinámica de Terrun y crear su cuenta conociendo cómo se protege su privacidad. |
+| **Administrador** | Equipo técnico del producto. | • Ajustar en la base de datos las reglas del juego (umbrales de conquista, vigencia de 30 días, velocidades y puntos XP) sin republicar la app. |
 
-# 4. Requisitos de alto nivel
+## 2.2 Dependencias y Asunciones
 
-## 4.1 Requisitos funcionales
+El funcionamiento y la entrega del sistema dependen de las siguientes condiciones técnicas y operativas:
 
-| ID | Requisito | Módulo | Prioridad |
+| Código | Tipo | Descripción de la dependencia o asunción | Mitigación y alcance en el proyecto |
 |---|---|---|---|
-| RF-01 | El sistema permite registrarse con correo y contraseña, verificar el correo e iniciar sesión | M1 | P0 |
-| RF-02 | El sistema permite iniciar sesión con Google y con Apple | M1 | P1 |
-| RF-03 | El usuario puede recuperar su contraseña por correo | M1 | P0 |
-| RF-04 | El usuario puede eliminar su cuenta y exportar sus datos desde la app | M1 | P1 |
-| RF-05 | El usuario acepta términos y política de privacidad versionados; el sistema registra el consentimiento | M1 | P0 |
-| RF-06 | El usuario gestiona su perfil (nombre, foto, ciudad, biografía, datos físicos) y preferencias | M2 | P0 |
-| RF-07 | El usuario define zonas de privacidad que ocultan el inicio y el fin de sus rutas públicas | M2 | P1 |
-| RF-08 | La app graba una actividad con GPS en primer y segundo plano, con pausa manual y auto-pausa | M3 | P0 |
-| RF-09 | La app conserva la actividad sin conexión y la sube automáticamente al recuperarla | M3 | P0 |
-| RF-10 | El sistema calcula distancia, duración en movimiento, ritmo, velocidad, elevación, calorías y splits por km | M3 | P0 |
-| RF-11 | El usuario consulta su historial y el detalle de cada actividad con su ruta en el mapa | M3 | P0 |
-| RF-12 | El sistema detecta récords personales (1 km, 5 km, 10 km, 21 km, 42 km, carrera más larga) | M3 | P1 |
-| RF-13 | El usuario puede editar título, tipo y visibilidad de una actividad, o eliminarla | M3 | P0 |
-| RF-14 | El usuario puede exportar una actividad en formato GPX | M11 | P1 |
-| RF-15 | El usuario registra zapatillas, las asocia a actividades y recibe aviso al llegar a su límite de km | M4 | P1 |
-| RF-16 | El mapa muestra las zonas en el área visible con su estado: libre, en progreso, conquistada, dominada por mí o por otro | M5 | P0 |
-| RF-17 | Una zona queda conquistada por el usuario al recorrer al menos 5 de sus 7 sub-celdas, sumando todas sus actividades | M5 | P0 |
-| RF-18 | El dueño de una zona es el usuario con más puntos de zona en los últimos 30 días; se recalcula tras cada actividad y diariamente | M5 | P1 |
-| RF-19 | Al perder una zona, el usuario recibe una notificación de robo | M5/M10 | P1 |
-| RF-20 | El usuario consulta el detalle de una zona: dueño, su progreso, historial de eventos | M5 | P0 |
-| RF-21 | El usuario puede seguir a otros; si el perfil es privado, el seguimiento requiere aprobación | M6 | P1 |
-| RF-22 | El usuario ve un feed con las actividades de las personas que sigue | M6 | P1 |
-| RF-23 | El usuario puede dar kudos y comentar actividades | M6 | P1 |
-| RF-24 | El usuario puede bloquear y reportar usuarios, actividades o comentarios | M6/M12 | P1 |
-| RF-25 | El usuario puede crear, buscar, unirse y abandonar clubes; el club tiene ranking y territorio agregado | M7 | P1 |
-| RF-26 | El sistema otorga XP por distancia, conquistas, robos y logros, y calcula el nivel | M8 | P1 |
-| RF-27 | El sistema calcula la racha de semanas consecutivas con actividad | M8 | P1 |
-| RF-28 | El sistema otorga logros según reglas configurables | M8 | P1 |
-| RF-29 | El usuario puede inscribirse en retos con meta y fechas, y ver su progreso | M8 | P1 |
-| RF-30 | El sistema ofrece rankings semanales y mensuales por zonas dominadas, distancia y XP; global, por ciudad, por club y entre amigos | M9 | P0 / P1 |
-| RF-31 | El sistema envía notificaciones push y mantiene una bandeja de notificaciones dentro de la app | M10 | P1 |
-| RF-32 | El sistema marca como sospechosas las actividades que violan reglas antitrampas y las excluye del territorio hasta su revisión | M12 | P1 |
-| RF-33 | Un moderador revisa reportes y actividades sospechosas, y las aprueba o rechaza | M12 | P1 |
-| RF-34 | Un administrador gestiona parámetros del motor, logros y retos | M13 | P0 / P1 |
-| RF-35 | El sistema registra en auditoría las acciones sensibles | M12 | P1 |
-| RF-36 | Cada zona pertenece a un barrio real; el sistema muestra los barrios en el mapa, su rey o reina (quien domina más zonas del barrio) y el ranking del barrio, y notifica cuando alguien gana o pierde ese título | M5 | P1 |
+| **D-01** | Dependencia | **Plataformas móviles y cuenta de publicación:** operación con el GPS interno en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta de pago en Apple Developer para TestFlight)**. | Demostración oficial garantizada en dispositivos Android reales y soporte multiplataforma en código. |
+| **D-02** | Dependencia | **Instalador de desarrollo para GPS en segundo plano:** el sistema operativo móvil exige un binario compilado (*development build*) para mantener activo el GPS con la pantalla bloqueada. | Generación de compilaciones de desarrollo desde los primeros sprints en lugar de usar visores limitados. |
+| **D-03** | Dependencia | **Servicios externos en capa gratuita:** disponibilidad y cuotas sin costo de *MapTiler / OpenStreetMap* (mapas), *Render* (servidor), *Neon* (base de datos), *Brevo / Resend* (correos) y *Cloudflare R2* (imágenes). | Caché de zonas en el teléfono y consumo acotado al volumen de usuarios de validación académica. |
+| **D-04** | Dependencia | **Cartografía semilla de barrios:** delimitación de los 6 barrios iniciales de Santo Domingo (*Piantini, Naco, Evaristo Morales, Serrallés, Paraíso y Bella Vista*). | Cada hexágono H3 lleva preasignado su barrio en la carga inicial de base de datos, evitando cálculos geométricos pesados por carrera. |
+| **S-01** | Asunción | **Conectividad móvil intermitente en calle:** el corredor puede perder señal de datos móviles durante el recorrido o al pasar entre edificios. | Arquitectura *offline-first* que guarda cada punto GPS en `SQLite` local y sincroniza al recuperar conexión. |
 
-## 4.2 Requisitos no funcionales
+# 3. Requisitos y características del sistema
 
-| ID | Categoría | Requisito |
-|---|---|---|
-| RNF-01 | Precisión | La distancia registrada difiere menos del 3 % respecto de una ruta medida, en condiciones de cielo abierto |
-| RNF-02 | Segundo plano | La grabación continúa con la pantalla bloqueada al menos 2 horas sin interrupciones |
-| RNF-03 | Batería | El consumo de batería de una hora de grabación no supera el 10 % en un dispositivo de gama media |
-| RNF-04 | Sin conexión | La app graba y conserva actividades sin conexión; ningún dato se pierde si la app se cierra |
-| RNF-05 | Rendimiento | El percentil 95 de los endpoints de lectura es menor a 500 ms; una actividad de 1 hora se procesa en menos de 10 s |
-| RNF-06 | Mapa | La capa de zonas del área visible carga en menos de 1 s con hasta 2.000 hexágonos |
-| RNF-07 | Seguridad | Tráfico solo por HTTPS; contraseñas con hash adaptativo; tokens de acceso de vida corta; controles OWASP API Top 10 |
-| RNF-08 | Privacidad | Cumplimiento de la Ley 172-13 de protección de datos personales (República Dominicana) y de las políticas de privacidad de App Store y Google Play; la ubicación nunca se comparte sin consentimiento |
-| RNF-09 | Disponibilidad | 99 % mensual en producción durante el periodo de evaluación |
-| RNF-10 | Compatibilidad | Android 10 o superior e iOS 16 o superior |
-| RNF-11 | Usabilidad | Iniciar una carrera en máximo 2 toques desde la pantalla principal; textos en español |
-| RNF-12 | Mantenibilidad | Cobertura de pruebas de al menos 80 % en el motor de territorio; CI en verde como condición de merge |
-| RNF-13 | Escalabilidad | Diseño apto para 10.000 usuarios activos sin cambios de arquitectura |
-| RNF-14 | Configurabilidad | Ningún parámetro del juego está fijo en el código; todos viven en `system_setting` |
+## 3.1 Requisitos funcionales
 
-# 5. Arquitectura
+**Leyenda de prioridades del alcance del MVP (congelación de código: 6 de enero):**
+- **P0 (Imprescindible — Núcleo del MVP):** los **17 requisitos obligatorios** que cubren el flujo completo de extremo a extremo (acceso, trackeo GPS sin internet, validación antitrampas, conquista 5 de 7 y disputa de zonas de 30 días).
+- **P1 (Importante — Complemento competitivo y social):** los **12 requisitos deseables** (acceso con Google, barrios, XP, logros, retos, clubes, rankings, muro y avisos) condicionales a tener cerrado el bloque P0.
 
-## 5.1 Estilo arquitectónico
+### Parte I — Funciones básicas de la aplicación
 
-Arquitectura **cliente-servidor** con tres piezas:
-
-1. **App móvil** (React Native + Expo): presentación, grabación GPS y almacenamiento local. Es *offline-first* para la grabación: la actividad se guarda primero en el teléfono y luego se sincroniza.
-2. **API REST** (.NET 10): **monolito modular**. Un solo desplegable organizado en módulos con fronteras claras (uno por dominio). Incluye un **motor de territorio** como librería pura, sin dependencias de infraestructura, y **trabajos en segundo plano** para el procesamiento asíncrono.
-3. **Base de datos** PostgreSQL + PostGIS: fuente única de verdad.
-
-Se elige el monolito modular frente a microservicios porque el equipo de backend es de una persona, la entrega es en 10 semanas y el volumen esperado no lo justifica. Las fronteras de módulo permiten separar servicios en el futuro si fuera necesario.
-
-![Arquitectura de componentes](diagramas/02-componentes.png)
-
-## 5.2 Principios de diseño
-
-- **El servidor siempre recalcula.** La app muestra métricas en vivo, pero las métricas oficiales, la conquista y el dominio los calcula el backend a partir de los puntos GPS crudos.
-- **Idempotencia.** Cada actividad lleva un UUID generado en el teléfono; reenviarla no la duplica.
-- **Procesamiento asíncrono.** Subir una actividad responde de inmediato (202); el cálculo de territorio ocurre en segundo plano y la app consulta el resultado.
-- **Configuración como datos.** Umbrales, ventanas y límites viven en la tabla `system_setting`.
-- **Privacidad por defecto.** Rutas visibles solo para seguidores por defecto; zonas de privacidad aplicadas a lo que ven otros.
-- **Código en inglés estándar.** Identificadores, base de datos, API, comentarios y commits en inglés (`Activity`, `Zone`, `Conquest`, `ActivityService`); la documentación y los textos de la app, en español (archivo de traducciones listo para otros idiomas).
-
-## 5.3 Decisiones tecnológicas
-
-| Capa | Decisión | Alternativas evaluadas | Justificación |
-|---|---|---|---|
-| App móvil | React Native + Expo SDK (TypeScript), Expo Router | Flutter; PWA | Una base de código para iOS y Android; GPS en segundo plano real; build y publicación en tiendas con EAS; aprovecha la experiencia React del equipo front. Una PWA pierde el GPS con la pantalla bloqueada |
-| Mapa | MapLibre React Native + teselas OpenStreetMap/MapTiler | Google Maps SDK | Código abierto, sin costo por carga, estilos personalizables y capas GeoJSON para los hexágonos |
-| GPS | expo-location + expo-task-manager, servicio en primer plano en Android | Librerías nativas de terceros | Soporte oficial de Expo; notificación persistente "Grabando carrera" |
-| Almacén local | expo-sqlite | AsyncStorage | Transaccional; soporta miles de puntos por actividad |
-| Estado y datos | TanStack Query + Zustand | Redux | Caché de servidor y reintentos sin código repetitivo |
-| Backend | .NET 10 Web API, EF Core 10, Npgsql | NestJS, FastAPI | Experiencia previa del equipo (proyecto FuelTrack): JWT, CI, Docker y despliegue ya probados; alto rendimiento |
-| Geometría | NetTopologySuite + PostGIS | Cálculo manual | Tipos `geography`, consultas espaciales por caja del mapa |
-| Celdas | H3 (librería .NET pocketken.H3) | Cuadrícula propia | Hexágonos de área casi uniforme, vecindad simple, jerarquía padre/hijas exacta (7 hijas) |
-| Base de datos | PostgreSQL 16 + PostGIS en Neon | MongoDB, SQL Server | Relacional con integridad; extensión geoespacial estándar; plan gratuito persistente con ramas (qa/prod) |
-| Autenticación | JWT propio (acceso 15 min) + refresh token rotativo; Google/Apple por ID token | Keycloak, Auth0 | Sin servidor de identidad adicional que operar; Apple exige "Sign in with Apple" si hay otros inicios sociales |
-| Notificaciones | Expo Push Service | FCM/APNs directo | Un solo API para ambas plataformas |
-| Archivos | Cloudflare R2 (compatible con S3) | Guardar en la BD | Barato y sin costo de salida; URLs firmadas |
-| Hosting API | Render (contenedor Docker) | Azure, Railway | Despliegue automático desde GitHub; experiencia previa |
-| CI/CD | GitHub Actions + Expo EAS Build/Submit | — | Pruebas en cada PR; builds de tienda reproducibles |
-
-## 5.4 Flujo principal: grabar una carrera y conquistar zonas
-
-![Secuencia de una actividad](diagramas/03-secuencia-actividad.png)
-
-1. El corredor inicia la carrera; la app activa el servicio de ubicación en primer plano y guarda cada punto en SQLite.
-2. Al finalizar, la app envía la actividad completa con su UUID. La API la guarda como `pending` y responde 202.
-3. El procesador en segundo plano toma la actividad, filtra puntos imprecisos, aplica las reglas antitrampas y calcula métricas y splits.
-4. El motor de territorio convierte la ruta en sub-celdas H3, actualiza el progreso de cada zona, registra conquistas y recalcula el dominio de las zonas tocadas.
-5. Se registran XP, logros, récords y retos; se generan notificaciones (por ejemplo, "te robaron la zona").
-6. La app consulta el estado y muestra el resumen con las zonas nuevas.
-
-# 6. Mecánica del juego
-
-![Mecánica H3](diagramas/05-mecanica-h3.png)
-
-## 6.1 Zonas
-
-El mundo se divide en hexágonos H3 de **resolución 9** (≈0,105 km²). Cada zona contiene exactamente **7 sub-celdas de resolución 10** (≈0,015 km²). Las zonas se crean bajo demanda la primera vez que alguien las recorre; no hace falta precargar el mapa.
-
-## 6.2 Conquista personal (regla aprobada)
-
-- Cada sub-celda recorrida por el usuario se marca en su progreso de esa zona.
-- La zona queda **conquistada** cuando el usuario acumula **al menos 5 de las 7 sub-celdas**, sumando todas sus actividades válidas.
-- La conquista es permanente y personal: mide cuánto de la ciudad ha explorado el usuario.
-- Umbral configurable: `territory.conquest_threshold = 5`.
-
-## 6.3 Dominio competitivo (regla aprobada)
-
-- **Puntos de zona** de un usuario = número de sub-celdas distintas recorridas en esa zona por cada actividad, sumadas en los **últimos 30 días**.
-- El **dueño** de la zona es el usuario con más puntos. Para quitarle la zona, hay que **superarlo**; con un empate se queda el dueño actual.
-- Se recalcula para las zonas tocadas por cada actividad y, cada noche, para todas las zonas con puntos que vencen (el territorio no defendido se pierde).
-- Cada cambio de dueño genera un evento (conquista de dominio, robo, pérdida por inactividad) y una notificación.
-- Parámetros: `territory.ownership_window_days = 30`, `territory.min_ownership_points = 3`.
-
-## 6.4 Antitrampas
-
-| Regla | Valor inicial | Efecto |
-|---|---|---|
-| Precisión GPS mínima | 30 m | Los puntos con peor precisión se descartan |
-| Velocidad máxima de tramo | 25 km/h | El tramo no suma distancia ni territorio (evita ir en carro) |
-| Ritmo promedio sospechoso | más rápido que 2:30 min/km sostenido | Actividad marcada `in_review`, excluida del territorio |
-| Duración mínima | 3 min | La actividad no suma territorio |
-| Saltos de posición | más de 200 m en menos de 5 s | El tramo se descarta |
-| Superposición temporal | dos actividades del mismo usuario que se solapan | La segunda se rechaza |
-
-## 6.5 Barrios: rey o reina del barrio (D-13)
-
-Las zonas son hexágonos porque así el juego es justo y funciona en cualquier ciudad, pero la gente piensa en barrios. Por eso cada zona pertenece a un **barrio real** (Naco, Piantini, Evaristo Morales…):
-
-- El hexágono sigue siendo lo único que se conquista y se domina.
-- El **rey o reina del barrio** es quien domina más zonas de ese barrio, con un mínimo de 3 (`territory.min_zones_for_ruler`); con un empate se queda quien tenía el título.
-- Ganar o perder el título genera una notificación y una entrada en el ranking del barrio.
-- Los límites de los barrios se cargan como datos (fuente oficial de la ONE si está disponible; si no, OpenStreetMap o límites dibujados por el equipo). Una zona sin barrio sigue funcionando normalmente.
-
-## 6.6 Experiencia (XP), niveles y rachas
-
-| Evento | XP inicial |
-|---|---|
-| Cada km recorrido | 10 |
-| Zona conquistada | 50 |
-| Dominio de una zona obtenido | 30 |
-| Robo de una zona | 40 |
-| Logro obtenido | según el logro |
-| Reto completado | según el reto |
-
-El nivel se calcula con una curva configurable (`level = f(total_xp)`). La **racha** cuenta semanas consecutivas con al menos una actividad válida.
-
-# 7. Despliegue
-
-![Despliegue](diagramas/04-despliegue.png)
-
-| Ambiente | Uso | API | Base de datos | App |
+| Código | Módulo | Función y descripción resumida | Prioridad | Depende de |
 |---|---|---|---|---|
-| Local | Desarrollo | `dotnet run` / Docker Compose | PostgreSQL + PostGIS en Docker | Expo Go / dev build |
-| QA | Pruebas del equipo QA cada sprint | Render (servicio qa) | Neon, rama `qa` | Build interna EAS (APK / TestFlight) |
-| Producción | Demo, evaluación y usuarios reales | Render (servicio prod) | Neon, rama `main` | Google Play (prueba cerrada → producción), App Store (TestFlight → producción) |
+| **RF-01** | **Registro y acceso** | **Registrar y verificar cuenta con correo:** crear cuenta con correo y contraseña segura y confirmar la titularidad del corredor mediante correo de verificación. | P0 | `RF-12` |
+| **RF-02** | **Registro y acceso** | **Iniciar y cerrar sesión con correo:** autenticar al corredor con su correo y contraseña manteniendo su sesión segura mediante tokens `JWT` y revocándola al salir. | P0 | `RF-01` |
+| **RF-03** | **Registro y acceso** | **Recuperar y cambiar contraseña:** restablecer la contraseña olvidada mediante enlace temporal enviado por correo o actualizarla desde los ajustes de cuenta. | P1 | `RF-01` |
+| **RF-04** | **Registro y acceso** | **Iniciar sesión con cuenta de Google:** permitir el acceso rápido mediante identidad verificada de Google como alternativa al inicio con contraseña. | P1 | `RF-02` |
+| **RF-05** | **Onboarding** | **Mostrar pantalla de bienvenida:** presentar al visitante la propuesta visual de Terrun y el acceso directo al registro o inicio de sesión. | P0 | — |
+| **RF-06** | **Onboarding** | **Solicitar permiso de ubicación GPS:** explicar en español por qué se requiere el GPS en primer y segundo plano antes de mostrar el diálogo de permisos del teléfono. | P0 | — |
+| **RF-07** | **Perfil y cuenta** | **Gestionar perfil propio:** consultar y editar nombre visible, `@handle`, foto de perfil, ciudad, datos físicos (para estimar calorías) y resumen de estadísticas propias. | P0 | `RF-02` |
+| **RF-08** | **Navegación** | **Navegar por pestañas y pantalla de inicio:** organizar la app en pestañas principales con resumen rápido del corredor y botón para iniciar el trackeo en máximo dos toques. | P0 | `RF-02` |
+| **RF-09** | **Comunidad** | **Consultar muro de actividad (Feed) con privacidad:** mostrar carreras, conquistas, dominios, coronas de barrio y logros recientes ocultando los metros iniciales y finales cerca del hogar. | P1 | `RF-17`, `RF-20`, `RF-22`, `RF-23`, `RF-25` |
+| **RF-10** | **Notificaciones** | **Enviar notificaciones push y bandeja de avisos:** alertar al teléfono cuando otro corredor roba una zona o al desbloquear logros, listando los avisos dentro de la aplicación. | P1 | `RF-02`, `RF-22`, `RF-25` |
+| **RF-11** | **Configuración** | **Configurar preferencias de carrera y avisos:** activar o desactivar la *auto-pausa* en paradas, los anuncios de voz por kilómetro y las alertas de territorio. | P1 | `RF-02` |
+| **RF-12** | **Soporte legal** | **Aceptar términos y política de privacidad (Ley 172-13):** mostrar los documentos legales en español y registrar la fecha y versión aceptadas al crear la cuenta. | P0 | — |
 
-- **CI:** cada PR ejecuta build, pruebas unitarias y de integración (PostgreSQL real), lint de la app y la verificación de que no hay atribución de herramientas de IA en los commits.
-- **CD:** merge a `main` despliega QA automáticamente; producción se promueve manualmente tras la aprobación de QA.
-- **Tiendas:** Google Play exige que las cuentas personales nuevas hagan una prueba cerrada con al menos 12 testers durante 14 días antes de publicar en producción. Se abre el 6 de enero y coincide con las dos semanas de QA.
+### Parte II — Funciones específicas que caracterizan a Terrun
 
-# 8. Seguridad y privacidad
-
-| Aspecto | Medida |
-|---|---|
-| Transporte | HTTPS/TLS obligatorio; HSTS |
-| Contraseñas | Hash PBKDF2-HMAC-SHA512 con sal, política de longitud mínima y lista de contraseñas comunes |
-| Sesión | JWT de acceso de 15 min firmado; refresh token opaco de 30 días, guardado como hash, rotativo y revocable; almacenado en SecureStore del teléfono |
-| Inicio social | Validación del ID token de Google/Apple (firma, audiencia, emisor, expiración) en el servidor |
-| Autorización | Roles `runner`, `moderator`, `admin`; verificación de propiedad en cada recurso; reglas de visibilidad (pública, seguidores, privada) y bloqueos |
-| Abuso | Limitación de tasa por IP y por usuario; validación de tamaño de las cargas de actividad |
-| Ubicación | Dato sensible: zonas de privacidad, visibilidad por defecto "seguidores", nunca se expone la posición en tiempo real |
-| Derechos del titular | Exportar datos (JSON + GPX) y eliminar la cuenta desde la app (requisito de App Store) |
-| Consentimiento | Términos y política de privacidad versionados, aceptación registrada; justificación clara del permiso de ubicación |
-| Auditoría | Registro de inicios de sesión, cambios de contraseña, eliminación de cuenta y acciones de moderación |
-| Secretos | Variables de entorno en Render/EAS; nunca en el repositorio; escaneo de secretos en CI |
-
-# 9. Calidad y pruebas
-
-| Nivel | Qué se prueba | Herramienta | Responsable |
-|---|---|---|---|
-| Unitarias | Motor de territorio (casos calculados a mano), cálculo de métricas, reglas antitrampas, XP | xUnit | Ashley |
-| Integración | Endpoints contra PostgreSQL + PostGIS real | xUnit + Testcontainers | Ashley |
-| Contrato de API | Colección de pruebas por endpoint (casos felices y de error) | Bruno / Postman | Rangelis |
-| Componentes app | Lógica del grabador, cola de subida, formateo | Jest + React Native Testing Library | Jorge, Rowlis |
-| Campo | Carreras reales: precisión, segundo plano, batería, sin conexión | Dispositivos Android e iOS | Jaime (+ grupo de corredores) |
-| Regresión | Flujos críticos antes de cada weekly | Checklist + Maestro (E2E) | Rangelis, Jaime |
-| Aceptación | Criterios de aceptación de cada historia | Revisión del Product Owner | Diana |
-
-**Definición de terminado (resumen):** criterios de aceptación verificados por alguien distinto del autor; pruebas automatizadas; CI en verde; endpoint documentado en Swagger; probado en Android e iOS; sin secretos ni valores del juego fijos en el código; documentación actualizada.
-
-# 10. Organización del equipo
-
-## 10.1 Responsabilidades
-
-| Integrante | Responsabilidades |
-|---|---|
-| **Ashley — Scrum Master + Backend** | Facilita weeklys y elimina impedimentos; arquitectura; API .NET, base de datos y migraciones, motor de territorio, trabajos en segundo plano, seguridad, CI/CD y despliegue; revisa todo PR que toque el contrato de API |
-| **Diana — Product Owner** | Mantiene y prioriza el backlog en GitHub Projects; redacta criterios de aceptación; encuesta y relación con el grupo de corredores; acepta o rechaza historias; documentación funcional, términos y política de privacidad, ficha de tienda; presentación final |
-| **Jorge — Front: núcleo técnico** | Grabador GPS en primer y segundo plano, auto-pausa, almacenamiento local y cola de subida, mapa MapLibre y capa de hexágonos, detalle de zona, resumen de actividad, zonas de privacidad, exportación GPX, push |
-| **Rowlis — Front: experiencia** | Sistema de diseño, navegación, registro e inicio de sesión (correo, Google, Apple), perfil y preferencias, historial, feed y social, clubes, rankings, logros y retos, notificaciones, zapatillas, configuración y cuenta |
-| **Rangelis — QA** | Plan de pruebas, casos por historia, pruebas de API, registro de defectos, informe de cierre por sprint |
-| **Jaime — QA** | Pruebas de campo en dispositivos reales, regresión, E2E con Maestro, coordinación de testers de la prueba cerrada |
-
-## 10.2 Matriz RACI
-
-| Decisión / entregable | R | A | C | I |
+| Código | Módulo | Función y descripción resumida | Prioridad | Depende de |
 |---|---|---|---|---|
-| Arquitectura y contrato de API | Ashley | Ashley | Jorge, Rowlis | Todos |
-| Prioridad del backlog | Diana | Diana | Ashley | Todos |
-| Reglas del juego (parámetros) | Ashley | Diana | Equipo, corredores | Todos |
-| Diseño de pantallas | Rowlis | Diana | Jorge | Todos |
-| Aprobación de calidad de un sprint | Rangelis, Jaime | Diana | Ashley | Todos |
-| Merge a `main` | Autor del PR | Ashley | Revisor | Todos |
-| Publicación en tiendas | Ashley | Diana | Jaime | Todos |
+| **RF-13** | **Trackeo deportivo** | **Trackear recorrido con GPS en primer y segundo plano:** capturar la ruta segundo a segundo y mostrar tiempo, distancia y ritmo en vivo incluso con la pantalla bloqueada. | P0 | `RF-06` |
+| **RF-14** | **Trackeo deportivo** | **Pausar y reanudar carrera (manual y auto-pausa):** detener y reanudar el cronómetro en movimiento de forma manual o automática cuando el corredor se detiene en un semáforo. | P0 | `RF-13` |
+| **RF-15** | **Trackeo deportivo** | **Emitir avisos de voz por kilómetro:** anunciar en español por audio el tiempo acumulado y el ritmo al completar cada kilómetro durante el trackeo. | P1 | `RF-11`, `RF-13` |
+| **RF-16** | **Trackeo deportivo** | **Guardar ruta sin internet y sincronizar sin duplicados:** almacenar cada punto GPS en `SQLite` local durante la carrera y enviar el recorrido al servidor con identificador único. | P0 | `RF-13` |
+| **RF-17** | **Trackeo deportivo** | **Calcular métricas deportivas oficiales y parciales (Splits):** calcular en el servidor la distancia oficial, tiempo en movimiento, ritmo (`min/km`), elevación, calorías y parciales por kilómetro. | P0 | `RF-16`, `RF-28` |
+| **RF-18** | **Trackeo deportivo** | **Mostrar resumen post-carrera e historial de actividades:** presentar al finalizar el mapa del trazo, las métricas oficiales y las zonas ganadas, y listar el historial de carreras propias. | P0 | `RF-17` |
+| **RF-19** | **Territorio H3** | **Visualizar mapa interactivo de zonas hexagonales:** dibujar sobre el mapa urbano las zonas H3 coloreadas según su estado (*libre, en progreso, conquistada, dominada por mí o por otro*). | P0 | `RF-08` |
+| **RF-20** | **Territorio H3** | **Otorgar conquista permanente de zona (Regla 5 de 7):** proyectar el trazo validado sobre las 7 sub-celdas H3 internas y conceder la conquista definitiva al acumular al menos **5 de 7**. | P0 | `RF-17`, `RF-28` |
+| **RF-21** | **Territorio H3** | **Consultar ficha de sub-celdas y balance territorial:** mostrar al tocar un hexágono el avance de sus 7 sub-celdas, su dueño actual y el total de zonas del corredor. | P0 | `RF-19`, `RF-20` |
+| **RF-22** | **Territorio H3** | **Calcular dominio competitivo (30 días) y robo de zonas:** asignar el dominio activo de cada zona a quien sume más sub-celdas en los últimos 30 días, recalcular vencimientos y registrar robos. | P0 | `RF-20` |
+| **RF-23** | **Barrios** | **Coronar rey o reina del barrio:** contabilizar las zonas activas dominadas dentro de cada uno de los 6 barrios del alcance inicial y coronar a quien lidere cada sector. | P1 | `RF-22` |
+| **RF-24** | **Gamificación** | **Otorgar experiencia (XP) y subir de nivel:** acreditar puntos de experiencia por kilómetros válidos, conquistas y dominios de zona, actualizando el nivel del corredor. | P1 | `RF-17`, `RF-20` |
+| **RF-25** | **Gamificación** | **Contabilizar racha semanal y desbloquear logros:** actualizar las semanas consecutivas entrenando y evaluar automáticamente el catálogo de medallas al cerrar cada carrera. | P1 | `RF-17`, `RF-24` |
+| **RF-26** | **Gamificación** | **Participar en retos deportivos:** inscribirse en retos temporales de distancia o conquista de zonas y sumar automáticamente el aporte de cada actividad válida. | P1 | `RF-17` |
+| **RF-27** | **Rankings** | **Consultar rankings individuales y por barrio:** mostrar las tablas de clasificación por zonas dominadas, zonas conquistadas, barrios y kilómetros acumulados. | P1 | `RF-17`, `RF-22`, `RF-23` |
+| **RF-28** | **Antitrampas** | **Filtrar saltos de GPS y descartar tramos en vehículo:** depurar en el servidor los rebotes de señal y rechazar segmentos con velocidades o aceleraciones incompatibles con ir a pie. | P0 | `RF-16` |
+| **RF-29** | **Clubes** | **Gestionar clubes y sumar territorio grupal:** crear un club, unirse mediante código de invitación y contabilizar el total de zonas dominadas por sus integrantes. | P1 | `RF-02`, `RF-22` |
 
-## 10.3 Ceremonias
+---
 
-| Ceremonia | Cuándo | Duración | Facilita |
-|---|---|---|---|
-| Weekly con el profesor (revisión + impedimentos) | Viernes | Según la clase | Ashley |
-| Planificación del sprint | Viernes, después de la weekly | 30 min | Ashley + Diana |
-| Sincronización del equipo | Lunes y miércoles por chat (asíncrona) | 10 min | Ashley |
-| Retrospectiva | Viernes, cada dos sprints | 20 min | Ashley |
+## 3.2 Requisitos de interfaz externa
 
-# 11. Plan de entrega
+![Diagrama de contexto de Terrun](diagramas/01-contexto.png)
 
-Sprints semanales de viernes a viernes. Entrega final: **miércoles 20 de enero de 2027**. Por acuerdo del equipo, el desarrollo se congela el **miércoles 6 de enero** para dedicar dos semanas completas a QA.
+### 1. Interfaces de usuario, hardware y comunicaciones
+- **Interfaz móvil y sensores:** pantallas íntegras en español con alto contraste para lectura al aire libre, uso del receptor GPS mediante servicio en primer plano (para trackear con pantalla bloqueada), almacenamiento local `SQLite` y salida de audio para avisos por kilómetro.
+- **Protocolo de comunicación:** intercambio de datos cifrado sobre **HTTPS (TLS)** en formato **JSON** y representación de hexágonos y límites de barrios en estándar **GeoJSON**.
 
-| Sprint | Fechas | Objetivo del sprint | Weekly |
-|---|---|---|---|
-| S0 | 10–13 nov | HLD y LLD aprobados; repositorio, CI y esqueletos; encuesta a corredores | Vie 13 nov |
-| S1 | 14–20 nov | Cuenta con correo, perfil y preferencias; BD y parámetros; sistema de diseño; prueba de concepto de GPS en segundo plano en Android e iOS | Vie 20 nov |
-| S2 | 21–27 nov | Grabar, guardar sin conexión, subir y procesar actividades; métricas y splits; historial y detalle | Vie 27 nov |
-| S3 | 28 nov–4 dic | Motor de territorio: sub-celdas, progreso, conquista 5/7; mapa con capa de zonas; ranking básico | Vie 4 dic |
-| S4 | 5–11 dic | **Hito P0 completo.** Dominio de 30 días y robos; XP y niveles; Google Sign-In; despliegue a producción | Vie 11 dic |
-| S5 | 12–18 dic | Social (seguir, feed, kudos, comentarios, bloqueo); notificaciones push; primera build en tiendas (prueba interna) | Vie 18 dic |
-| S6 | 19–23 dic | Clubes, logros, rachas y retos | **Mié 23 dic** (25 es Navidad) |
-| S7 | 26–30 dic | Récords, zapatillas, zonas de privacidad, Apple Sign-In, eliminar/exportar cuenta, moderación y reportes, GPX | **Mié 30 dic** (1 es Año Nuevo) |
-| S8 | 31 dic–6 ene | Cierre de funcionalidades y deuda técnica; **congelamiento de código el 6 de enero**; apertura de prueba cerrada en Google Play | — |
-| QA 1 | 7–13 ene | Ciclo completo de pruebas y corrección de defectos | Vie 8 ene |
-| QA 2 | 14–19 ene | Regresión final, ensayo de la demo, materiales de entrega | Vie 15 ene |
-| Entrega | Mié 20 ene | Presentación final | — |
+### 2. Interfaces de software (Servicios externos)
 
-## 11.1 Hitos de control
-
-| Fecha | Hito | Si no se cumple |
+| Servicio externo | Propósito en Terrun | Mecanismo de integración |
 |---|---|---|
-| 11 nov | HLD y LLD entregados | Bloqueante académico; máxima prioridad |
-| 20 nov | GPS en segundo plano funcionando en ambos sistemas | Grabación solo con la app en primer plano y pantalla encendida (plan B), registrado como riesgo |
-| 4 dic | Conquista 5/7 funcionando de punta a punta | Ashley y Jorge se dedican en exclusiva hasta resolverlo; se pospone el inicio del social |
-| 11 dic | P0 completo en producción | Los P1 de menor prioridad pasan a P2 sin discusión |
-| 18 dic | Primera build instalable desde la tienda | Distribuir APK directo y TestFlight mientras se resuelve |
-| 6 ene | Congelamiento de código | Lo no terminado pasa a P2; no se negocia |
+| **MapTiler / OpenStreetMap** | Proveer la cartografía vectorial de calles y parques de Santo Domingo. | Descarga de teselas vectoriales desde **MapLibre** por HTTPS. |
+| **Brevo / Resend y Google OAuth** | Envío de correos transaccionales y autenticación opcional con cuenta de Google. | Consumo de API REST por HTTPS y validación de tokens de identidad en el servidor. |
+| **Cloudflare R2 y Expo Push / FCM** | Almacenamiento de avatares en la nube y entrega de notificaciones *push* al teléfono. | Subida mediante enlaces firmados temporales y envío de alertas desde el servidor. |
 
-# 12. Riesgos
+---
 
-| ID | Riesgo | Prob. | Impacto | Mitigación |
-|---|---|---|---|---|
-| R-01 | El GPS en segundo plano se corta por políticas de batería del fabricante (Xiaomi, Samsung) o de iOS | Media | Alto | Prueba de concepto en el S1 en dispositivos reales; servicio en primer plano; guía al usuario para excluir la app del ahorro de batería |
-| R-02 | Revisión de Google Play por permiso de ubicación en segundo plano | Media | Alto | Usar ubicación "mientras se usa" + servicio en primer plano (no requiere el permiso de segundo plano); declarar el uso en la ficha |
-| R-03 | Carga de backend concentrada en una persona (112 operaciones de API) | Alta | Alto | P0 primero; contrato de API cerrado en el LLD para que el front avance con mocks; los P1 de menor prioridad se recortan en el hito del 11 dic |
-| R-04 | Vacaciones de diciembre reducen la capacidad | Alta | Medio | S6 y S7 con alcance menor; weeklys movidas al miércoles |
-| R-05 | Trampas (bicicleta, carro, GPS falso) desvirtúan el juego | Media | Medio | Reglas antitrampas configurables, revisión manual, cálculo solo en el servidor |
-| R-06 | Requisito de 12 testers durante 14 días para publicar en Google Play | Alta | Medio | Prueba cerrada desde el 6 ene con el equipo y el grupo de corredores |
-| R-07 | Costos de servicios en la nube | Baja | Medio | Planes gratuitos (Neon, R2, Expo, MapTiler); Render de pago solo en producción |
-| R-08 | Exposición de la ubicación de los usuarios | Baja | Alto | Privacidad por defecto, zonas de privacidad, sin posición en tiempo real, cumplimiento de la Ley 172-13 |
-| R-09 | Rendimiento del mapa con muchos hexágonos | Media | Medio | Consulta por caja visible, límite de celdas y simplificación por nivel de zoom |
+## 3.3 Características del sistema
 
-# 13. Supuestos y pendientes
+### 1. Resumen de características principales
+1. **Trackeo deportivo autónomo** (*offline-first*): registro continuo de carreras a pie con el GPS del teléfono en primer y segundo plano, métricas en vivo y resguardo local en `SQLite` ante cortes de internet.
+2. **Motor territorial H3 de doble capa:** conversión de rutas reales en progreso acumulativo sobre sub-celdas (nivel 10) para otorgar conquistas permanentes (**regla 5 de 7**) y disputar el dominio activo de zonas (nivel 9) en ventanas móviles de **30 días**.
+3. **Validación antitrampas en el servidor:** el teléfono captura el trazo en bruto, pero únicamente el servidor filtra saltos de GPS, descarta recorridos en vehículo y adjudica territorio y métricas oficiales.
+4. **Barrios, clubes y comunidad:** liderazgo por barrios de Santo Domingo, agrupación en clubes para sumar territorio colectivo y muro de actividad con recorte de privacidad cerca del hogar.
+5. **Progresión y motivación continua:** sistema de experiencia (**XP**) y niveles, rachas semanales, desbloqueo automático de medallas, retos deportivos y tablas de *rankings*.
 
-| ID | Tipo | Descripción | Responsable |
+### 2. Arquitectura general y tecnologías
+
+El sistema emplea una arquitectura **Cliente-Servidor basada en un Monolito Modular**: una aplicación móvil en **React Native + Expo**, una API central en **.NET 10** que concentra los módulos de negocio y el motor matemático geoespacial, y una base de datos **PostgreSQL 16 + PostGIS**.
+
+![Arquitectura de componentes de Terrun](diagramas/02-componentes.png)
+
+| Componente | Tecnología elegida | Alternativas | Justificación técnica y del equipo |
 |---|---|---|---|
-| S-01 | Supuesto | Jorge y Rowlis dominan React; si dominaran Flutter, se reevalúa la decisión del front en el S0 | Ashley |
-| S-02 | Supuesto | Las cuentas de desarrollador de Google Play ($25) y Apple ($99/año) se abren a nombre del equipo antes del S5 | Diana |
-| P-01 | Pendiente | Resultados de la encuesta a corredores para ordenar los P1 (S1) | Diana |
-| P-02 | Pendiente | Fecha exacta de la presentación y formato de evaluación con el profesor | Ashley |
-| P-03 | Pendiente | Validar con usuarios los valores iniciales de XP y de los umbrales antitrampas | Diana, Jaime |
+| **Aplicación móvil** | **React Native + Expo (TypeScript)** | Flutter; PWA | Código compartido para Android e iOS, soporte nativo de GPS en segundo plano y dominio previo en el equipo. |
+| **Mapa y almacenamiento local** | **MapLibre + SQLite** | Google Maps | Renderizado fluido de cientos de hexágonos sin costo de licencia y persistencia local sin internet. |
+| **Servidor (Backend)** | **.NET 10 Web API** | NestJS, FastAPI | Alto desempeño en cálculo geoespacial y experiencia previa comprobada en producción dentro del equipo. |
+| **Malla territorial y datos** | **Uber H3 + PostgreSQL 16 / PostGIS** | Cuadrícula propia | Relación exacta de 1 zona a 7 sub-celdas con barrios preasignados en semilla y consultas espaciales rápidas. |
+| **Infraestructura y entrega** | **Render + Neon + GitHub Actions + EAS** | Servidor manual | Pruebas automatizadas en cada cambio, despliegue continuo del servidor y generación de instaladores móviles. |
+
+### 3. Flujo de procesamiento y ambientes de trabajo
+- **Ciclo de una carrera:** el teléfono guarda los puntos GPS en `SQLite` mientras el usuario corre y muestra el ritmo en vivo; al finalizar con internet, envía el lote identificado con un código único para evitar duplicados. El servidor limpia la ruta, descarta tramos en vehículo, actualiza las sub-celdas y zonas H3, evalúa en un solo paso los robos de dominio, barrios, XP y logros, y devuelve el resumen oficial.
+- **Ambientes:** el desarrollo se realiza en entorno **Local** (con Docker), se valida continuamente en el ambiente de **Pruebas (QA)** desplegado en Render y Neon, y se publica en el ambiente de **Producción** para la demostración final.
+
+---
+
+## 3.4 Requisitos no funcionales
+
+| Código | Aspecto de calidad | Criterio medible que debe cumplir el sistema | Prioridad |
+|---|---|---|---|
+| **RNF-01** | **Precisión deportiva** | Variación máxima del **3 %** en la distancia calculada frente a una ruta urbana de referencia. | P0 |
+| **RNF-02** | **Trackeo en segundo plano** | Captura continua durante **al menos 1 hora** con la pantalla bloqueada sin cierre del servicio GPS. | P0 |
+| **RNF-03** | **Consumo de batería** | Gasto moderado (meta de hasta **10 % de batería por hora** de trackeo activo) en un teléfono de gama media. | P1 |
+| **RNF-04** | **Tiempos de respuesta** | Consultas del mapa y perfil en menos de **500 ms** (p95) y validación completa de una carrera en menos de **10 s**. | P0 |
+| **RNF-05** | **Fluidez del mapa** | Carga de hexágonos visibles del sector en menos de **1 segundo** al desplazar el mapa. | P0 |
+| **RNF-06** | **Seguridad** | Tráfico cifrado por HTTPS, contraseñas con hash irreversible y sesiones con tokens `JWT` de corta duración. | P0 |
+| **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte de ruta cerca del domicilio en el muro. | P0 |
+| **RNF-08** | **Disponibilidad** | Servidor disponible y operativo durante las sesiones de pruebas de campo y la demostración final. | P1 |
+| **RNF-09** | **Compatibilidad móvil** | Operación en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta Apple Developer)**. | P0 |
+| **RNF-10** | **Usabilidad** | Inicio del trackeo en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. | P0 |
+| **RNF-11** | **Cobertura de pruebas** | Al menos el **80 %** de las reglas del motor de territorio y antitrampas verificadas con pruebas automáticas. | P0 |
+| **RNF-12** | **Escalabilidad** | Diseño modular e índices espaciales que no impidan escalar en el futuro. | P1 |

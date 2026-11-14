@@ -14,6 +14,23 @@ Formato:
 
 ---
 
+## 2026-11-13 — Diana — Actualización de responsables S0, cierre de encuesta (23 respuestas), HLD v2.0 académico y HLD v1.2 post-MVP
+- Hecho: actualizados los responsables de S0 en `docs/03-BACKLOG.md` y `docs/ESTADO.md` (`CTZ-08` y `CTZ-09` → Rowlis; `CTZ-10` → Jorge) y alineada la descripción de roles según `D-16`. Cerrado `CTZ-05` con 23 respuestas recolectadas (superando la meta de 15). Incorporado el **HLD v2.0** como entregable oficial para este período académico / MVP (`docs/01-HLD.md` y `docs/entregables/HLD-Terrun.docx`) aplicando las observaciones del profesor (*trackear*, descarte de P2 y de relojes inteligentes, síntesis en 29 RF —17 P0 y 12 P1— alineados con el backlog y versión concisa de ~10–11 páginas), y conservado el **HLD v1.2** completo con anexos como referencia para la evolución posterior al MVP (`docs/01-HLD-v1.2-post-MVP.md` y `docs/entregables/HLD-Terrun-v1.2-post-MVP.docx`, decisión `D-17`).
+- Evidencia: `docs/03-BACKLOG.md`, `docs/ESTADO.md`, `docs/DECISIONES.md` (D-15, D-16 y D-17), `docs/01-HLD.md`, `docs/01-HLD-v1.2-post-MVP.md`, `docs/entregables/HLD-Terrun.docx`, `docs/entregables/HLD-Terrun-v1.2-post-MVP.docx`.
+- Decisiones: D-15, D-16, D-17.
+- Siguiente paso: cargar el backlog en GitHub Projects (`CTZ-06`) y documentar el análisis detallado de la encuesta en el S1 (`CTZ-25`).
+
+## 2026-11-13 — Ashley — Ajuste de asignaciones del equipo (D-16)
+- Hecho: Rowlis toma CTZ-08 y CTZ-09 y Jorge toma CTZ-10; Rowlis se suma al backend en funciones puntuales. Actualizados la guía §3, el LLD (v1.2), `docs/sprints/S0.md`, el README, `CONTRIBUTING.md` (revisores) y `scripts/configurar-entorno.sh`.
+- Evidencia: `docs/DECISIONES.md` (D-16).
+- Decisiones: D-16.
+- Siguiente paso: Diana actualiza los responsables en `docs/03-BACKLOG.md` y `docs/ESTADO.md`; Ashley define qué funciones de backend toma Rowlis.
+
+## 2026-11-13 — Ashley — HLD v1.2 de Diana incorporado al repo
+- Hecho: el HLD v1.2 de Diana (estructura oficial de la asignatura, 90 RF por módulos, diseño visual de Terrun) pasa a ser el entregable `docs/entregables/HLD-Terrun.docx` y su PDF, con D-16 aplicado, asteriscos sobrantes quitados y una errata corregida. `docs/01-HLD.md` se regeneró desde el docx como versión de lectura; `scripts/generar_documentos.py` ya no genera el HLD. Referencias a secciones viejas del HLD corregidas en el backlog y el plan de pruebas.
+- Evidencia: `docs/entregables/HLD-Terrun.pdf` (46 páginas).
+- Siguiente paso: revisar con Diana las observaciones de la revisión (riesgos y hitos que se cayeron, prioridades inconsistentes, cifras de la encuesta).
+
 ## 2026-11-11 — Diana — CTZ-07 y CTZ-05 Confirmación del stack React y difusión de la encuesta
 - Hecho: confirmado con Jorge y Rowlis que se sienten cómodos trabajando con React + TypeScript y React Native + Expo (queda validado el supuesto S-01 y resuelto el bloqueo de front). Enlace de la encuesta (`https://terrun-encuesta.netlify.app`) compartido con los corredores; ya está circulando y recibiendo respuestas.
 - Evidencia: `docs/DECISIONES.md` (D-15), panel de Netlify Forms (`runner-survey`).
