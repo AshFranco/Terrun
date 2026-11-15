@@ -104,7 +104,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 
 | Código | Tipo | Descripción de la dependencia o asunción | Mitigación y alcance en el proyecto |
 |---|---|---|---|
-| **D-01** | Dependencia | **Plataformas móviles y cuenta de publicación:** operación con el GPS interno en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta de pago en Apple Developer para TestFlight)**. | Demostración oficial garantizada en dispositivos Android reales y soporte multiplataforma en código. |
+| **D-01** | Dependencia | **Plataformas móviles y cuenta de publicación:** operación con el GPS interno en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta de pago en Apple Developer para TestFlight)**. | Demostración oficial garantizada en dispositivos Android reales y soporte multiplataforma en código. En caso de no contar con cuenta de Apple Developer, la validación de la entrega académica se limita a Android y iOS queda fuera de los criterios de aceptación. |
 | **D-02** | Dependencia | **Instalador de desarrollo para GPS en segundo plano:** el sistema operativo móvil exige un binario compilado (*development build*) para mantener activo el GPS con la pantalla bloqueada. | Generación de compilaciones de desarrollo desde los primeros sprints en lugar de usar visores limitados. |
 | **D-03** | Dependencia | **Servicios externos en capa gratuita:** disponibilidad y cuotas sin costo de *MapTiler / OpenStreetMap* (mapas), *Render* (servidor), *Neon* (base de datos), *Brevo / Resend* (correos) y *Cloudflare R2* (imágenes). | Caché de zonas en el teléfono y consumo acotado al volumen de usuarios de validación académica. |
 | **D-04** | Dependencia | **Cartografía semilla de barrios:** delimitación de los 6 barrios iniciales de Santo Domingo (*Piantini, Naco, Evaristo Morales, Serrallés, Paraíso y Bella Vista*). | Cada hexágono H3 lleva preasignado su barrio en la carga inicial de base de datos, evitando cálculos geométricos pesados por carrera. |
@@ -218,7 +218,7 @@ El sistema emplea una arquitectura **Cliente-Servidor basada en un Monolito Modu
 | **RNF-06** | **Seguridad** | Tráfico cifrado por HTTPS, contraseñas con hash irreversible y sesiones con tokens `JWT` de corta duración. | P0 |
 | **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte de ruta cerca del domicilio en el muro. | P0 |
 | **RNF-08** | **Disponibilidad** | Servidor disponible y operativo durante las sesiones de pruebas de campo y la demostración final. | P1 |
-| **RNF-09** | **Compatibilidad móvil** | Operación en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta Apple Developer)**. | P0 |
+| **RNF-09** | **Compatibilidad móvil** | Operación en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta Apple Developer)**. En caso de no contar con cuenta de Apple Developer, la validación de la entrega académica se limita a Android y iOS queda fuera de los criterios de aceptación. | P0 |
 | **RNF-10** | **Usabilidad** | Inicio del trackeo en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. | P0 |
 | **RNF-11** | **Cobertura de pruebas** | Al menos el **80 %** de las reglas del motor de territorio y antitrampas verificadas con pruebas automáticas. | P0 |
 | **RNF-12** | **Escalabilidad** | Diseño modular e índices espaciales que no impidan escalar en el futuro. | P1 |
