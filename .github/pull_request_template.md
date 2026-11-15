@@ -1,7 +1,7 @@
 <!-- Título del PR en inglés (formato Conventional Commits); descripción en español -->
 ## Qué resuelve
 
-<!-- Historia del backlog: CTZ-XX -->
+<!-- Historia del backlog: CTZ-XX. En "Closes #" va el número del ISSUE de esa historia (búscalo en el tablero), no el número CTZ -->
 Closes #
 
 ## Cómo probarlo

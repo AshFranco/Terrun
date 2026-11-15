@@ -4,6 +4,8 @@
 > **Weekly:** viernes 13 de noviembre · **Próximo hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
 > **Última actualización:** 14/11/2026 — Ashley
 
+Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
+
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
 
 Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.

@@ -18,6 +18,7 @@ Formato:
 - Hecho: LLD v1.3 alineado con el HLD v2.0 ("trackear" en lugar de "grabar", referencia al HLD v2.0 y al v1.2 post-MVP) y entregables `LLD-Terrun.docx`/`.pdf` regenerados; plan de pruebas apuntando al Anexo B del HLD v1.2 post-MVP y a los módulos M1–M13 del LLD; corregida en D-18 la historia que pasa a P0 (CTZ-54, no CTZ-55); encabezado de `ESTADO.md` con el hito del 20/11.
 - Evidencia: `docs/02-LLD.md`, `docs/entregables/LLD-Terrun.pdf`, `docs/qa/01-PLAN-PRUEBAS.md`, `docs/DECISIONES.md`, `docs/ESTADO.md`.
 - Hecho: CTZ-02 cerrada; los 6 integrantes tienen acceso al repo y `main` quedó protegida (PR obligatorio con 1 aprobación, check `autoria`, sin excepciones para administradores). Un push directo a `main` fue rechazado por GitHub.
+- Hecho: tablero del equipo movido a la cuenta AshFranco y ligado al repo (https://github.com/users/AshFranco/projects/4): 106 historias (4 en Hecha, 102 en Pendiente), público, con auto-add de issues nuevos. Enlazado desde el README, `ESTADO.md` y la guía (§2, §5 y §6); la plantilla de PR aclara que `Closes #` lleva el número del issue.
 - Siguiente paso: CTZ-03 (esqueleto del backend).
 
 ## 2026-11-13 — Diana — Actualización de responsables S0, cierre de encuesta (23 respuestas), HLD v2.0 académico y HLD v1.2 post-MVP
