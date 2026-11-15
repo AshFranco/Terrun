@@ -136,7 +136,7 @@ EF Core se configura con `UseSnakeCaseNamingConvention()`: `DistanceM` en C# se 
 6. **Sin `TODO` ni `FIXME` en `main`.** Lo pendiente se convierte en issue.
 7. **Errores explícitos.** Nada de `catch` vacíos. El backend lanza excepciones de dominio que el middleware convierte en `ProblemDetails` con su `code` (LLD §3.4); la app traduce cada `code` a un mensaje en español.
 8. **Nada de datos personales en los logs:** ni coordenadas, ni correos, ni tokens. Se registran IDs.
-9. **Fechas siempre con zona.** `DateTimeOffset` en C#, cadenas ISO con `Z` en TypeScript. Nunca `DateTime.Now`: se usa `IClock`.
+9. **Fechas siempre con zona.** `DateTimeOffset` en C#, cadenas ISO con `Z` en TypeScript. Nunca `DateTime.Now` ni `DateTimeOffset.UtcNow`: se usa el `TimeProvider` inyectado (el reloj de la app), que las pruebas pueden reemplazar.
 10. **Dependencias nuevas con justificación.** Agregar un paquete de NuGet o npm exige una línea en `docs/DECISIONES.md` (qué es, por qué y qué alternativa se descartó).
 
 ## 4. Backend (.NET)

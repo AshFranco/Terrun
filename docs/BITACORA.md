@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — CTZ-13 Migración inicial
+- Hecho: entidades y enums de M1 (6 tablas), M2 (4), M13 (1) y `audit_log` (M12, adelantada para CTZ-14) en `Terrun.Domain`; configuraciones de EF con los nombres del estándar (`pk_`, `fk_`, `uk_`, `ck_`), `citext`, `geography(point, 4326)`, `CHECK` de peso y radio, y defaults de preferencias activos; migración `AddIdentityProfileAndSettingsTables` con los 20 parámetros del LLD §2.4 y los documentos legales v1.0. La API aplica las migraciones al arrancar. Revisión de integridad contra el LLD completo: se agregaron `security_version` (claim `sv`), índice por `family_id`, interceptor de `created_at`/`updated_at` con `TimeProvider` y `audit_log` inmutable por trigger. 14 pruebas de integración nuevas (22 en total). Las fechas se redondean a microsegundos, la precisión de PostgreSQL (la CI en Linux lo detectó).
+- Evidencia: `dotnet test` 22/22; `docker compose up` desde cero migra y responde Healthy (y al reiniciar: "No migrations were applied"); migración aplicada en una rama temporal de Neon copiada de `qa` (12 tablas, `audit_log` rechaza DELETE) y rama borrada. Mutaciones verificadas: un cambio de modelo sin migración y quitar el interceptor de fechas hacen fallar las pruebas.
+- Decisiones: D-22; LLD v1.7.
+- Siguiente paso: al mergear, Render migra la rama `qa` de Neon. Sigue CTZ-14 (registro y login). Diana debe nombrar los textos de CTZ-27 `terminos-v1.0.md` y `privacidad-v1.0.md`.
+
 ## 2026-11-15 — Ashley — Cierre del S0 y planificación del S1
 - Hecho: S0 cerrado con 7 de 12 historias (CTZ-01 a CTZ-07); CTZ-08 a CTZ-12 pasan al S1 sin avance en el repo. `ESTADO.md` reescrito para el S1 (23 historias: 18 del backlog y 5 que vienen de S0), con el orden por persona según dependencias. CTZ-18 (despliegue de QA) queda hecha porque se adelantó en CTZ-04. `docs/sprints/S0.md` completado y `docs/sprints/S1.md` creado con el compromiso y los riesgos.
 - Evidencia: `docs/ESTADO.md`, `docs/sprints/S0.md`, `docs/sprints/S1.md`; https://terrun-api-qa.onrender.com/health.

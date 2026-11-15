@@ -1,5 +1,6 @@
 using Terrun.Api.Modules.Platform;
 using Terrun.Infrastructure;
+using Terrun.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,12 @@ builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddPlatformModule();
 
 var app = builder.Build();
+
+// QA and production apply pending migrations on every deploy; tests turn this off to control the database themselves
+if (app.Configuration.GetValue<bool>(DatabaseMigrator.MigrateOnStartupKey))
+{
+    await app.Services.MigrateDatabaseAsync();
+}
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
