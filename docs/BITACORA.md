@@ -17,7 +17,8 @@ Formato:
 ## 2026-11-14 — Ashley — Ajustes tras el HLD v2.0 (PR #6)
 - Hecho: LLD v1.3 alineado con el HLD v2.0 ("trackear" en lugar de "grabar", referencia al HLD v2.0 y al v1.2 post-MVP) y entregables `LLD-Terrun.docx`/`.pdf` regenerados; plan de pruebas apuntando al Anexo B del HLD v1.2 post-MVP y a los módulos M1–M13 del LLD; corregida en D-18 la historia que pasa a P0 (CTZ-54, no CTZ-55); encabezado de `ESTADO.md` con el hito del 20/11.
 - Evidencia: `docs/02-LLD.md`, `docs/entregables/LLD-Terrun.pdf`, `docs/qa/01-PLAN-PRUEBAS.md`, `docs/DECISIONES.md`, `docs/ESTADO.md`.
-- Siguiente paso: CTZ-02 (invitar al equipo y proteger `main`) y CTZ-03 (esqueleto del backend).
+- Hecho: CTZ-02 cerrada; los 6 integrantes tienen acceso al repo y `main` quedó protegida (PR obligatorio con 1 aprobación, check `autoria`, sin excepciones para administradores). Un push directo a `main` fue rechazado por GitHub.
+- Siguiente paso: CTZ-03 (esqueleto del backend).
 
 ## 2026-11-13 — Diana — Actualización de responsables S0, cierre de encuesta (23 respuestas), HLD v2.0 académico y HLD v1.2 post-MVP
 - Hecho: actualizados los responsables de S0 en `docs/03-BACKLOG.md` y `docs/ESTADO.md` (`CTZ-08` y `CTZ-09` → Rowlis; `CTZ-10` → Jorge) y alineada la descripción de roles según `D-16`. Cerrado `CTZ-05` con 23 respuestas recolectadas (superando la meta de 15). Incorporado el **HLD v2.0** como entregable oficial para este período académico / MVP (`docs/01-HLD.md` y `docs/entregables/HLD-Terrun.docx`) aplicando las observaciones del profesor (*trackear*, descarte de P2 y de relojes inteligentes, síntesis en 29 RF —17 P0 y 12 P1— alineados con el backlog y versión concisa de ~10–11 páginas), y conservado el **HLD v1.2** completo con anexos como referencia para la evolución posterior al MVP (`docs/01-HLD-v1.2-post-MVP.md` y `docs/entregables/HLD-Terrun-v1.2-post-MVP.docx`, decisión `D-17`).
