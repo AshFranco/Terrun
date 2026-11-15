@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — Cierre del S0 y planificación del S1
+- Hecho: S0 cerrado con 7 de 12 historias (CTZ-01 a CTZ-07); CTZ-08 a CTZ-12 pasan al S1 sin avance en el repo. `ESTADO.md` reescrito para el S1 (23 historias: 18 del backlog y 5 que vienen de S0), con el orden por persona según dependencias. CTZ-18 (despliegue de QA) queda hecha porque se adelantó en CTZ-04. `docs/sprints/S0.md` completado y `docs/sprints/S1.md` creado con el compromiso y los riesgos.
+- Evidencia: `docs/ESTADO.md`, `docs/sprints/S0.md`, `docs/sprints/S1.md`; https://terrun-api-qa.onrender.com/health.
+- Riesgos: carga de Rowlis (9 historias; CTZ-15 y CTZ-23b, ambas P1, son candidatas a S2 si Diana lo decide) y el hito del 20/11, que depende de que CTZ-08 esté en `main` a más tardar el martes 17.
+- Siguiente paso: Rowlis arranca CTZ-08; Ashley, CTZ-13; Diana, CTZ-27.
+
 ## 2026-11-15 — Ashley — CTZ-04 Cuentas de servicios (cierre)
 - Hecho: Render `terrun-api-qa` (Docker, Virginia, despliegue automático desde `main`) conectado a la rama `qa` de Neon; `/health` = Healthy, `/swagger` 200 y OpenAPI 3.1.1 con `servers` en `https` (gracias a `ASPNETCORE_FORWARDEDHEADERS_ENABLED`). Organización `terrun` en Expo con Diana (Admin) y Jorge, Rowlis, Rangelis y Jaime (Developer) invitados. LLD v1.6 (§8: variables y ambiente de QA).
 - Evidencia: https://terrun-api-qa.onrender.com/health; `docs/DECISIONES.md` (D-21).

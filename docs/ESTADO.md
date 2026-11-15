@@ -1,59 +1,77 @@
 # Estado actual del proyecto
 
-> **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
-> **Weekly:** viernes 13 de noviembre · **Próximo hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
+> **Sprint en curso: S1 — Cuenta, perfil y prueba de GPS** · del sábado 14 al viernes 20 de noviembre de 2026
+> **Weekly:** viernes 20 de noviembre · **Hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
 > **Última actualización:** 15/11/2026 — Ashley
 
 Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
 
-Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
+Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`. Compromiso y riesgos del sprint: `docs/sprints/S1.md`. QA: https://terrun-api-qa.onrender.com (`/health`, `/swagger`).
 
 ## Tareas por persona
 
+Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a otros.
+
 ### Ashley — Scrum Master + Backend
-- ✅ **CTZ-01** Entregar HLD y LLD (mié 11/11). *Entregables listos en `docs/entregables/`: HLD v2.0 como versión oficial para este período académico (MVP) tras las correcciones del profesor (`D-17`), HLD v1.2 conservado como referencia posterior al MVP (`HLD-Terrun-v1.2-post-MVP.docx`) y LLD v1.2.*
-- ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con los checks `autoria`, `integridad` y `backend`, sin excepciones (push directo rechazado, verificado el 14/11; reglas ajustadas el 15/11, D-20).*
-- ✅ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Mergeado (PR #115): solución .NET 10, `/health`, Swagger, compose con PostGIS y CI de formato, build y pruebas.*
-- 👀 **CTZ-04** Cuentas en Neon, Render y Expo. *Neon (proyecto `terrun`, Postgres 16, ramas `main` y `qa` con PostGIS), Render (`terrun-api-qa`, https://terrun-api-qa.onrender.com, `/health` = Healthy) y organización `terrun` en Expo con el equipo invitado; credenciales fuera del repo (D-21).*
+- ✅ **CTZ-18** Despliegue de QA: Render + Neon `qa`, despliegue automático al hacer merge a `main`. *Adelantado en CTZ-04 (D-21): `/health` = Healthy y Swagger visible.*
+- ⬜ **CTZ-13** Migración inicial: tablas de M1, M2 y M13 + datos iniciales de `system_setting` y `legal_document`. *Bloquea CTZ-14 y CTZ-17.*
+- ⬜ **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.*
+- ⬜ **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.*
+- ⬜ **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16 y CTZ-08.*
+- Revisar los PR de backend de Rowlis: CTZ-15 y CTZ-17.
 
 ### Diana — Product Owner
-- ✅ **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Publicada en https://terrun-encuesta.netlify.app y compartida con los corredores; meta superada con 23 respuestas recibidas (meta inicial: 15).*
-- ✅ **CTZ-07** Confirmar con Jorge y Rowlis que dominan React (supuesto S-01). *Confirmado con ambos y registrado en `docs/DECISIONES.md` (D-15).*
-- ⬜ **CTZ-06** Cargar el backlog en GitHub Projects. *Depende de CTZ-02.*
+- ⬜ **CTZ-27** Términos y política de privacidad v1 en `docs/producto/legal/`. *Bloquea CTZ-17.*
+- ⬜ **CTZ-25** Analizar las 23 respuestas de la encuesta y confirmar el orden de los P1.
+- ⬜ **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20).
 
 ### Jorge — Front, experiencia de usuario y núcleo técnico
-- ⬜ **CTZ-10** Sistema de diseño base + wireframes de P-01 a P-09.
+- ⬜ **CTZ-10** Sistema de diseño base + wireframes de P-01 a P-09. *Viene de S0. Lo usan las pantallas de Rowlis (CTZ-23 y CTZ-24).*
+- ⬜ **CTZ-09** Configuración de `expo-location` + `TaskManager` y MapLibre RN en un *development build*, con Rowlis. *Viene de S0. Depende de CTZ-08.*
+- ⬜ **CTZ-20** Prueba de concepto del GPS en segundo plano (Android): 30 min con la pantalla bloqueada. *Depende de CTZ-08. Es el hito del 20/11 y bloquea CTZ-29.*
+- ⬜ **CTZ-21** Mapa base MapLibre en la pestaña Mapa. *Depende de CTZ-08.*
 
 ### Rowlis — Front y apoyo puntual en Backend
-- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Depende de CTZ-02.*
-- ⬜ **CTZ-09** Investigar expo-location + TaskManager y MapLibre RN en un development build. *Depende de CTZ-08.*
+- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `main` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
+- ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
+- ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
+- ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Depende de CTZ-13 y CTZ-27.*
+- ⬜ **CTZ-23** Pantallas P-01 a P-04 contra QA. *Depende de CTZ-22 y CTZ-14.*
+- ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16.*
+- ⬜ **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley.
+- ⬜ **CTZ-15** (P1) Recuperar y restablecer contraseña (revisa Ashley). *Depende de CTZ-14.*
+- ⬜ **CTZ-23b** (P1) Pantalla P-05 recuperar contraseña. *Depende de CTZ-23 y CTZ-15.*
 
 ### Rangelis — QA
-- ⬜ **CTZ-11** Plan de pruebas v1 en `docs/qa/01-PLAN-PRUEBAS.md`.
+- ⬜ **CTZ-11** Plan de pruebas v1 en `docs/qa/01-PLAN-PRUEBAS.md`. *Viene de S0.*
+- ⬜ **CTZ-28** Casos de M1/M2 y colección de API (Bruno) contra QA; registro de defectos activo. *QA ya está en línea (CTZ-18).*
 
 ### Jaime — QA
-- ⬜ **CTZ-12** Plan de pruebas de campo: dispositivos y rutas medidas en `docs/qa/03-PRUEBAS-CAMPO.md`.
+- ⬜ **CTZ-12** Plan de pruebas de campo: dispositivos y rutas medidas en `docs/qa/03-PRUEBAS-CAMPO.md`. *Viene de S0. Lo necesita CTZ-29.*
+- ⬜ **CTZ-29** Prueba de campo del CTZ-20 en 2–3 teléfonos Android reales. *Depende de CTZ-20 y CTZ-12.*
 
 ## Bloqueos abiertos
 
 | Desde | Bloqueo | Afecta a | Responsable de resolverlo |
 |---|---|---|---|
-| — | Ninguno | — | — |
+| 15/11 | El esqueleto de la app (CTZ-08) no existe todavía | Jorge (CTZ-09, CTZ-20, CTZ-21), Rowlis (CTZ-22 a CTZ-24) y Jaime (CTZ-29) | Rowlis, antes del martes 17 |
 
 ## Avance del sprint
 
+Las historias compartidas (CTZ-09 y CTZ-19) cuentan para las dos personas y una sola vez en el total del equipo.
+
 | Persona | Hechas | Total |
 |---|---|---|
-| Ashley | 2 | 4 |
-| Diana | 2 | 3 |
-| Jorge | 0 | 1 |
-| Rowlis | 0 | 2 |
-| Rangelis | 0 | 1 |
-| Jaime | 0 | 1 |
-| **Equipo** | **4** | **12** |
+| Ashley | 1 | 5 |
+| Diana | 0 | 3 |
+| Jorge | 0 | 4 |
+| Rowlis | 0 | 9 |
+| Rangelis | 0 | 2 |
+| Jaime | 0 | 2 |
+| **Equipo** | **1** | **23** |
 
-## Próximo sprint (S1 — 14 al 20 de noviembre)
+## Próximo sprint (S2 — 21 al 27 de noviembre)
 
-Cuenta, perfil y prueba de GPS en segundo plano: CTZ-13 a CTZ-29. Hito del 20/11: GPS funcionando con la pantalla bloqueada en Android e iOS.
+Actividades y trackeo deportivo (ver `docs/03-BACKLOG.md`, sección S2).
