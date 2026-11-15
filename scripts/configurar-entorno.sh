@@ -23,8 +23,8 @@ echo ""
 echo "¿Quién eres?"
 echo "  1) Ashley   — Scrum Master + Backend"
 echo "  2) Diana    — Product Owner"
-echo "  3) Jorge    — Front: núcleo técnico (GPS, mapa, offline)"
-echo "  4) Rowlis   — Front: experiencia (cuenta, social, clubes, gamificación) + backend puntual"
+echo "  3) Jorge    — Front: experiencia de usuario y núcleo técnico (UX/UI, GPS, mapa, offline)"
+echo "  4) Rowlis   — Front: estructura y pantallas (cuenta, clubes, gamificación) + backend puntual"
 echo "  5) Rangelis — QA: plan, casos y API"
 echo "  6) Jaime    — QA: campo y regresión"
 printf "Número: "
@@ -32,8 +32,8 @@ read -r OPCION
 case "$OPCION" in
     1) PERSONA="Ashley"; ROL="Scrum Master + Backend" ;;
     2) PERSONA="Diana"; ROL="Product Owner" ;;
-    3) PERSONA="Jorge"; ROL="Front: núcleo técnico" ;;
-    4) PERSONA="Rowlis"; ROL="Front: experiencia + backend puntual" ;;
+    3) PERSONA="Jorge"; ROL="Front: experiencia de usuario y núcleo técnico" ;;
+    4) PERSONA="Rowlis"; ROL="Front: estructura y pantallas + backend puntual" ;;
     5) PERSONA="Rangelis"; ROL="QA: plan, casos y API" ;;
     6) PERSONA="Jaime"; ROL="QA: campo y regresión" ;;
     *) echo "Opción no válida"; exit 1 ;;

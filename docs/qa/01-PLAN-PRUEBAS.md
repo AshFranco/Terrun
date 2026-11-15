@@ -4,7 +4,7 @@
 
 Completar cada sección:
 
-1. **Objetivo y alcance.** Qué se prueba en cada módulo (M1–M13) y qué queda fuera.
+1. **Objetivo y alcance.** Qué se prueba en cada módulo (M1–M15) y qué queda fuera.
 2. **Niveles de prueba.** Unitarias, integración, contrato de API, componentes de la app, campo, regresión, aceptación. Indicar herramienta y responsable (HLD Anexo B.1).
 3. **Ambientes.** Local, QA (Render + Neon `qa`), producción. Datos de prueba y usuarios de prueba.
 4. **Criterios de entrada por sprint.** Por ejemplo: historia en `👀 en revisión`, desplegada en QA, con criterios de aceptación escritos.
