@@ -33,7 +33,7 @@ internal sealed class TimestampsInterceptor(TimeProvider clock) : SaveChangesInt
             return;
         }
 
-        var now = clock.GetUtcNow();
+        var now = TruncateToMicroseconds(clock.GetUtcNow());
         foreach (var entry in context.ChangeTracker.Entries())
         {
             if (entry.State == EntityState.Added)
@@ -47,6 +47,11 @@ internal sealed class TimestampsInterceptor(TimeProvider clock) : SaveChangesInt
             }
         }
     }
+
+    // PostgreSQL stores timestamptz in microseconds and .NET ticks are 100 ns: truncating keeps the tracked entity
+    // equal to the stored row (otherwise an equality check after a reload fails on Linux, whose clock has ticks)
+    private static DateTimeOffset TruncateToMicroseconds(DateTimeOffset value) =>
+        value.AddTicks(-(value.Ticks % TimeSpan.TicksPerMicrosecond));
 
     private static void SetIfMapped(EntityEntry entry, string propertyName, DateTimeOffset now)
     {

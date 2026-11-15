@@ -11,6 +11,8 @@ public sealed class MigratedDatabaseFixture : IAsyncLifetime
     private readonly PostgisFixture _postgis = new();
     private TerrunApiFactory? _factory;
 
+    public string ConnectionString => _postgis.ConnectionString;
+
     public async ValueTask InitializeAsync()
     {
         await _postgis.InitializeAsync();
