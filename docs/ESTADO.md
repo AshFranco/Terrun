@@ -1,7 +1,7 @@
 # Estado actual del proyecto
 
 > **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
-> **Weekly:** viernes 13 de noviembre · **Próximo hito:** entrega del HLD y el LLD, miércoles 11 de noviembre
+> **Weekly:** viernes 13 de noviembre · **Próximo hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
 > **Última actualización:** 13/11/2026 — Diana
 
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
