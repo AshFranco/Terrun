@@ -39,6 +39,10 @@ dotnet_naming_symbols.async_methods.required_modifiers = async
 dotnet_naming_style.suffix_async.required_suffix = Async
 dotnet_naming_style.suffix_async.capitalization = pascal_case
 
+# Test methods follow Method_Scenario_ExpectedResult (docs/04-ESTANDARES-DESARROLLO.md §6), without the Async suffix
+[backend/tests/**.cs]
+dotnet_naming_rule.async_suffix.severity = none
+
 [*.{json,yml,yaml}]
 indent_size = 2
 

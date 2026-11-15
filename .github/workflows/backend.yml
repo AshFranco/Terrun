@@ -1,0 +1,37 @@
+name: Backend
+
+# Runs on every pull request (not only on backend changes) because it is a required check:
+# a required check that is skipped by a path filter leaves documentation-only PRs waiting forever.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: backend/global.json
+
+      - name: Restore
+        run: dotnet restore Terrun.slnx
+
+      - name: Check formatting
+        run: dotnet format Terrun.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build Terrun.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --solution Terrun.slnx --configuration Release --no-build

@@ -1,0 +1,34 @@
+name: terrun
+
+services:
+  db:
+    # The official PostGIS image is published only for amd64; Apple Silicon runs it under emulation
+    image: postgis/postgis:16-3.5
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: terrun
+      POSTGRES_USER: terrun
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-terrun_local}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U terrun -d terrun"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: .
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Db: Host=db;Port=5432;Database=terrun;Username=terrun;Password=${POSTGRES_PASSWORD:-terrun_local}
+    ports:
+      - "5080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
