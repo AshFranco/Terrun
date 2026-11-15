@@ -61,6 +61,12 @@ Las comparten todos los módulos; ningún controlador las repite (D-24):
 - **Límite de tasa:** 100/min por usuario (o IP) y, en los endpoints con `[EnableRateLimiting("auth")]`, 10/min por IP; 429 `RATE_LIMITED` con `Retry-After`.
 - **Seguridad y logs:** cuerpo máximo de 2 MB, cabeceras de seguridad, HSTS en producción y una línea de log JSON por solicitud.
 
+## Autenticación y correos (CTZ-14)
+
+- **JWT:** en local la clave sale de `appsettings.Development.json` (solo sirve en tu máquina). En QA y producción va en la variable secreta `Jwt__Key` de Render (al menos 32 bytes; genérala con `openssl rand -base64 48`). Sin ella la API no arranca.
+- **Probar en Swagger:** registra o inicia sesión en `/api/v1/auth/...`, copia el `accessToken` y pégalo en **Authorize**. Todo endpoint pide token salvo los marcados `[AllowAnonymous]`.
+- **Correos:** sin `Email__SmtpHost` no se envían. En `Development` el código de verificación aparece en el log de la API (`Email not sent ... code for local testing`); en los demás ambientes solo se registra que no se envió. Con SMTP (variables `Email__Smtp*` del LLD §8) sale de verdad, con cualquier proveedor.
+
 ## Pruebas y formato
 
 ```bash

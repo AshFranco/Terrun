@@ -14,5 +14,8 @@ public sealed class VerificationToken
 
     public DateTimeOffset? UsedAt { get; set; }
 
+    // Wrong codes entered; after the limit the code stops working and a new one must be requested
+    public short AttemptCount { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; }
 }

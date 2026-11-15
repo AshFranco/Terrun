@@ -70,6 +70,10 @@ internal static class ApiConventions
 
         app.Use(AddSecurityHeaders);
         app.UseHttpLogging();
+
+        // Authentication runs before the rate limiter so that the limit counts per user, not per shared IP
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseRateLimiter();
 
         return app;

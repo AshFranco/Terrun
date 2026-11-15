@@ -1,3 +1,4 @@
+using Terrun.Api.Modules.Identity;
 using Terrun.Api.Modules.Platform;
 using Terrun.Api.Web;
 using Terrun.Infrastructure;
@@ -9,9 +10,10 @@ var connectionString = builder.Configuration.GetConnectionString("Db")
     ?? throw new InvalidOperationException("Missing connection string 'ConnectionStrings:Db'.");
 
 builder.AddApiConventions();
-builder.Services.AddOpenApi();
-builder.Services.AddInfrastructure(connectionString);
+builder.Services.AddApiOpenApi();
+builder.Services.AddInfrastructure(connectionString, builder.Configuration);
 builder.Services.AddPlatformModule();
+builder.AddIdentityModule();
 
 var app = builder.Build();
 
@@ -26,11 +28,13 @@ app.UseApiConventions();
 // LLD §7.3: Swagger is exposed only outside production
 if (!app.Environment.IsProduction())
 {
-    app.MapOpenApi();
+    app.MapOpenApi().AllowAnonymous();
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "Terrun API v1"));
 }
 
-app.MapControllers();
+// Secure by default: every controller action needs a valid token unless it opts out with [AllowAnonymous].
+// Applied to the controllers, not as a fallback policy, so unknown routes still answer 404 and Swagger UI loads
+app.MapControllers().RequireAuthorization();
 app.MapPlatformModule();
 
 app.Run();

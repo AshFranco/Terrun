@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Terrun.Domain.Errors;
@@ -7,6 +8,7 @@ namespace Terrun.Api.Tests.Platform;
 
 // Test-only endpoints that exercise the API conventions before real modules exist; never part of the app
 [ApiController]
+[AllowAnonymous]
 [Route("probe")]
 public sealed class ProbeController : ControllerBase
 {

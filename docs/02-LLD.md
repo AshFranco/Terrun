@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.9
+version: 1.10
 fecha: 15 de noviembre de 2026
 ---
 
@@ -20,6 +20,7 @@ fecha: 15 de noviembre de 2026
 | 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup`, `app_user.security_version`, índice `refresh_token.family_id`, `audit_log` desde CTZ-13 y `TimeProvider` como reloj | Ashley |
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
+| 1.10 | 15/11/2026 | Autenticación (CTZ-14, D-26): contrato de registro, login, refresh, logout y verificación por código; errores `VERIFICATION_CODE_INVALID` y `CONSENT_REQUIRED`; evidencia del consentimiento; variables SMTP | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -131,9 +132,9 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | `app_user` | `id uuid`, `email citext`, `is_email_verified bool`, `password_hash text null`, `role user_role` (runner, moderator, admin), `status user_status` (active, suspended, deleted), `security_version int` (claim `sv`, §7.1; empieza en 1), `last_login_at`, `deleted_at`, `created_at`, `updated_at` | PK `id`; UK `email`; `password_hash` nulo solo si existe un `external_login` |
 | `external_login` | `id uuid`, `user_id uuid`, `provider login_provider` (google, apple), `subject text` (claim `sub`), `email citext`, `created_at` | FK → app_user (cascade); UK (`provider`, `subject`) |
 | `refresh_token` | `id uuid`, `user_id uuid`, `token_hash bytea` (SHA-256), `family_id uuid`, `expires_at`, `revoked_at`, `replaced_by uuid`, `ip inet`, `device text`, `created_at` | UK `token_hash`; índice (`user_id`, `revoked_at`); índice `family_id` (revocar la familia, §7.1) |
-| `verification_token` | `id uuid`, `user_id uuid`, `type token_type` (email_verification, password_reset), `token_hash bytea`, `expires_at`, `used_at`, `created_at` | UK `token_hash`; vigencia de 24 h (verificación) y 1 h (restablecimiento) |
+| `verification_token` | `id uuid`, `user_id uuid`, `type token_type` (email_verification, password_reset), `token_hash bytea` (SHA-256 del usuario y el código de 6 dígitos), `expires_at`, `used_at`, `attempt_count smallint`, `created_at` | UK `token_hash`; índice (`user_id`, `type`); vigencia de 24 h (verificación) y 1 h (restablecimiento); el código deja de servir tras 5 intentos fallidos (D-26) |
 | `legal_document` | `id uuid`, `type legal_document_type` (terms, privacy), `version text`, `url text`, `effective_from timestamptz` | UK (`type`, `version`) |
-| `consent` | `id uuid`, `user_id uuid`, `legal_document_id uuid`, `accepted_at`, `ip inet` | UK (`user_id`, `legal_document_id`) |
+| `consent` | `id uuid`, `user_id uuid`, `legal_document_id uuid`, `accepted_at`, `method consent_method` (registration, settings), `app_version varchar(20)`, `ip inet` | UK (`user_id`, `legal_document_id`); evidencia de cuándo, cómo y desde dónde se aceptó cada versión (Ley 172-13) |
 
 ### M2 — Perfil y preferencias
 
@@ -272,8 +273,8 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 
 | Método | Ruta | Rol | Descripción | P |
 |---|---|---|---|---|
-| POST | `/auth/register` | pub | Crea la cuenta (correo, contraseña, aceptación legal) y envía la verificación | P0 |
-| POST | `/auth/verify-email` | pub | Confirma el correo con el token recibido | P0 |
+| POST | `/auth/register` | pub | Crea la cuenta (correo, contraseña, nombre visible, `@handle` y aceptación de los términos y la privacidad vigentes), inicia la sesión y envía el código de verificación (§3.3) | P0 |
+| POST | `/auth/verify-email` | pub | Confirma el correo con el código de 6 dígitos recibido (D-26) | P0 |
 | POST | `/auth/resend-verification` | pub | Reenvía el correo de verificación | P0 |
 | POST | `/auth/login` | pub | Inicia sesión; devuelve el token de acceso y el refresh token | P0 |
 | POST | `/auth/google` | pub | Inicia sesión o registra con un ID token de Google | P1 |
@@ -450,6 +451,37 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 
 Respuestas: `202 Accepted` con `{ "id": "...", "status": "pending" }`; si el `clientId` ya existe, `200 OK` con la actividad existente (idempotencia); `409 ACTIVITY_OVERLAP`; `413 PAYLOAD_TOO_LARGE`; `400 VALIDATION_ERROR`.
 
+**POST `/auth/register`** (CTZ-14, D-26)
+
+```json
+{
+  "email": "ashley@example.com",
+  "password": "Corre-Piantini-2026!",
+  "displayName": "Ashley",
+  "handle": "ashley",
+  "acceptedLegalDocumentIds": ["<id de los términos vigentes>", "<id de la privacidad vigente>"],
+  "appVersion": "0.3.0",
+  "device": "Pixel 8 / Android 15"
+}
+```
+
+- Contraseña: de 10 a 128 caracteres y fuera de las 10.000 más comunes. `@handle`: de 3 a 30 letras minúsculas, dígitos, `_` o `.` (se guarda sin la `@`, sin distinguir mayúsculas). Nombre visible: hasta 60 caracteres.
+- Respuestas: `201 Created` con la sesión (igual que el login) y el correo sin verificar; `400 VALIDATION_ERROR` (con `errors` por campo); `400 CONSENT_REQUIRED`; `409 EMAIL_ALREADY_REGISTERED`; `409 HANDLE_TAKEN`. El código llega por correo y se confirma en P-04.
+
+**POST `/auth/login`** (`{ "email", "password", "device"? }`), **POST `/auth/refresh`** (`{ "refreshToken", "device"? }`): `200 OK` con
+
+```json
+{
+  "accessToken": "eyJ...",
+  "accessTokenExpiresAt": "2026-11-21T10:17:11Z",
+  "refreshToken": "Q2xh...",
+  "refreshTokenExpiresAt": "2026-12-21T10:02:11Z",
+  "user": { "id": "...", "email": "ashley@example.com", "displayName": "Ashley", "handle": "ashley", "isEmailVerified": false, "role": "runner" }
+}
+```
+
+Errores: `401 INVALID_CREDENTIALS` (login), `401 INVALID_TOKEN` (refresh vencido, revocado o reutilizado), `403 USER_SUSPENDED`. **POST `/auth/logout`** (`{ "refreshToken" }`, con token de acceso): `204`. **POST `/auth/verify-email`** (`{ "email", "code" }`): `204` o `400 VERIFICATION_CODE_INVALID`. **POST `/auth/resend-verification`** (`{ "email" }`): siempre `202`, exista o no la cuenta; envía un código nuevo como máximo una vez por minuto e invalida el anterior.
+
 **GET `/zones?bbox=-69.95,18.44,-69.88,18.50`**
 
 ```json
@@ -481,6 +513,8 @@ Estados de una zona para el usuario: `free`, `in_progress` (1 a 4 de 7), `conque
 | 400 | `VALIDATION_ERROR` | Datos inválidos; incluye `errors` por campo |
 | 401 | `INVALID_CREDENTIALS` | Correo o contraseña incorrectos (mensaje genérico) |
 | 401 | `INVALID_TOKEN` | JWT expirado o mal firmado, o refresh token revocado |
+| 400 | `VERIFICATION_CODE_INVALID` | Código de verificación incorrecto, vencido o bloqueado tras 5 intentos |
+| 400 | `CONSENT_REQUIRED` | Registro sin aceptar las versiones vigentes de los términos y de la privacidad |
 | 403 | `EMAIL_NOT_VERIFIED` | Acción que requiere el correo verificado |
 | 403 | `FORBIDDEN` | Sin permiso sobre el recurso |
 | 403 | `USER_SUSPENDED` | Cuenta suspendida |
@@ -710,7 +744,10 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 - **JWT de acceso:** HS256 (clave de 256 bits por variable de entorno), 15 minutos. Claims: `sub`, `role`, `sv` (versión de seguridad: cambia al cambiar la contraseña o el rol e invalida los tokens anteriores).
 - **Refresh token:** 32 bytes aleatorios; se guarda solo su SHA-256; 30 días; se rota en cada uso. Si se reutiliza un token ya rotado, se revoca toda la `family_id` (posible robo).
 - **Google / Apple:** se valida la firma con las JWKS del proveedor, `aud` = el client id de la app, `iss` y `exp`. Si el correo coincide con una cuenta existente con correo verificado, se vinculan.
-- **En el teléfono:** los tokens se guardan en `expo-secure-store` (Keychain / Keystore), nunca en AsyncStorage.
+- **Verificación del correo (D-26):** código de 6 dígitos que el corredor escribe en P-04 (Gmail web no abre enlaces `terrun://`). Dura 24 h, se bloquea tras 5 intentos fallidos y solo hay uno activo por cuenta; reenviar tiene una espera de 60 s. El restablecimiento de contraseña (CTZ-15) usa el mismo mecanismo con vigencia de 1 h.
+- **Validación en cada solicitud:** el token de acceso solo vale si su `sv` coincide con `app_user.security_version` y la cuenta está activa; suspender una cuenta o cambiar su contraseña o su rol corta sus tokens al instante. Todo endpoint de un controlador exige token salvo los marcados `[AllowAnonymous]`.
+- **Login sin pistas:** el mismo error genérico y el mismo tiempo de respuesta tanto si el correo existe como si no; cada intento, exitoso o fallido, queda en `audit_log`. Un refresh revocado por un logout responde `401` sin revocar la familia; solo uno ya rotado dispara la revocación y el registro `refresh_token_reused`.
+- **En el teléfono:** los tokens se guardan en `expo-secure-store` (Keychain / Keystore), nunca en AsyncStorage. La app no debe enviar dos refresh a la vez con el mismo token (CTZ-22): el segundo cuenta como reutilización y cierra la sesión.
 
 ## 7.2 Autorización y visibilidad
 
@@ -740,13 +777,12 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 | Variable de entorno | Descripción |
 |---|---|
 | `ConnectionStrings__Db` | Cadena de conexión de PostgreSQL (Neon) |
-| `Jwt__Key`, `Jwt__Issuer`, `Jwt__Audience` | Firma y validación del JWT |
+| `Jwt__Key` | Clave HS256 de al menos 32 bytes; **secreta**, solo en Render. Sin ella la API no arranca. `Jwt__Issuer` y `Jwt__Audience` están en `appsettings.json` |
 | `Google__ClientIds` | Client IDs de Android, iOS y web |
 | `Apple__ClientId`, `Apple__TeamId` | Validación de Sign in with Apple |
-| `Email__ApiKey`, `Email__Sender` | Proveedor de correo |
+| `Email__SmtpHost`, `Email__SmtpPort`, `Email__SmtpUsername`, `Email__SmtpPassword`, `Email__Sender`, `Email__SenderName` | Envío por SMTP con cualquier proveedor (D-26). Sin `Email__SmtpHost` no se envían correos: en `Development` el código aparece en el log y en los demás ambientes solo se registra que no se envió |
 | `Expo__AccessToken` | Envío de push |
 | `R2__Endpoint`, `R2__AccessKey`, `R2__SecretKey`, `R2__Bucket` | Almacenamiento de fotos |
-| `App__DeepLinkBaseUrl` | Base de los enlaces de verificación (deep link `terrun://`) |
 | `Jobs__Key` | Clave que exige `POST /internal/jobs/run`; la misma va como secreto en GitHub Actions (§6) |
 | `ASPNETCORE_ENVIRONMENT` | `Development` en local, `Staging` en QA (con Swagger) y `Production` en producción (sin Swagger) |
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | `true` en Render: la API respeta el `X-Forwarded-Proto` del proxy (HTTPS) |

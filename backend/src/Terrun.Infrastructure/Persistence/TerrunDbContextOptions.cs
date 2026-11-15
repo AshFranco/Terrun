@@ -17,6 +17,7 @@ internal static class TerrunDbContextOptions
             .MapEnum<LoginProvider>("login_provider")
             .MapEnum<TokenType>("token_type")
             .MapEnum<LegalDocumentType>("legal_document_type")
+            .MapEnum<ConsentMethod>("consent_method")
             .MapEnum<Sex>("sex")
             .MapEnum<UnitSystem>("unit_system")
             .MapEnum<Visibility>("visibility"))

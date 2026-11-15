@@ -11,6 +11,8 @@ public sealed class TerrunApiFactory(string connectionString, bool migrateOnStar
     // Port 1 is closed on every machine, so the database check fails without waiting for a timeout
     public const string UnreachableDatabase = "Host=localhost;Port=1;Database=terrun;Username=terrun;Password=unused";
 
+    public const string TestJwtKey = "test-only-signing-key-0123456789abcdefghij";
+
     public string EnvironmentName { get; init; } = "Development";
 
     public Dictionary<string, string?> Settings { get; init; } = [];
@@ -22,6 +24,9 @@ public sealed class TerrunApiFactory(string connectionString, bool migrateOnStar
         builder.UseEnvironment(EnvironmentName);
         builder.UseSetting("ConnectionStrings:Db", connectionString);
         builder.UseSetting(DatabaseMigrator.MigrateOnStartupKey, migrateOnStartup.ToString());
+
+        // The tests also run as Production, where appsettings.Development.json (with the local key) is not loaded
+        builder.UseSetting("Jwt:Key", TestJwtKey);
         foreach (var (key, value) in Settings)
         {
             builder.UseSetting(key, value);

@@ -14,6 +14,13 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — CTZ-14 Registro, verificación, login, refresh y logout
+- Hecho: módulo `Identity` con `POST /api/v1/auth/register`, `verify-email`, `resend-verification`, `login`, `refresh` y `logout`. PBKDF2-SHA512 de 210.000 iteraciones, lista de 10.000 contraseñas comunes, JWT de 15 min con `sv` validado en cada solicitud, refresh de 30 días con rotación y revocación de la familia ante una reutilización, código de verificación de 6 dígitos (24 h, 5 intentos), evidencia del consentimiento (`method`, `app_version`), auditoría de cada inicio de sesión y correo por SMTP. Revisión de completitud: login sin pistas de tiempo, carrera de dos registros iguales resuelta por el índice único, límite de tasa por usuario (`sub`), logout que no dispara la alarma de robo, Bearer en OpenAPI y controladores con token por defecto.
+- Evidencia: 62 pruebas en verde (26 nuevas de autenticación); mutaciones de los tres criterios verificadas; prueba de humo en `Staging` (registro 201, login, logout 204, refresh posterior 401, log de correo sin el código).
+- Decisiones: D-26; LLD v1.10.
+- Antes del merge: crear la variable `Jwt__Key` en Render (sin ella QA no arranca). Pendiente: comprar el dominio y configurar SMTP para que QA envíe correos.
+- Siguiente paso: CTZ-16 (`GET /me` y `PATCH /me/profile`).
+
 ## 2026-11-15 — Ashley — Revisión de completitud de CTZ-03 y CTZ-04
 - Hecho: revisión de lo ya mergeado contra el HLD y el LLD completos. En CTZ-03 faltaban las convenciones transversales de la API; quedaron en `src/Terrun.Api/Web/` (prefijo `/api/v1`, enums `snake_case`, errores con `code` y `traceId`, FluentValidation, límite de tasa, 2 MB, cabeceras de seguridad, HSTS y logs JSON). Guía del primer día: Rowlis también necesita .NET y Docker (D-16) y `dotnet tool restore`. Estándares §2.1: las constantes privadas usan `_camelCase`, como exige `.editorconfig`.
 - Evidencia: 34 pruebas en verde (13 nuevas de convenciones, una sobre Kestrel real para el tope de 2 MB); mutaciones verificadas (sin prefijo ni convertidor de enums fallan 7 pruebas); API en `Staging` con logs JSON y `traceId` igual en la respuesta y en el log.

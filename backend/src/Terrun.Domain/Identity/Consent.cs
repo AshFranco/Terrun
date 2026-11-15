@@ -12,5 +12,10 @@ public sealed class Consent
 
     public DateTimeOffset AcceptedAt { get; set; }
 
+    public ConsentMethod Method { get; set; }
+
+    // App version that showed the checkbox, e.g. "0.3.0"
+    public string? AppVersion { get; set; }
+
     public IPAddress? Ip { get; set; }
 }

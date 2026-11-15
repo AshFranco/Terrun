@@ -12,6 +12,7 @@ internal sealed class ConsentConfiguration : IEntityTypeConfiguration<Consent>
         builder.Property(c => c.Id).HasDefaultValueSql(ColumnDefaults.NewUuid);
         builder.HasIndex(c => new { c.UserId, c.LegalDocumentId }).IsUnique().HasDatabaseName("uk_consent_user_id_legal_document_id");
         builder.Property(c => c.AcceptedAt).HasDefaultValueSql(ColumnDefaults.Now);
+        builder.Property(c => c.AppVersion).HasMaxLength(20);
         builder.HasOne<AppUser>().WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne<LegalDocument>().WithMany().HasForeignKey(c => c.LegalDocumentId).OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_consent_legal_document_legal_document_id");

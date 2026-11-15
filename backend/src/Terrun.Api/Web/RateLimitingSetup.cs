@@ -1,7 +1,7 @@
 using System.Globalization;
-using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Terrun.Api.Modules.Platform;
 
 namespace Terrun.Api.Web;
@@ -42,7 +42,7 @@ internal static class RateLimitingSetup
     private static bool IsExempt(HttpContext http) => http.Request.Path.StartsWithSegments(PlatformModule.HealthPath);
 
     private static string CallerKey(HttpContext http) =>
-        http.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId ? $"user:{userId}" : $"ip:{ClientIp(http)}";
+        http.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value is { } userId ? $"user:{userId}" : $"ip:{ClientIp(http)}";
 
     // Behind Render the forwarded-headers middleware has already replaced RemoteIpAddress with the client address
     private static string ClientIp(HttpContext http) => http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
