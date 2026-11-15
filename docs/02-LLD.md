@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.8
+version: 1.9
 fecha: 15 de noviembre de 2026
 ---
 
@@ -19,6 +19,7 @@ fecha: 15 de noviembre de 2026
 | 1.6 | 15/11/2026 | Ambiente de QA (CTZ-04, D-21): variables `ASPNETCORE_ENVIRONMENT` y `ASPNETCORE_FORWARDEDHEADERS_ENABLED` y URL de QA | Ashley |
 | 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup`, `app_user.security_version`, índice `refresh_token.family_id`, `audit_log` desde CTZ-13 y `TimeProvider` como reloj | Ashley |
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
+| 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -223,8 +224,9 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
 | `system_setting` | `key varchar(80)`, `value jsonb`, `description text`, `is_public bool`, `updated_by uuid`, `updated_at` | PK `key`; los parámetros con `is_public = true` se exponen a la app |
+| `job_run` | `name varchar(60)`, `last_started_at`, `last_succeeded_at`, `last_error text` | PK `name`; lo actualiza el programador de trabajos (§6, D-25) |
 
-**Total: 41 tablas.**
+**Total: 42 tablas.**
 
 ## 2.4 Parámetros iniciales del sistema
 
@@ -420,8 +422,9 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 | POST | `/admin/neighborhoods/import` | adm | Carga límites de barrios (GeoJSON) y reasigna las zonas existentes | P1 |
 | GET | `/settings/public` | pub | Parámetros que usa la app (auto-pausa, umbral de conquista) | P0 |
 | GET | `/health` | pub | Salud de la API y de la base de datos | P0 |
+| POST | `/internal/jobs/run` | clave | Ejecuta los trabajos programados vencidos; lo llama GitHub Actions cada hora con `X-Jobs-Key` (§6, D-25). Fuera de `/api/v1` y de Swagger | P0 |
 
-**Total: 116 operaciones** (108 filas, más los cuatro métodos de cada uno de los dos CRUD de administración).
+**Total: 117 operaciones** (109 filas, más los cuatro métodos de cada uno de los dos CRUD de administración).
 
 ## 3.3 Ejemplos de contrato
 
@@ -678,18 +681,26 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 
 # 6. Trabajos en segundo plano
 
-| Trabajo | Frecuencia | Qué hace |
-|---|---|---|
-| `ActivityProcessorJob` | Continuo (sondeo cada 2 s, lotes de 5) | Toma actividades `pending` con `FOR UPDATE SKIP LOCKED` y ejecuta §4.1 |
-| `PushDispatchJob` | Cada 5 s | Envía las notificaciones sin `push_sent_at` a Expo Push; desactiva los tokens inválidos; hasta 5 intentos |
-| `NightlyOwnershipJob` | Diario, 03:00 (AST) | Recalcula las zonas cuyos puntos vencen ese día |
-| `StreakJob` | Lunes, 00:10 (zona del usuario) | Cierra la semana y actualiza las rachas |
-| `LeaderboardSnapshotJob` | Lunes 00:05 y día 1 de cada mes | Guarda el ranking del periodo cerrado |
-| `ChallengeCloseJob` | Cada hora | Cierra los retos vencidos y notifica los resultados |
-| `AccountDeletionJob` | Cada hora | Ejecuta las eliminaciones de cuenta pendientes (§4.5) |
-| `TokenCleanupJob` | Diario | Borra refresh tokens y tokens de verificación vencidos |
+**Restricción de los planes gratis (D-25).** Render apaga el servicio tras 15 minutos sin tráfico entrante y tarda cerca de un minuto en despertar; Neon da 100 horas de cómputo al mes por proyecto y suspende la base tras 5 minutos sin uso. Por eso **nada consulta la base en bucle** y **los trabajos programados los dispara un programador externo**: un servicio dormido no ejecuta temporizadores propios.
 
-Implementación: `BackgroundService` de .NET con programación cron (librería Cronos). Cada trabajo registra su inicio, su fin y sus errores en el log estructurado.
+- **Procesamiento de actividades:** `POST /activities` guarda la actividad como `pending` y deja su `id` en una cola en memoria (`Channel`) que un `BackgroundService` procesa de inmediato (§4.1); la subida es tráfico entrante, así que la API está despierta. Al arrancar, la API procesa las `pending` que hayan quedado (`FOR UPDATE SKIP LOCKED`), y la corrida programada recoge cualquier rezagada.
+- **Programador:** el workflow `.github/workflows/jobs.yml` de GitHub Actions corre cada hora en el minuto 17 (lejos del minuto 00, cuando GitHub más retrasa los programados) y llama a `POST /internal/jobs/run` con la cabecera `X-Jobs-Key` (secreto en GitHub Actions y en la variable `Jobs__Key` de Render). Espera hasta 3 minutos para cubrir el arranque en frío.
+- **Idempotencia:** el endpoint ejecuta solo los trabajos vencidos según `job_run` (último inicio, último éxito y último error de cada trabajo) y la expresión cron de cada uno (librería Cronos). Si GitHub retrasa o salta una corrida, la siguiente recupera lo pendiente.
+
+| Trabajo | Disparo | Qué hace |
+|---|---|---|
+| `ActivityProcessorJob` | Al subir una actividad, al arrancar y en cada corrida horaria (rezagadas) | Ejecuta §4.1 sobre las actividades `pending` |
+| `PushDispatchJob` | Después de procesar una actividad y en cada corrida horaria (reintentos) | Envía las notificaciones sin `push_sent_at` a Expo Push; desactiva los tokens inválidos; hasta 5 intentos |
+| `NightlyOwnershipJob` | Primera corrida después de las 03:00 (AST) | Recalcula las zonas cuyos puntos vencen ese día |
+| `StreakJob` | Primera corrida después del lunes 00:10 | Cierra la semana y actualiza las rachas |
+| `LeaderboardSnapshotJob` | Primera corrida después del lunes 00:05 y del día 1 de cada mes | Guarda el ranking del periodo cerrado |
+| `ChallengeCloseJob` | Cada corrida horaria | Cierra los retos vencidos y notifica los resultados |
+| `AccountDeletionJob` | Cada corrida horaria | Ejecuta las eliminaciones de cuenta pendientes (§4.5), dentro de las 24 h |
+| `TokenCleanupJob` | Primera corrida de cada día | Borra refresh tokens y tokens de verificación vencidos |
+
+- **Pruebas de campo y demo (RNF-08):** antes de empezar se despierta la API con `GET /health`; la app ya reintenta las subidas pendientes (CTZ-34), así que un arranque en frío no pierde datos.
+- **Producción (S4):** proyecto de Neon aparte (`terrun-prod`), con su propia cuota de cómputo, y servicio propio en Render. Con un despertar por hora, cada servicio usa cerca de 180 de las 750 horas gratis de la cuenta.
+- **Implementación:** cada trabajo registra su inicio, su fin y sus errores en el log estructurado y en `job_run`.
 
 # 7. Seguridad detallada
 
@@ -736,6 +747,7 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 | `Expo__AccessToken` | Envío de push |
 | `R2__Endpoint`, `R2__AccessKey`, `R2__SecretKey`, `R2__Bucket` | Almacenamiento de fotos |
 | `App__DeepLinkBaseUrl` | Base de los enlaces de verificación (deep link `terrun://`) |
+| `Jobs__Key` | Clave que exige `POST /internal/jobs/run`; la misma va como secreto en GitHub Actions (§6) |
 | `ASPNETCORE_ENVIRONMENT` | `Development` en local, `Staging` en QA (con Swagger) y `Production` en producción (sin Swagger) |
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | `true` en Render: la API respeta el `X-Forwarded-Proto` del proxy (HTTPS) |
 | `Database__MigrateOnStartup` | `true` por defecto (`appsettings.json`): la API aplica las migraciones pendientes al arrancar (D-22) |
@@ -822,3 +834,4 @@ Ninguna tabla queda sin uso: cada una se escribe o se lee desde al menos un endp
 | `activity_review` | `ActivityProcessorJob` | `/admin/reviews` | P-09 (aviso "en revisión"), ADM |
 | `audit_log` | Acciones sensibles (§7.3) | `/admin/audit-log` | ADM |
 | `system_setting` | `/admin/settings/{key}` | `ActivityProcessorJob`, `/settings/public` | P-08, P-13, ADM |
+| `job_run` | `POST /internal/jobs/run` | `POST /internal/jobs/run` | — |
