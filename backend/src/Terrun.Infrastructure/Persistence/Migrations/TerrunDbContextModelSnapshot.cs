@@ -25,6 +25,7 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "consent_method", new[] { "registration", "settings" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "legal_document_type", new[] { "privacy", "terms" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "login_provider", new[] { "apple", "google" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "sex", new[] { "female", "male", "other", "undisclosed" });
@@ -123,6 +124,11 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .HasColumnName("accepted_at")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<string>("AppVersion")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("app_version");
+
                     b.Property<IPAddress>("Ip")
                         .HasColumnType("inet")
                         .HasColumnName("ip");
@@ -130,6 +136,10 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("LegalDocumentId")
                         .HasColumnType("uuid")
                         .HasColumnName("legal_document_id");
+
+                    b.Property<ConsentMethod>("Method")
+                        .HasColumnType("consent_method")
+                        .HasColumnName("method");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -318,6 +328,12 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<short>("AttemptCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)0)
+                        .HasColumnName("attempt_count");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -352,8 +368,8 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("uk_verification_token_token_hash");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_verification_token_user_id");
+                    b.HasIndex("UserId", "Type")
+                        .HasDatabaseName("ix_verification_token_user_id_type");
 
                     b.ToTable("verification_token", (string)null);
                 });

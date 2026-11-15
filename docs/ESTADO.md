@@ -17,7 +17,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 ### Ashley — Scrum Master + Backend
 - ✅ **CTZ-18** Despliegue de QA: Render + Neon `qa`, despliegue automático al hacer merge a `main`. *Adelantado en CTZ-04 (D-21): `/health` = Healthy y Swagger visible.*
 - 👀 **CTZ-13** Migración inicial: tablas de M1, M2 y M13 + datos iniciales de `system_setting` y `legal_document`. *Bloquea CTZ-14 y CTZ-17.*
-- ⬜ **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.*
+- 👀 **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.* *En revisión (PR #124).*
 - ⬜ **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.*
 - ⬜ **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16 y CTZ-08.*
 - Revisar los PR de backend de Rowlis: CTZ-15 y CTZ-17.

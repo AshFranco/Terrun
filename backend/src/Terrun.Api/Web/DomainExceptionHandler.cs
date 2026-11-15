@@ -31,6 +31,7 @@ internal sealed class DomainExceptionHandler(IProblemDetailsService problemDetai
 
     private static (int Status, string Code, string? Detail) Map(Exception exception) => exception switch
     {
+        InvalidRequestException e => (StatusCodes.Status400BadRequest, e.Code, e.Message),
         NotFoundException e => (StatusCodes.Status404NotFound, e.Code, e.Message),
         ConflictException e => (StatusCodes.Status409Conflict, e.Code, e.Message),
         ForbiddenException e => (StatusCodes.Status403Forbidden, e.Code, e.Message),

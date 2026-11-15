@@ -14,6 +14,13 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — CTZ-14 Registro, verificación, login, refresh y logout
+- Hecho: módulo `Identity` con `POST /api/v1/auth/register`, `verify-email`, `resend-verification`, `login`, `refresh` y `logout`. PBKDF2-SHA512 de 210.000 iteraciones, lista de 10.000 contraseñas comunes, JWT de 15 min con `sv` validado en cada solicitud, refresh de 30 días con rotación y revocación de la familia ante una reutilización, código de verificación de 6 dígitos (24 h, 5 intentos), evidencia del consentimiento (`method`, `app_version`), auditoría de cada inicio de sesión y correo por SMTP. Revisión de completitud: login sin pistas de tiempo, carrera de dos registros iguales resuelta por el índice único, límite de tasa por usuario (`sub`), logout que no dispara la alarma de robo, Bearer en OpenAPI y controladores con token por defecto.
+- Evidencia: 62 pruebas en verde (26 nuevas de autenticación); mutaciones de los tres criterios verificadas; prueba de humo en `Staging` (registro 201, login, logout 204, refresh posterior 401, log de correo sin el código).
+- Decisiones: D-26; LLD v1.10.
+- Antes del merge: crear la variable `Jwt__Key` en Render (sin ella QA no arranca). Pendiente: comprar el dominio y configurar SMTP para que QA envíe correos.
+- Siguiente paso: CTZ-16 (`GET /me` y `PATCH /me/profile`).
+
 ## 2026-11-15 — Ashley — Evaluación de cumplimiento legal
 - Hecho: `docs/producto/legal/CUMPLIMIENTO.md` evalúa nueve puntos de cumplimiento contra lo que es Terrun (app gratuita con GPS en segundo plano que se publicará en Google Play): marco aplicable (Ley 172-13, Ley 136-03, eliminación de cuentas y ubicación en segundo plano de Google Play, licencia ODbL), estado de cada punto, responsable y contenido mínimo de la política de privacidad. No aplican, por ahora, la política de cookies (no se usan) ni la de reembolso (no se cobra).
 - Evidencia: revisión de `survey/index.html` (sin cookies ni analítica, aviso de privacidad y atribución de OpenStreetMap presentes) y del modelo de datos (`consent` por documento).

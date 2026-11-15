@@ -16,7 +16,7 @@ public static class PlatformModule
 
     public static IEndpointRouteBuilder MapPlatformModule(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapHealthChecks(HealthPath);
+        endpoints.MapHealthChecks(HealthPath).AllowAnonymous();
 
         return endpoints;
     }

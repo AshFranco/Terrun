@@ -7,6 +7,8 @@ public static class ErrorCodes
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
     public const string InvalidToken = "INVALID_TOKEN";
     public const string EmailNotVerified = "EMAIL_NOT_VERIFIED";
+    public const string VerificationCodeInvalid = "VERIFICATION_CODE_INVALID";
+    public const string ConsentRequired = "CONSENT_REQUIRED";
     public const string Forbidden = "FORBIDDEN";
     public const string UserSuspended = "USER_SUSPENDED";
     public const string NotFound = "NOT_FOUND";
