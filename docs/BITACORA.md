@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — CTZ-13 Migración inicial
+- Hecho: entidades y enums de M1 (6 tablas), M2 (4) y M13 (1) en `Terrun.Domain`; configuraciones de EF con los nombres del estándar (`pk_`, `fk_`, `uk_`, `ck_`), `citext`, `geography(point, 4326)`, `CHECK` de peso y radio, y defaults de preferencias activos; migración `AddIdentityProfileAndSettingsTables` con los 20 parámetros del LLD §2.4 y los documentos legales v1.0. La API aplica las migraciones al arrancar. 9 pruebas de integración nuevas (17 en total).
+- Evidencia: `dotnet test` 17/17; `docker compose up` desde cero migra y responde Healthy (y al reiniciar: "No migrations were applied"); migración aplicada en una rama temporal de Neon copiada de `qa` (11 tablas, 20 parámetros) y rama borrada. Mutaciones verificadas: un cambio de modelo sin migración hace fallar las pruebas.
+- Decisiones: D-22; LLD v1.7.
+- Siguiente paso: al mergear, Render migra la rama `qa` de Neon. Sigue CTZ-14 (registro y login). Diana debe nombrar los textos de CTZ-27 `terminos-v1.0.md` y `privacidad-v1.0.md`.
+
 ## 2026-11-15 — Ashley — Cierre del S0 y planificación del S1
 - Hecho: S0 cerrado con 7 de 12 historias (CTZ-01 a CTZ-07); CTZ-08 a CTZ-12 pasan al S1 sin avance en el repo. `ESTADO.md` reescrito para el S1 (23 historias: 18 del backlog y 5 que vienen de S0), con el orden por persona según dependencias. CTZ-18 (despliegue de QA) queda hecha porque se adelantó en CTZ-04. `docs/sprints/S0.md` completado y `docs/sprints/S1.md` creado con el compromiso y los riesgos.
 - Evidencia: `docs/ESTADO.md`, `docs/sprints/S0.md`, `docs/sprints/S1.md`; https://terrun-api-qa.onrender.com/health.

@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.6
+version: 1.7
 fecha: 15 de noviembre de 2026
 ---
 
@@ -17,6 +17,7 @@ fecha: 15 de noviembre de 2026
 | 1.4 | 14/11/2026 | Esqueleto del backend (CTZ-03, D-19): solución `Terrun.slnx` y módulo `System` renombrado a `Platform` | Ashley |
 | 1.5 | 15/11/2026 | Reglas de `main` (D-20): sin aprobación obligatoria y con los checks `autoria`, `integridad` y `backend` | Ashley |
 | 1.6 | 15/11/2026 | Ambiente de QA (CTZ-04, D-21): variables `ASPNETCORE_ENVIRONMENT` y `ASPNETCORE_FORWARDEDHEADERS_ENABLED` y URL de QA | Ashley |
+| 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup` | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -734,6 +735,7 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 | `App__DeepLinkBaseUrl` | Base de los enlaces de verificación (deep link `terrun://`) |
 | `ASPNETCORE_ENVIRONMENT` | `Development` en local, `Staging` en QA (con Swagger) y `Production` en producción (sin Swagger) |
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | `true` en Render: la API respeta el `X-Forwarded-Proto` del proxy (HTTPS) |
+| `Database__MigrateOnStartup` | `true` por defecto (`appsettings.json`): la API aplica las migraciones pendientes al arrancar (D-22) |
 
 Ambientes desplegados (D-21): QA en Render (`terrun-api-qa`, https://terrun-api-qa.onrender.com, se despliega solo con cada merge a `main`) sobre la rama `qa` de Neon; la rama `main` de Neon queda para producción.
 

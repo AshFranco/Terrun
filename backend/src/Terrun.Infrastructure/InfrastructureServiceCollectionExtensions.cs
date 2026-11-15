@@ -10,9 +10,7 @@ public static class InfrastructureServiceCollectionExtensions
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
-        services.AddDbContext<TerrunDbContext>(options => options
-            .UseNpgsql(connectionString, npgsql => npgsql.UseNetTopologySuite())
-            .UseSnakeCaseNamingConvention());
+        services.AddDbContext<TerrunDbContext>(options => TerrunDbContextOptions.Configure(options, connectionString));
 
         return services;
     }

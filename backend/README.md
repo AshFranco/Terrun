@@ -36,6 +36,20 @@ En `Development` la cadena de conexión sale de `appsettings.Development.json`. 
 
 **QA:** https://terrun-api-qa.onrender.com (`/health`, `/swagger`). Se despliega solo con cada merge a `main` y usa la rama `qa` de Neon (D-21). El plan gratis de Render se duerme tras unos minutos sin tráfico: la primera llamada puede tardar hasta un minuto.
 
+## Migraciones de la base
+
+La API aplica sola las migraciones pendientes al arrancar (`Database:MigrateOnStartup`, activado en `appsettings.json`): con `docker compose up`, en QA y en producción la base queda al día sin pasos manuales (D-22). Al arrancar contra una base vacía, EF registra una vez `Failed executing DbCommand ... __EFMigrationsHistory` porque consulta el historial antes de crearlo; es esperado y enseguida aplica la migración.
+
+Para cambiar el modelo (entidades en `src/Terrun.Domain`, configuraciones en `src/Terrun.Infrastructure/Persistence/Configurations`):
+
+```bash
+dotnet tool restore                      # instala dotnet-ef en la versión del repo (dotnet-tools.json)
+dotnet ef migrations add AddTerritoryTables --project src/Terrun.Infrastructure --startup-project src/Terrun.Infrastructure --output-dir Persistence/Migrations
+dotnet ef migrations script --project src/Terrun.Infrastructure --startup-project src/Terrun.Infrastructure   # revisar el SQL antes del commit
+```
+
+El nombre de la migración va en `PascalCase` descriptivo (estándares §2.1). Si el modelo cambia sin migración, la prueba `Model_ComparedWithTheMigrations_HasNoPendingChanges` falla y la API no arranca.
+
 ## Pruebas y formato
 
 ```bash
@@ -51,7 +65,7 @@ La CI (`.github/workflows/backend.yml`) corre en cada PR: `dotnet format --verif
 |---|---|
 | `src/Terrun.Api` | Host: `Program.cs`, ProblemDetails, Swagger, módulos (`Modules/`) y trabajos en segundo plano (`Jobs/`, desde S4) |
 | `src/Terrun.Domain` | Entidades, enums y excepciones de dominio |
-| `src/Terrun.Infrastructure` | `TerrunDbContext` (snake_case, PostGIS), configuraciones de EF y migraciones (desde CTZ-13) |
+| `src/Terrun.Infrastructure` | `TerrunDbContext` (snake_case, PostGIS), configuraciones de EF, semilla de `system_setting` y `legal_document`, y migraciones (`Persistence/`) |
 | `src/Terrun.Engine` | Motor puro (geo, métricas, antitrampas, territorio, progresión): sin EF, sin HTTP |
 | `tests/Terrun.Engine.Tests` | Pruebas unitarias del motor y regla de dependencias del Engine |
 | `tests/Terrun.Api.Tests` | Pruebas de integración con Testcontainers y reglas de dependencias entre capas |
