@@ -68,6 +68,7 @@ Cuando alguien pregunte qué toca hacer, el asistente **debe**:
 4. Marcar la tarea en `ESTADO.md` como `🔄 en curso` y mover su tarjeta a **En curso** en el tablero.
 5. Trabajar **solo dentro de tu carpeta** (§3). Si hace falta un endpoint que no existe o un cambio de contrato: primero se actualiza `docs/02-LLD.md` §3 en un PR propio, se avisa a Ashley y, mientras tanto, el front trabaja con un mock.
 6. No adelantarse: si algo pertenece a un sprint futuro, no se construye ahora.
+7. **Antes de abrir el PR, revisión de completitud.** Cumplir los criterios de aceptación no basta: el asistente revisa la tarea contra el LLD completo (§1–§10, no solo las secciones que cita la historia), los estándares y los criterios de las historias que dependen de ella en `03-BACKLOG.md`. Busca reglas que el diseño exige en otras secciones (seguridad §7, auditoría, fechas, índices para consultas que vienen, validaciones). Lo que falte se agrega en la misma tarea si le corresponde; si no, se abre un issue. Si el propio LLD tiene un hueco, se corrige. El PR lo resume en su sección "Revisión de completitud" (D-23).
 
 ## 6. Protocolo: cerrar una sesión de trabajo
 
@@ -106,7 +107,7 @@ Después de la weekly, cuando Ashley pida "planifica el siguiente sprint":
 7. **Estándares de desarrollo** (`docs/04-ESTANDARES-DESARROLLO.md`): **todo el código en inglés** (identificadores, BD, API, comentarios, logs y commits) y documentación en español; nombres del glosario. Antes de escribir código, el asistente lee ese archivo.
 8. **Probar antes de hacer commit.** No se hace commit de código que no compila o cuyas pruebas fallan.
 9. **Sin secretos en el repo.** Las variables van en `.env` (ignorado) y en Render/EAS.
-10. **No decir "listo" sin evidencia:** pruebas ejecutadas, captura o PR.
+10. **No decir "listo" sin evidencia ni sin revisión de completitud:** pruebas ejecutadas, captura o PR, y la revisión del §5 paso 7. En proyectos anteriores quedaron cientos de cosas incompletas que parecían entregadas.
 
 ## 9. Plantilla de pedido para el asistente
 

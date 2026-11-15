@@ -17,7 +17,7 @@ Formato:
 ## 2026-11-15 — Ashley — Revisión de completitud de CTZ-03 y CTZ-04
 - Hecho: revisión de lo ya mergeado contra el HLD y el LLD completos. En CTZ-03 faltaban las convenciones transversales de la API; quedaron en `src/Terrun.Api/Web/` (prefijo `/api/v1`, enums `snake_case`, errores con `code` y `traceId`, FluentValidation, límite de tasa, 2 MB, cabeceras de seguridad, HSTS y logs JSON). Guía del primer día: Rowlis también necesita .NET y Docker (D-16) y `dotnet tool restore`. Estándares §2.1: las constantes privadas usan `_camelCase`, como exige `.editorconfig`.
 - Evidencia: 34 pruebas en verde (13 nuevas de convenciones, una sobre Kestrel real para el tope de 2 MB); mutaciones verificadas (sin prefijo ni convertidor de enums fallan 7 pruebas); API en `Staging` con logs JSON y `traceId` igual en la respuesta y en el log.
-- Decisiones: D-24; LLD v1.8.
+- Decisiones: D-24; LLD v1.8. Además, D-23: la revisión de completitud queda obligatoria antes de cada PR (guía §5 paso 7 y §8 regla 10, Definition of Done, plantilla de PR y guía del primer día; PR #120).
 - Hallazgo en CTZ-04: con los planes gratis, Render se duerme a los 15 min sin tráfico y Neon da 100 horas de cómputo al mes; los trabajos en segundo plano del LLD §6 no eran viables. Decidido D-25: GitHub Actions como programador, procesamiento al subir y producción en un proyecto de Neon aparte; LLD v1.9 y nueva historia CTZ-104 (S2).
 - Siguiente paso: CTZ-14; CTZ-104 entra en el S2 (Diana debe incluirla en la planificación).
 
