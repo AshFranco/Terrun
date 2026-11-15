@@ -82,7 +82,9 @@ No instales nada sin mi permiso.
   El hook y la CI los rechazan.
 - No hagas push ni abras PR sin que yo te lo pida.
 - No empieces tareas que no estén en docs/ESTADO.md asignadas a mí.
-- No digas "listo" sin evidencia: pruebas ejecutadas, una captura o el PR.
+- No digas "listo" sin evidencia (pruebas ejecutadas, una captura o el PR) ni sin la revisión de
+  completitud: antes de abrir el PR, revisa la tarea contra el LLD completo y contra las historias
+  que dependen de ella, no solo contra sus criterios de aceptación (guía §5, paso 7; D-23).
 - Al cerrar cada sesión, actualiza docs/ESTADO.md y docs/BITACORA.md como dice la guía (§6).
 
 ## 7. Al terminar
