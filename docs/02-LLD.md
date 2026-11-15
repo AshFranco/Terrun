@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.7
+version: 1.8
 fecha: 15 de noviembre de 2026
 ---
 
@@ -18,6 +18,7 @@ fecha: 15 de noviembre de 2026
 | 1.5 | 15/11/2026 | Reglas de `main` (D-20): sin aprobación obligatoria y con los checks `autoria`, `integridad` y `backend` | Ashley |
 | 1.6 | 15/11/2026 | Ambiente de QA (CTZ-04, D-21): variables `ASPNETCORE_ENVIRONMENT` y `ASPNETCORE_FORWARDEDHEADERS_ENABLED` y URL de QA | Ashley |
 | 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup`, `app_user.security_version`, índice `refresh_token.family_id`, `audit_log` desde CTZ-13 y `TimeProvider` como reloj | Ashley |
+| 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -57,6 +58,8 @@ backend/
 │   │   │   ├── Notifications/
 │   │   │   ├── Moderation/
 │   │   │   └── Platform/                 settings, health, legal documents (D-19)
+│   │   ├── Web/                          cross-cutting: /api/v1 prefix, errors (§3.4), validation,
+│   │   │                                 rate limit, security headers, request logs (D-24)
 │   │   └── Jobs/                         background services (§6)
 │   ├── Terrun.Domain/           entities, enums, domain exceptions
 │   ├── Terrun.Infrastructure/   DbContext, EF configurations, migrations,
@@ -736,10 +739,12 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 | `ASPNETCORE_ENVIRONMENT` | `Development` en local, `Staging` en QA (con Swagger) y `Production` en producción (sin Swagger) |
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | `true` en Render: la API respeta el `X-Forwarded-Proto` del proxy (HTTPS) |
 | `Database__MigrateOnStartup` | `true` por defecto (`appsettings.json`): la API aplica las migraciones pendientes al arrancar (D-22) |
+| `RateLimiting__PerCallerPerMinute`, `RateLimiting__AuthPerIpPerMinute` | Límites de tasa del §3.1 (100 y 10 por defecto) |
+| `Limits__MaxRequestBodyBytes` | Tamaño máximo del cuerpo de una solicitud (2 MB por defecto, §7.3) |
 
 Ambientes desplegados (D-21): QA en Render (`terrun-api-qa`, https://terrun-api-qa.onrender.com, se despliega solo con cada merge a `main`) sobre la rama `qa` de Neon; la rama `main` de Neon queda para producción.
 
-- **Logs:** Serilog en JSON con `traceId` por solicitud.
+- **Logs:** JSON en consola con el logger nativo de .NET (en `Development`, texto legible), con el `TraceId` de cada solicitud en el contexto y una línea por solicitud con método, ruta, estado y duración, sin la query string ni el cuerpo. El `traceId` de las respuestas de error es el mismo que el del log (D-24).
 - **Salud:** `/health` comprueba la API y la BD; Render la usa como health check.
 - **Métricas:** duración del procesamiento por actividad y tamaño de la cola de pendientes, en el log y en el panel de Render.
 

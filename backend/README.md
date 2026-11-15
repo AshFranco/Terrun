@@ -50,6 +50,17 @@ dotnet ef migrations script --project src/Terrun.Infrastructure --startup-projec
 
 El nombre de la migración va en `PascalCase` descriptivo (estándares §2.1). Si el modelo cambia sin migración, la prueba `Model_ComparedWithTheMigrations_HasNoPendingChanges` falla y la API no arranca.
 
+## Convenciones de la API (`src/Terrun.Api/Web/`)
+
+Las comparten todos los módulos; ningún controlador las repite (D-24):
+
+- **Rutas:** todo controlador queda bajo `/api/v1` automáticamente; en el `[Route]` va solo el recurso (`[Route("auth")]`). `/health` sigue en la raíz.
+- **JSON:** propiedades en `camelCase` y enums en `snake_case` (`owned_by_me`).
+- **Errores (LLD §3.4):** los servicios lanzan las excepciones de `Terrun.Domain.Errors` (`NotFoundException`, `ConflictException(ErrorCodes.HandleTaken, ...)`, etc.) y la API responde `application/problem+json` con `code` y `traceId`. Un error inesperado responde 500 `INTERNAL_ERROR` sin detalles internos.
+- **Validación:** un `AbstractValidator<TRequest>` de FluentValidation en el módulo se aplica solo; si falla, 400 `VALIDATION_ERROR` con `errors` por campo.
+- **Límite de tasa:** 100/min por usuario (o IP) y, en los endpoints con `[EnableRateLimiting("auth")]`, 10/min por IP; 429 `RATE_LIMITED` con `Retry-After`.
+- **Seguridad y logs:** cuerpo máximo de 2 MB, cabeceras de seguridad, HSTS en producción y una línea de log JSON por solicitud.
+
 ## Pruebas y formato
 
 ```bash

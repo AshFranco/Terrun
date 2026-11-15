@@ -1,4 +1,5 @@
 using Terrun.Api.Modules.Platform;
+using Terrun.Api.Web;
 using Terrun.Infrastructure;
 using Terrun.Infrastructure.Persistence;
 
@@ -7,8 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("Db")
     ?? throw new InvalidOperationException("Missing connection string 'ConnectionStrings:Db'.");
 
-builder.Services.AddProblemDetails();
-builder.Services.AddControllers();
+builder.AddApiConventions();
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddPlatformModule();
@@ -21,8 +21,7 @@ if (app.Configuration.GetValue<bool>(DatabaseMigrator.MigrateOnStartupKey))
     await app.Services.MigrateDatabaseAsync();
 }
 
-app.UseExceptionHandler();
-app.UseStatusCodePages();
+app.UseApiConventions();
 
 // LLD §7.3: Swagger is exposed only outside production
 if (!app.Environment.IsProduction())

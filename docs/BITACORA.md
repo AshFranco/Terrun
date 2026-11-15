@@ -14,6 +14,13 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — Revisión de completitud de CTZ-03 y CTZ-04
+- Hecho: revisión de lo ya mergeado contra el HLD y el LLD completos. En CTZ-03 faltaban las convenciones transversales de la API; quedaron en `src/Terrun.Api/Web/` (prefijo `/api/v1`, enums `snake_case`, errores con `code` y `traceId`, FluentValidation, límite de tasa, 2 MB, cabeceras de seguridad, HSTS y logs JSON). Guía del primer día: Rowlis también necesita .NET y Docker (D-16) y `dotnet tool restore`. Estándares §2.1: las constantes privadas usan `_camelCase`, como exige `.editorconfig`.
+- Evidencia: 34 pruebas en verde (13 nuevas de convenciones, una sobre Kestrel real para el tope de 2 MB); mutaciones verificadas (sin prefijo ni convertidor de enums fallan 7 pruebas); API en `Staging` con logs JSON y `traceId` igual en la respuesta y en el log.
+- Decisiones: D-24; LLD v1.8.
+- Riesgo abierto (CTZ-04): con los planes gratis, Render se duerme a los 15 min sin tráfico y Neon da 100 horas de cómputo al mes; los trabajos en segundo plano del LLD §6 no son viables tal como están diseñados. Pendiente de decisión.
+- Siguiente paso: decidir la estrategia de los trabajos en segundo plano y de disponibilidad (RNF-08) antes del S2.
+
 ## 2026-11-15 — Ashley — CTZ-13 Migración inicial
 - Hecho: entidades y enums de M1 (6 tablas), M2 (4), M13 (1) y `audit_log` (M12, adelantada para CTZ-14) en `Terrun.Domain`; configuraciones de EF con los nombres del estándar (`pk_`, `fk_`, `uk_`, `ck_`), `citext`, `geography(point, 4326)`, `CHECK` de peso y radio, y defaults de preferencias activos; migración `AddIdentityProfileAndSettingsTables` con los 20 parámetros del LLD §2.4 y los documentos legales v1.0. La API aplica las migraciones al arrancar. Revisión de integridad contra el LLD completo: se agregaron `security_version` (claim `sv`), índice por `family_id`, interceptor de `created_at`/`updated_at` con `TimeProvider` y `audit_log` inmutable por trigger. 13 pruebas de integración nuevas (21 en total).
 - Evidencia: `dotnet test` 21/21; `docker compose up` desde cero migra y responde Healthy (y al reiniciar: "No migrations were applied"); migración aplicada en una rama temporal de Neon copiada de `qa` (12 tablas, `audit_log` rechaza DELETE) y rama borrada. Mutaciones verificadas: un cambio de modelo sin migración y quitar el interceptor de fechas hacen fallar las pruebas.
