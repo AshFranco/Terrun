@@ -21,6 +21,7 @@ Este archivo define **cómo trabaja el equipo** y es la primera lectura obligato
 | `docs/04-ESTANDARES-DESARROLLO.md` | Reglas de código: idioma, nombres por capa, glosario, pruebas, formato | Ashley |
 | `docs/05-PRIMER-DIA.md` | Texto para que Claude Code clone, configure y revise el entorno de cada integrante | Ashley |
 | `docs/ESTADO.md` | **Lo que toca ahora**: sprint en curso, tareas por persona, bloqueos | Cada persona marca lo suyo; Ashley lo rehace en cada planificación |
+| [Tablero de GitHub Projects](https://github.com/users/AshFranco/projects/4) | Una tarjeta por historia CTZ (issue), en Pendiente / En curso / En revisión / Hecha | Cada persona mueve sus tarjetas; Diana lo mantiene |
 | `docs/BITACORA.md` | Histórico: qué se hizo, quién, cuándo y con qué evidencia | Cada persona al cerrar una sesión de trabajo |
 | `docs/DECISIONES.md` | Decisiones tomadas (técnicas o de producto) con fecha y motivo | Quien toma la decisión |
 | `docs/sprints/` | Un archivo por sprint: compromiso, resultado y resumen de la weekly | Ashley |
@@ -64,7 +65,7 @@ Cuando alguien pregunte qué toca hacer, el asistente **debe**:
 1. Confirmar que la tarea está en `ESTADO.md` y asignada a quien la va a hacer. Si no está, **no se empieza**: se avisa a Diana o a Ashley.
 2. Actualizar `main` y crear la rama: `git switch main && git pull && git switch -c feat/CTZ-XX-short-description`.
 3. Leer las secciones del LLD que correspondan (las cita cada historia del backlog) y `docs/04-ESTANDARES-DESARROLLO.md`.
-4. Marcar la tarea en `ESTADO.md` como `🔄 en curso`.
+4. Marcar la tarea en `ESTADO.md` como `🔄 en curso` y mover su tarjeta a **En curso** en el tablero.
 5. Trabajar **solo dentro de tu carpeta** (§3). Si hace falta un endpoint que no existe o un cambio de contrato: primero se actualiza `docs/02-LLD.md` §3 en un PR propio, se avisa a Ashley y, mientras tanto, el front trabaja con un mock.
 6. No adelantarse: si algo pertenece a un sprint futuro, no se construye ahora.
 
@@ -72,7 +73,7 @@ Cuando alguien pregunte qué toca hacer, el asistente **debe**:
 
 Al terminar cada sesión (aunque la tarea no esté completa), el asistente **debe**:
 
-1. Actualizar el estado de la tarea en `docs/ESTADO.md`: `⬜ pendiente`, `🔄 en curso`, `👀 en revisión (PR #n)`, `✅ hecha`, `⛔ bloqueada (motivo)`.
+1. Actualizar el estado de la tarea en `docs/ESTADO.md`: `⬜ pendiente`, `🔄 en curso`, `👀 en revisión (PR #n)`, `✅ hecha`, `⛔ bloqueada (motivo)`. En el tablero, la tarjeta pasa a **En revisión** al abrir el PR; a **Hecha** se mueve sola cuando el PR se mergea, si su descripción dice `Closes #n` con el número del issue (no el número CTZ).
 2. Agregar una entrada **al principio** de `docs/BITACORA.md` con el formato de ese archivo: fecha, persona, tarea, qué se hizo, evidencia (PR, commit, captura, resultado de pruebas) y el siguiente paso.
 3. Si se tomó una decisión, registrarla en `docs/DECISIONES.md`.
 4. Si cambió el contrato de API o el modelo de datos, verificar que `docs/02-LLD.md` quedó actualizado.

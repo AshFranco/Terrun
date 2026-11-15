@@ -31,6 +31,8 @@ Después lee, en este orden:
 2. [`docs/ESTADO.md`](docs/ESTADO.md) — qué toca ahora y a quién.
 3. [`CONTRIBUTING.md`](CONTRIBUTING.md) — ramas, commits, PR, Definition of Ready y Definition of Done.
 
+Tablero del equipo: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) (GitHub Projects, ligado a este repo). Cada historia CTZ es un issue con su sprint, prioridad y responsable.
+
 ## Documentación
 
 | Documento | Contenido |

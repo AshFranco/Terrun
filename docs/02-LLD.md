@@ -2,8 +2,8 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.1
-fecha: 11 de noviembre de 2026
+version: 1.3
+fecha: 14 de noviembre de 2026
 ---
 
 # Control del documento
@@ -13,8 +13,9 @@ fecha: 11 de noviembre de 2026
 | 1.0 | 11/11/2026 | Versión inicial: modelo de datos, contrato de API, algoritmos y estructura de código | Ashley (Scrum Master) |
 | 1.1 | 11/11/2026 | Barrios (D-13): tablas `neighborhood` y `neighborhood_ruler`, columna `zone.neighborhood_id`, 4 endpoints, algoritmo del rey o reina, pantalla P-34 | Ashley |
 | 1.2 | 13/11/2026 | Rowlis participa en `backend/` en funciones puntuales (D-16) | Ashley |
+| 1.3 | 14/11/2026 | Alineado con el HLD v2.0 (D-17): "trackear" en lugar de "grabar" en los textos en español | Ashley |
 
-Este documento detalla la implementación del diseño descrito en el **HLD v1.0**. Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
+Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
 **Convención de idioma:** todos los identificadores técnicos (código, tablas, columnas, rutas, JSON, códigos de error) están en **inglés**; las explicaciones, en español. El glosario que relaciona cada concepto del dominio con su nombre en el código está en `docs/04-ESTANDARES-DESARROLLO.md` §1.3.
 
@@ -609,7 +610,7 @@ Un **trabajo nocturno** (`NightlyOwnershipJob`, 03:00 hora de Santo Domingo) rec
 
 # 5. App móvil: diseño detallado
 
-## 5.1 Máquina de estados de la grabación (`RecordingState`)
+## 5.1 Máquina de estados del trackeo (`RecordingState`)
 
 ```text
 idle ──start──▶ recording ──pause / auto-pause──▶ paused
@@ -622,8 +623,8 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 
 - **Auto-pausa:** velocidad por debajo de 0,5 m/s durante 10 s → pausa; por encima de 1 m/s → reanuda. Cada pausa abre un `segment` nuevo.
 - **Frecuencia del GPS:** precisión `BestForNavigation`, intervalo de 2 s o distancia de 5 m.
-- **Android:** servicio en primer plano con la notificación "Grabando carrera · 3,2 km · 18:45" y permiso de ubicación *mientras se usa*.
-- **iOS:** `UIBackgroundModes: location`, indicador azul de ubicación y `pausesUpdatesAutomatically = false` durante la grabación.
+- **Android:** servicio en primer plano con la notificación "Trackeando carrera · 3,2 km · 18:45" y permiso de ubicación *mientras se usa*.
+- **iOS:** `UIBackgroundModes: location`, indicador azul de ubicación y `pausesUpdatesAutomatically = false` durante el trackeo.
 - **Persistencia:** cada punto se escribe en SQLite en cuanto llega. Si el sistema mata la app, al reabrirla se ofrece reanudar o finalizar la actividad.
 - **Métricas en vivo:** la app las calcula solo para mostrarlas; las oficiales son las del servidor.
 - **Avisos de voz:** cada `voiceCueIntervalKm` se leen la distancia, el tiempo y el ritmo del último km (expo-speech).
@@ -639,7 +640,7 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 | P-05 | Recuperar contraseña (`(auth)/forgot-password`) | `/auth/forgot-password`, `/auth/reset-password` | Rowlis | P0 |
 | P-06 | Permisos: ubicación y notificaciones (`onboarding/permissions`) | `/me/devices` | Jorge | P0 |
 | P-07 | Mapa de territorio, inicio (`(tabs)/map`) | `/zones`, `/me/territory` | Jorge | P0 |
-| P-08 | Grabar actividad (`(tabs)/record`) | `/settings/public`, `/me/shoes` | Jorge | P0 |
+| P-08 | Trackear actividad (`(tabs)/record`) | `/settings/public`, `/me/shoes` | Jorge | P0 |
 | P-09 | Resumen al terminar (`activity/[id]/summary`) | `/activities/{id}` | Jorge | P0 |
 | P-10 | Historial (`profile/activities`) | `/me/activities`, `/me/summary` | Rowlis | P0 |
 | P-11 | Detalle de actividad (`activity/[id]`) | `/activities/{id}`, `/route`, `/splits`, `/kudos`, `/comments` | Jorge (mapa y splits) / Rowlis (social) | P0 |

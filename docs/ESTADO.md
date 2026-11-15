@@ -1,8 +1,10 @@
 # Estado actual del proyecto
 
 > **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
-> **Weekly:** viernes 13 de noviembre · **Próximo hito:** entrega del HLD y el LLD, miércoles 11 de noviembre
-> **Última actualización:** 13/11/2026 — Diana
+> **Weekly:** viernes 13 de noviembre · **Próximo hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
+> **Última actualización:** 14/11/2026 — Ashley
+
+Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
 Leyenda: ⬜ pendiente · 🔄 en curso · 👀 en revisión (PR #n) · ✅ hecha · ⛔ bloqueada (motivo)
 
@@ -12,7 +14,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 
 ### Ashley — Scrum Master + Backend
 - ✅ **CTZ-01** Entregar HLD y LLD (mié 11/11). *Entregables listos en `docs/entregables/`: HLD v2.0 como versión oficial para este período académico (MVP) tras las correcciones del profesor (`D-17`), HLD v1.2 conservado como referencia posterior al MVP (`HLD-Terrun-v1.2-post-MVP.docx`) y LLD v1.2.*
-- 🔄 **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Repo creado (`AshFranco/Terrun`, PR #1 a #3 y #7 mergeados); falta invitar al equipo y proteger `main`. Bloquea a CTZ-03, CTZ-06 y CTZ-08.*
+- ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con 1 aprobación y el check `autoria` sin excepciones (push directo rechazado, verificado el 14/11).*
 - ⬜ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Depende de CTZ-02.*
 - ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
 
@@ -38,19 +40,19 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 
 | Desde | Bloqueo | Afecta a | Responsable de resolverlo |
 |---|---|---|---|
-| 10/11 | Falta invitar al equipo y proteger `main` en GitHub | CTZ-03, CTZ-06, CTZ-08 | Ashley (CTZ-02) |
+| — | Ninguno | — | — |
 
 ## Avance del sprint
 
 | Persona | Hechas | Total |
 |---|---|---|
-| Ashley | 1 | 4 |
+| Ashley | 2 | 4 |
 | Diana | 2 | 3 |
 | Jorge | 0 | 1 |
 | Rowlis | 0 | 2 |
 | Rangelis | 0 | 1 |
 | Jaime | 0 | 1 |
-| **Equipo** | **3** | **12** |
+| **Equipo** | **4** | **12** |
 
 ## Próximo sprint (S1 — 14 al 20 de noviembre)
 
