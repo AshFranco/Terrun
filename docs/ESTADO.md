@@ -15,7 +15,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 ### Ashley — Scrum Master + Backend
 - ✅ **CTZ-01** Entregar HLD y LLD (mié 11/11). *Entregables listos en `docs/entregables/`: HLD v2.0 como versión oficial para este período académico (MVP) tras las correcciones del profesor (`D-17`), HLD v1.2 conservado como referencia posterior al MVP (`HLD-Terrun-v1.2-post-MVP.docx`) y LLD v1.2.*
 - ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con 1 aprobación y el check `autoria` sin excepciones (push directo rechazado, verificado el 14/11).*
-- ⬜ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Depende de CTZ-02.*
+- 👀 **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *En revisión (PR #115): solución .NET 10, `/health`, Swagger, compose con PostGIS y CI de formato, build y pruebas.*
 - ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
 
 ### Diana — Product Owner

@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-14 — Ashley — CTZ-03 Esqueleto del backend
+- Hecho: solución `backend/Terrun.slnx` (Api, Domain, Infrastructure, Engine + 2 proyectos de pruebas), `TerrunDbContext` con PostGIS y snake_case, `/health` (API + BD), Swagger y OpenAPI 3.1, `Dockerfile` y `docker-compose.yml` con `postgis/postgis:16-3.5`, y CI `backend.yml` (formato, build y pruebas). 8 pruebas en verde: integración con Testcontainers y reglas de dependencias del LLD §1.2. D-19 y LLD v1.4.
+- Evidencia: PR #115; `dotnet test` 8/8 y `docker compose up` con `/health` = Healthy, verificados desde cero en local.
+- Decisiones: D-19.
+- Siguiente paso: aprobación del PR (Rowlis o Diana); luego agregar el check `backend` como obligatorio en la protección de `main` y seguir con CTZ-04 (cuentas de Neon, Render y Expo).
+
 ## 2026-11-14 — Ashley — Ajustes tras el HLD v2.0 (PR #6)
 - Hecho: LLD v1.3 alineado con el HLD v2.0 ("trackear" en lugar de "grabar", referencia al HLD v2.0 y al v1.2 post-MVP) y entregables `LLD-Terrun.docx`/`.pdf` regenerados; plan de pruebas apuntando al Anexo B del HLD v1.2 post-MVP y a los módulos M1–M13 del LLD; corregida en D-18 la historia que pasa a P0 (CTZ-54, no CTZ-55); encabezado de `ESTADO.md` con el hito del 20/11.
 - Evidencia: `docs/02-LLD.md`, `docs/entregables/LLD-Terrun.pdf`, `docs/qa/01-PLAN-PRUEBAS.md`, `docs/DECISIONES.md`, `docs/ESTADO.md`.

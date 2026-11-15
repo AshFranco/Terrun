@@ -166,7 +166,7 @@ EF Core se configura con `UseSnakeCaseNamingConvention()`: `DistanceM` en C# se 
 
 | Regla | Detalle |
 |---|---|
-| Nombre de las pruebas (C#) | `Method_Scenario_ExpectedResult`: `Conquer_FiveOfSevenCells_CreatesConquest` |
+| Nombre de las pruebas (C#) | `Method_Scenario_ExpectedResult`: `Conquer_FiveOfSevenCells_CreatesConquest`. Las pruebas asíncronas no llevan el sufijo `Async` (excepción configurada en `.editorconfig` para `backend/tests/`) |
 | Nombre de las pruebas (TS) | `describe('formatPace')` + `it('returns 5:30 for 330 seconds')` |
 | Estructura | Arrange / Act / Assert, separados por una línea en blanco |
 | Casos del motor | Cada caso MT del LLD §9 tiene su prueba con el ID en un atributo: `[Trait("Case", "MT-07")]` |

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Terrun.Api/Terrun.Api.csproj" />
+    <Project Path="src/Terrun.Domain/Terrun.Domain.csproj" />
+    <Project Path="src/Terrun.Engine/Terrun.Engine.csproj" />
+    <Project Path="src/Terrun.Infrastructure/Terrun.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Terrun.Api.Tests/Terrun.Api.Tests.csproj" />
+    <Project Path="tests/Terrun.Engine.Tests/Terrun.Engine.Tests.csproj" />
+  </Folder>
+</Solution>
