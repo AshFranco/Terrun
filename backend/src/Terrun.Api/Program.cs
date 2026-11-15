@@ -1,21 +1,27 @@
 using Terrun.Api.Modules.Platform;
+using Terrun.Api.Web;
 using Terrun.Infrastructure;
+using Terrun.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Db")
     ?? throw new InvalidOperationException("Missing connection string 'ConnectionStrings:Db'.");
 
-builder.Services.AddProblemDetails();
-builder.Services.AddControllers();
+builder.AddApiConventions();
 builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddPlatformModule();
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
-app.UseStatusCodePages();
+// QA and production apply pending migrations on every deploy; tests turn this off to control the database themselves
+if (app.Configuration.GetValue<bool>(DatabaseMigrator.MigrateOnStartupKey))
+{
+    await app.Services.MigrateDatabaseAsync();
+}
+
+app.UseApiConventions();
 
 // LLD §7.3: Swagger is exposed only outside production
 if (!app.Environment.IsProduction())

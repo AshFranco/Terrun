@@ -73,7 +73,7 @@ Un concepto tiene **un solo nombre** en todas las capas. No se inventan sinónim
 | Interfaces | `I` + `PascalCase` | `ITerritoryService` |
 | Parámetros y variables locales | `camelCase` | `activityId`, `validPoints` |
 | Campos privados | `_camelCase` | `_clock`, `_db` |
-| Constantes | `PascalCase` | `const int CellsPerZone = 7;` (solo constantes matemáticas o de H3, nunca reglas del juego) |
+| Constantes | Públicas: `PascalCase`; privadas: `_camelCase`, como los campos (lo exige `.editorconfig`) | `public const int CellsPerZone = 7;`, `private const string _sectionName = "RateLimiting";` (solo constantes técnicas o matemáticas, nunca reglas del juego) |
 | Métodos asíncronos | Sufijo `Async` | `ProcessActivityAsync()` |
 | Booleanos | Prefijo `Is`, `Has`, `Can` | `IsPublic`, `HasPhoto`, `IsConquered` |
 | DTO de entrada | `<Verb><Entity>Request` | `CreateActivityRequest`, `UpdateProfileRequest` |
@@ -136,7 +136,7 @@ EF Core se configura con `UseSnakeCaseNamingConvention()`: `DistanceM` en C# se 
 6. **Sin `TODO` ni `FIXME` en `main`.** Lo pendiente se convierte en issue.
 7. **Errores explícitos.** Nada de `catch` vacíos. El backend lanza excepciones de dominio que el middleware convierte en `ProblemDetails` con su `code` (LLD §3.4); la app traduce cada `code` a un mensaje en español.
 8. **Nada de datos personales en los logs:** ni coordenadas, ni correos, ni tokens. Se registran IDs.
-9. **Fechas siempre con zona.** `DateTimeOffset` en C#, cadenas ISO con `Z` en TypeScript. Nunca `DateTime.Now`: se usa `IClock`.
+9. **Fechas siempre con zona.** `DateTimeOffset` en C#, cadenas ISO con `Z` en TypeScript. Nunca `DateTime.Now` ni `DateTimeOffset.UtcNow`: se usa el `TimeProvider` inyectado (el reloj de la app), que las pruebas pueden reemplazar.
 10. **Dependencias nuevas con justificación.** Agregar un paquete de NuGet o npm exige una línea en `docs/DECISIONES.md` (qué es, por qué y qué alternativa se descartó).
 
 ## 4. Backend (.NET)
