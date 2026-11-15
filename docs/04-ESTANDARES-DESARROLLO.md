@@ -73,7 +73,7 @@ Un concepto tiene **un solo nombre** en todas las capas. No se inventan sinónim
 | Interfaces | `I` + `PascalCase` | `ITerritoryService` |
 | Parámetros y variables locales | `camelCase` | `activityId`, `validPoints` |
 | Campos privados | `_camelCase` | `_clock`, `_db` |
-| Constantes | `PascalCase` | `const int CellsPerZone = 7;` (solo constantes matemáticas o de H3, nunca reglas del juego) |
+| Constantes | Públicas: `PascalCase`; privadas: `_camelCase`, como los campos (lo exige `.editorconfig`) | `public const int CellsPerZone = 7;`, `private const string _sectionName = "RateLimiting";` (solo constantes técnicas o matemáticas, nunca reglas del juego) |
 | Métodos asíncronos | Sufijo `Async` | `ProcessActivityAsync()` |
 | Booleanos | Prefijo `Is`, `Has`, `Can` | `IsPublic`, `HasPhoto`, `IsConquered` |
 | DTO de entrada | `<Verb><Entity>Request` | `CreateActivityRequest`, `UpdateProfileRequest` |

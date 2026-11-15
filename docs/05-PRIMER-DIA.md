@@ -61,9 +61,12 @@ Respóndeme siempre en español. No escribas código de la app en esta sesión.
 Revisa qué tengo instalado y dime qué falta, con el comando para instalarlo.
 No instales nada sin mi permiso.
 - Todos: git, Node.js LTS y un editor (VS Code).
-- Backend (Ashley): .NET 10 SDK y Docker Desktop (PostgreSQL + PostGIS en Docker Compose).
+- Backend (Ashley, y Rowlis para sus historias de backend, D-16): .NET 10 SDK y Docker Desktop
+  (PostgreSQL + PostGIS en Docker Compose). Después, desde backend/: `dotnet tool restore`
+  (instala dotnet-ef) y `docker compose up -d --build`; los pasos están en backend/README.md.
 - Front (Jorge, Rowlis): Node.js LTS, la app Expo Go en mi teléfono, Android Studio
-  con un emulador y, si tengo Mac, Xcode. El proyecto en mobile/ todavía no existe
+  con un emulador y, si tengo Mac, Xcode. Expo Go sirve para las primeras pantallas; el GPS
+  en segundo plano y MapLibre necesitan un development build (CTZ-09). El proyecto en mobile/ todavía no existe
   (se crea en CTZ-08): no lo crees tú.
 - QA (Rangelis, Jaime): un cliente de API para la colección de docs/qa/coleccion-api/.
   Jaime, además, Maestro para las pruebas E2E.
