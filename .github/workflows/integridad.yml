@@ -1,0 +1,33 @@
+name: Integridad
+
+# pull_request_target runs the copy of this file that lives in main, so a PR cannot edit or skip it.
+# It never checks out or runs code from the PR: it only reads the list of changed files.
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  integridad:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Solo la duena del repo cambia la CI y las reglas (.github/)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          protegidos=$(gh api --paginate "repos/$REPO/pulls/$PR/files" \
+            --jq '.[] | select((.filename | startswith(".github/")) or ((.previous_filename // "") | startswith(".github/"))) | .filename')
+          if [ -n "$protegidos" ] && [ "$AUTHOR" != "$OWNER" ]; then
+            echo "::error::Solo $OWNER puede cambiar la CI y las reglas del repo (.github/). Archivos del PR:"
+            echo "$protegidos"
+            exit 1
+          fi
+          echo "Sin cambios protegidos o autor autorizado ($AUTHOR)."

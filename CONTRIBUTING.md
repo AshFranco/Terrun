@@ -16,7 +16,7 @@ Usar asistentes para escribir código está bien; atribuirles autoría en el his
 
 ## Ramas
 
-`main` está protegida: solo se entra por PR con 1 aprobación y CI en verde.
+`main` está protegida: solo se entra por PR con los checks `autoria`, `integridad` y `backend` en verde y la rama al día con `main`. No se puede hacer push directo, push forzado ni borrar `main`, ni siquiera los administradores. La revisión se pide siempre pero no bloquea el merge, y los cambios en `.github/` (CI y reglas) solo los hace Ashley (D-20). Las etiquetas `v*` de las entregas no se pueden mover ni borrar.
 
 ```text
 feat/CTZ-XX-short-description     funcionalidad nueva
@@ -44,7 +44,7 @@ docs(lld): add challenge standings endpoint
 - Uno por historia (`CTZ-XX`). Si pasa de ~400 líneas, se parte: un PR de 2.000 líneas no se revisa, se aprueba a ciegas.
 - Título en inglés con el formato de los commits; descripción en español usando la plantilla: qué resuelve, cómo probarlo, checklist de la Definition of Done.
 - **Revisores:** el backend de Ashley lo revisa Jorge o Rowlis (como mínimo, lo que toca el contrato); el backend de Rowlis lo revisa Ashley; el front lo revisa el otro dev front; todo cambio del contrato de API lo aprueba Ashley.
-- El autor hace el merge (squash) después de la aprobación.
+- El autor hace el merge cuando la CI está en verde; si pidió revisión y le dejaron comentarios, los resuelve antes (GitHub exige conversaciones resueltas).
 
 ## Definition of Ready
 
@@ -60,7 +60,7 @@ Una historia entra al sprint solo si:
 
 Una historia se cierra solo si:
 
-- [ ] Está en `main` mediante un PR aprobado.
+- [ ] Está en `main` mediante un PR con la CI en verde.
 - [ ] Cumple `docs/04-ESTANDARES-DESARROLLO.md` (idioma, nombres, glosario, formato).
 - [ ] Los criterios de aceptación los verificó alguien distinto del autor (QA o PO).
 - [ ] Tiene pruebas automatizadas (unitarias o de integración) y pasan.

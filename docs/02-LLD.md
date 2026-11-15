@@ -2,8 +2,8 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.4
-fecha: 14 de noviembre de 2026
+version: 1.5
+fecha: 15 de noviembre de 2026
 ---
 
 # Control del documento
@@ -15,6 +15,7 @@ fecha: 14 de noviembre de 2026
 | 1.2 | 13/11/2026 | Rowlis participa en `backend/` en funciones puntuales (D-16) | Ashley |
 | 1.3 | 14/11/2026 | Alineado con el HLD v2.0 (D-17): "trackear" en lugar de "grabar" en los textos en español | Ashley |
 | 1.4 | 14/11/2026 | Esqueleto del backend (CTZ-03, D-19): solución `Terrun.slnx` y módulo `System` renombrado a `Platform` | Ashley |
+| 1.5 | 15/11/2026 | Reglas de `main` (D-20): sin aprobación obligatoria y con los checks `autoria`, `integridad` y `backend` | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -33,7 +34,7 @@ terrun/
 └── .github/          CI, plantillas de issue y de PR
 ```
 
-Ramas: `main` protegida (solo por PR con 1 aprobación y CI en verde). Ramas de trabajo `feat/CTZ-<n>-short-description`, `fix/...`, `docs/...`, `chore/...`. Commits en inglés con formato Conventional Commits y ámbitos `api`, `db`, `engine`, `territory`, `auth`, `social`, `app`, `gps`, `map`, `ui`, `qa`, `docs`, `ci`.
+Ramas: `main` protegida (solo por PR con los checks `autoria`, `integridad` y `backend` en verde; sin push directo, forzado ni borrado; cambios en `.github/` solo de Ashley, D-20). Ramas de trabajo `feat/CTZ-<n>-short-description`, `fix/...`, `docs/...`, `chore/...`. Commits en inglés con formato Conventional Commits y ámbitos `api`, `db`, `engine`, `territory`, `auth`, `social`, `app`, `gps`, `map`, `ui`, `qa`, `docs`, `ci`.
 
 ## 1.2 Backend (.NET 10)
 

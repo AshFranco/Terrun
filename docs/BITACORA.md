@@ -14,6 +14,13 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — Reglas de `main` (D-20) y CTZ-04 (Neon)
+- Hecho: PR #115 (CTZ-03) mergeado. `main` ya no exige aprobación; quedan obligatorios los checks `autoria`, `integridad` y `backend`, la rama al día, las conversaciones resueltas y el bloqueo de push directo, push forzado y borrado, sin excepciones para administradores. Nuevo workflow `integridad` (`pull_request_target`): solo la dueña del repo cambia `.github/`. Etiquetas `v*` inmutables y alertas de Dependabot activas.
+- Hecho: CTZ-04, parte Neon: organización y proyecto `terrun` (Postgres 16, AWS us-east-1), base `terrun`, ramas `main` y `qa` con PostGIS 3.3.10 (es la versión que ofrece Neon para Postgres 16; local usa 3.5). La API local conectada a la rama `qa` respondió `/health` = Healthy. Las credenciales no están en el repo.
+- Evidencia: protección de `main` y ruleset de etiquetas consultados por la API de GitHub; `docs/DECISIONES.md` (D-20); LLD v1.5.
+- Decisiones: D-20.
+- Siguiente paso: Expo (organización e invitaciones) y Render (servicio `qa`) para cerrar CTZ-04; registrar la decisión de credenciales y PostGIS en D-21.
+
 ## 2026-11-14 — Ashley — CTZ-03 Esqueleto del backend
 - Hecho: solución `backend/Terrun.slnx` (Api, Domain, Infrastructure, Engine + 2 proyectos de pruebas), `TerrunDbContext` con PostGIS y snake_case, `/health` (API + BD), Swagger y OpenAPI 3.1, `Dockerfile` y `docker-compose.yml` con `postgis/postgis:16-3.5`, y CI `backend.yml` (formato, build y pruebas). 8 pruebas en verde: integración con Testcontainers y reglas de dependencias del LLD §1.2. D-19 y LLD v1.4.
 - Evidencia: PR #115; `dotnet test` 8/8 y `docker compose up` con `/health` = Healthy, verificados desde cero en local.
