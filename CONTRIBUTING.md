@@ -63,6 +63,7 @@ Una historia se cierra solo si:
 - [ ] Está en `main` mediante un PR con la CI en verde.
 - [ ] Cumple `docs/04-ESTANDARES-DESARROLLO.md` (idioma, nombres, glosario, formato).
 - [ ] Los criterios de aceptación los verificó alguien distinto del autor (QA o PO).
+- [ ] **Revisión de completitud:** se revisó contra el diseño completo (HLD, LLD §1–§10 y estándares), no solo contra los criterios de aceptación, y contra lo que necesitan las historias que dependen de esta. Lo que falta se agrega o queda como issue, y el PR dice qué se revisó y qué se dejó fuera y por qué (D-23).
 - [ ] Tiene pruebas automatizadas (unitarias o de integración) y pasan.
 - [ ] Si toca el motor: hay casos calculados a mano (LLD §9).
 - [ ] Ningún parámetro del juego está fijo en el código.
