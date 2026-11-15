@@ -26,7 +26,7 @@ REPO_NAME = "Terrun"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BACKLOG_MD = REPO_ROOT / "docs" / "03-BACKLOG.md"
 
-HECHAS_S0 = {"CTZ-01", "CTZ-02", "CTZ-05", "CTZ-07"}
+HECHAS_S0 = {"CTZ-01", "CTZ-05", "CTZ-07"}
 
 
 def parsear_backlog():
