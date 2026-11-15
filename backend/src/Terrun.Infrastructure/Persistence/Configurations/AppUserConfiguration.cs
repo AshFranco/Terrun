@@ -15,6 +15,7 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.Property(u => u.IsEmailVerified).HasDefaultValue(false);
         builder.Property(u => u.Role).HasDefaultValue(UserRole.Runner);
         builder.Property(u => u.Status).HasDefaultValue(UserStatus.Active);
+        builder.Property(u => u.SecurityVersion).HasDefaultValue(1).HasSentinel(1);
         builder.Property(u => u.CreatedAt).HasDefaultValueSql(ColumnDefaults.Now);
         builder.Property(u => u.UpdatedAt).HasDefaultValueSql(ColumnDefaults.Now);
     }

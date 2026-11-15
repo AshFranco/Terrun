@@ -9,7 +9,7 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
 {
     private static readonly string[] _expectedTables =
     [
-        "app_user", "consent", "external_login", "legal_document", "privacy_zone", "profile",
+        "app_user", "audit_log", "consent", "external_login", "legal_document", "privacy_zone", "profile",
         "refresh_token", "system_setting", "user_preference", "user_stats", "verification_token",
     ];
 
@@ -20,7 +20,7 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
     ];
 
     [Fact]
-    public async Task Migrate_EmptyDatabase_CreatesTheElevenTablesOfM1M2AndM13()
+    public async Task Migrate_EmptyDatabase_CreatesTheTablesOfM1M2M13AndAuditLog()
     {
         await using var scope = database.CreateScope();
         var db = MigratedDatabaseFixture.Db(scope);

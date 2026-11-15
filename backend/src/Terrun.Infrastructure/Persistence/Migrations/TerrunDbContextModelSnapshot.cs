@@ -81,6 +81,12 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .HasDefaultValue(UserRole.Runner)
                         .HasColumnName("role");
 
+                    b.Property<int>("SecurityVersion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("security_version");
+
                     b.Property<UserStatus>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("user_status")
@@ -291,6 +297,9 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_refresh_token");
 
+                    b.HasIndex("FamilyId")
+                        .HasDatabaseName("ix_refresh_token_family_id");
+
                     b.HasIndex("TokenHash")
                         .IsUnique()
                         .HasDatabaseName("uk_refresh_token_token_hash");
@@ -347,6 +356,58 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_verification_token_user_id");
 
                     b.ToTable("verification_token", (string)null);
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Moderation.AuditLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("action");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("data");
+
+                    b.Property<string>("Entity")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("entity");
+
+                    b.Property<string>("EntityId")
+                        .HasColumnType("text")
+                        .HasColumnName("entity_id");
+
+                    b.Property<IPAddress>("Ip")
+                        .HasColumnType("inet")
+                        .HasColumnName("ip");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_audit_log");
+
+                    b.HasIndex("UserId", "OccurredAt")
+                        .HasDatabaseName("ix_audit_log_user_id_occurred_at");
+
+                    b.ToTable("audit_log", (string)null);
                 });
 
             modelBuilder.Entity("Terrun.Domain.Platform.SystemSetting", b =>
@@ -875,6 +936,15 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_verification_token_app_user_user_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Moderation.AuditLog", b =>
+                {
+                    b.HasOne("Terrun.Domain.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_audit_log_app_user_user_id");
                 });
 
             modelBuilder.Entity("Terrun.Domain.Platform.SystemSetting", b =>

@@ -15,6 +15,9 @@ public sealed class AppUser
 
     public UserStatus Status { get; set; } = UserStatus.Active;
 
+    // LLD §7.1: the "sv" claim of the access token; raising it on a password or role change invalidates older tokens
+    public int SecurityVersion { get; set; } = 1;
+
     public DateTimeOffset? LastLoginAt { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }

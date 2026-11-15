@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Terrun.Domain.Identity;
+using Terrun.Domain.Moderation;
 using Terrun.Domain.Platform;
 using Terrun.Domain.Profiles;
 
@@ -28,6 +29,8 @@ public sealed class TerrunDbContext(DbContextOptions<TerrunDbContext> options) :
     public DbSet<UserStats> UserStats => Set<UserStats>();
 
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
+
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

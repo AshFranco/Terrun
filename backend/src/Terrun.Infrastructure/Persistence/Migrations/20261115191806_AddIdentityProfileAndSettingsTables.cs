@@ -2,6 +2,7 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Terrun.Domain.Common;
 using Terrun.Domain.Identity;
 using Terrun.Domain.Profiles;
@@ -41,6 +42,7 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                     password_hash = table.Column<string>(type: "text", nullable: true),
                     role = table.Column<UserRole>(type: "user_role", nullable: false, defaultValue: UserRole.Runner),
                     status = table.Column<UserStatus>(type: "user_status", nullable: false, defaultValue: UserStatus.Active),
+                    security_version = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     last_login_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     deleted_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
@@ -64,6 +66,31 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_legal_document", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "audit_log",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    action = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    entity = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    entity_id = table.Column<string>(type: "text", nullable: true),
+                    data = table.Column<string>(type: "jsonb", nullable: true),
+                    ip = table.Column<IPAddress>(type: "inet", nullable: true),
+                    occurred_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_audit_log", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_audit_log_app_user_user_id",
+                        column: x => x.user_id,
+                        principalTable: "app_user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -375,6 +402,11 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_audit_log_user_id_occurred_at",
+                table: "audit_log",
+                columns: new[] { "user_id", "occurred_at" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_consent_legal_document_id",
                 table: "consent",
                 column: "legal_document_id");
@@ -414,6 +446,11 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_refresh_token_family_id",
+                table: "refresh_token",
+                column: "family_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_refresh_token_user_id_revoked_at",
                 table: "refresh_token",
                 columns: new[] { "user_id", "revoked_at" });
@@ -439,11 +476,37 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 table: "verification_token",
                 column: "token_hash",
                 unique: true);
+
+            // Hand-written: LLD §2.3 (M12) audit_log is insert-only. Keep this block if the migration is regenerated
+            migrationBuilder.Sql("""
+                CREATE FUNCTION reject_audit_log_change() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                    RAISE EXCEPTION 'audit_log is insert-only' USING ERRCODE = 'insufficient_privilege';
+                END;
+                $$;
+
+                CREATE TRIGGER trg_audit_log_insert_only
+                    BEFORE UPDATE OR DELETE ON audit_log
+                    FOR EACH ROW EXECUTE FUNCTION reject_audit_log_change();
+
+                CREATE TRIGGER trg_audit_log_no_truncate
+                    BEFORE TRUNCATE ON audit_log
+                    FOR EACH STATEMENT EXECUTE FUNCTION reject_audit_log_change();
+                """);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("""
+                DROP TRIGGER trg_audit_log_no_truncate ON audit_log;
+                DROP TRIGGER trg_audit_log_insert_only ON audit_log;
+                DROP FUNCTION reject_audit_log_change();
+                """);
+
+            migrationBuilder.DropTable(
+                name: "audit_log");
+
             migrationBuilder.DropTable(
                 name: "consent");
 

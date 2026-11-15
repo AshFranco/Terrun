@@ -17,7 +17,7 @@ fecha: 15 de noviembre de 2026
 | 1.4 | 14/11/2026 | Esqueleto del backend (CTZ-03, D-19): solución `Terrun.slnx` y módulo `System` renombrado a `Platform` | Ashley |
 | 1.5 | 15/11/2026 | Reglas de `main` (D-20): sin aprobación obligatoria y con los checks `autoria`, `integridad` y `backend` | Ashley |
 | 1.6 | 15/11/2026 | Ambiente de QA (CTZ-04, D-21): variables `ASPNETCORE_ENVIRONMENT` y `ASPNETCORE_FORWARDEDHEADERS_ENABLED` y URL de QA | Ashley |
-| 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup` | Ashley |
+| 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup`, `app_user.security_version`, índice `refresh_token.family_id`, `audit_log` desde CTZ-13 y `TimeProvider` como reloj | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
 
@@ -74,7 +74,7 @@ backend/
 
 **Reglas de dependencia:** `Api → Infrastructure → Domain`; `Api → Engine`; `Engine` no depende de ningún otro proyecto. Un módulo no accede directamente a las tablas de otro: usa su servicio (`ITerritoryService`, `IGamificationService`, etc.).
 
-**Patrones:** controladores delgados → servicio de aplicación → EF Core (el `DbContext` actúa como unidad de trabajo); validación con FluentValidation; errores con `ProblemDetails`; opciones tipadas para la configuración; `IClock` inyectable para probar fechas.
+**Patrones:** controladores delgados → servicio de aplicación → EF Core (el `DbContext` actúa como unidad de trabajo); validación con FluentValidation; errores con `ProblemDetails`; opciones tipadas para la configuración; `TimeProvider` inyectable (el reloj de la app) para probar fechas.
 
 ## 1.3 App móvil (React Native + Expo)
 
@@ -112,7 +112,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 - Fechas `timestamptz` en UTC con sufijo `_at`. Distancias en metros, tiempos en segundos, ritmos en segundos por km.
 - Geometrías en `geography` (SRID 4326).
 - Enumeraciones como tipos `enum` de PostgreSQL, mapeados a enums de C#.
-- Toda tabla mutable tiene `created_at`; las editables, además, `updated_at`.
+- Toda tabla mutable tiene `created_at`; las editables, además, `updated_at`. Los mantiene un interceptor de EF con el reloj inyectable (`TimeProvider`); el default `now()` de la BD solo cubre inserciones hechas fuera de EF.
 
 ## 2.2 Diagrama entidad-relación (núcleo)
 
@@ -124,9 +124,9 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
-| `app_user` | `id uuid`, `email citext`, `is_email_verified bool`, `password_hash text null`, `role user_role` (runner, moderator, admin), `status user_status` (active, suspended, deleted), `last_login_at`, `deleted_at`, `created_at`, `updated_at` | PK `id`; UK `email`; `password_hash` nulo solo si existe un `external_login` |
+| `app_user` | `id uuid`, `email citext`, `is_email_verified bool`, `password_hash text null`, `role user_role` (runner, moderator, admin), `status user_status` (active, suspended, deleted), `security_version int` (claim `sv`, §7.1; empieza en 1), `last_login_at`, `deleted_at`, `created_at`, `updated_at` | PK `id`; UK `email`; `password_hash` nulo solo si existe un `external_login` |
 | `external_login` | `id uuid`, `user_id uuid`, `provider login_provider` (google, apple), `subject text` (claim `sub`), `email citext`, `created_at` | FK → app_user (cascade); UK (`provider`, `subject`) |
-| `refresh_token` | `id uuid`, `user_id uuid`, `token_hash bytea` (SHA-256), `family_id uuid`, `expires_at`, `revoked_at`, `replaced_by uuid`, `ip inet`, `device text`, `created_at` | UK `token_hash`; índice (`user_id`, `revoked_at`) |
+| `refresh_token` | `id uuid`, `user_id uuid`, `token_hash bytea` (SHA-256), `family_id uuid`, `expires_at`, `revoked_at`, `replaced_by uuid`, `ip inet`, `device text`, `created_at` | UK `token_hash`; índice (`user_id`, `revoked_at`); índice `family_id` (revocar la familia, §7.1) |
 | `verification_token` | `id uuid`, `user_id uuid`, `type token_type` (email_verification, password_reset), `token_hash bytea`, `expires_at`, `used_at`, `created_at` | UK `token_hash`; vigencia de 24 h (verificación) y 1 h (restablecimiento) |
 | `legal_document` | `id uuid`, `type legal_document_type` (terms, privacy), `version text`, `url text`, `effective_from timestamptz` | UK (`type`, `version`) |
 | `consent` | `id uuid`, `user_id uuid`, `legal_document_id uuid`, `accepted_at`, `ip inet` | UK (`user_id`, `legal_document_id`) |
@@ -213,7 +213,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
 | `activity_review` | `id uuid`, `activity_id uuid`, `violated_rules jsonb`, `status review_status` (pending, approved, rejected), `reviewer_id uuid`, `note text`, `created_at`, `resolved_at` | UK `activity_id` |
-| `audit_log` | `id bigint identity`, `user_id uuid null`, `action varchar(60)`, `entity varchar(40)`, `entity_id text`, `data jsonb`, `ip inet`, `occurred_at` | Solo inserción: un trigger rechaza UPDATE y DELETE |
+| `audit_log` | `id bigint identity`, `user_id uuid null`, `action varchar(60)`, `entity varchar(40)`, `entity_id text`, `data jsonb`, `ip inet`, `occurred_at` | Solo inserción: un trigger rechaza UPDATE, DELETE y TRUNCATE; FK → app_user (restrict: el usuario se anonimiza, nunca se borra, §4.5); índice (`user_id`, `occurred_at`). Se crea en CTZ-13 para que el login (CTZ-14) registre desde el inicio |
 
 ### M13 — Configuración
 
