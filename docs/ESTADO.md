@@ -16,7 +16,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 - ✅ **CTZ-01** Entregar HLD y LLD (mié 11/11). *Entregables listos en `docs/entregables/`: HLD v2.0 como versión oficial para este período académico (MVP) tras las correcciones del profesor (`D-17`), HLD v1.2 conservado como referencia posterior al MVP (`HLD-Terrun-v1.2-post-MVP.docx`) y LLD v1.2.*
 - ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con los checks `autoria`, `integridad` y `backend`, sin excepciones (push directo rechazado, verificado el 14/11; reglas ajustadas el 15/11, D-20).*
 - ✅ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Mergeado (PR #115): solución .NET 10, `/health`, Swagger, compose con PostGIS y CI de formato, build y pruebas.*
-- 🔄 **CTZ-04** Cuentas en Neon, Render y Expo. *Neon listo (proyecto `terrun`, Postgres 16, ramas `main` y `qa` con PostGIS); faltan Expo y Render.*
+- 👀 **CTZ-04** Cuentas en Neon, Render y Expo. *Neon (proyecto `terrun`, Postgres 16, ramas `main` y `qa` con PostGIS), Render (`terrun-api-qa`, https://terrun-api-qa.onrender.com, `/health` = Healthy) y organización `terrun` en Expo con el equipo invitado; credenciales fuera del repo (D-21).*
 
 ### Diana — Product Owner
 - ✅ **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Publicada en https://terrun-encuesta.netlify.app y compartida con los corredores; meta superada con 23 respuestas recibidas (meta inicial: 15).*

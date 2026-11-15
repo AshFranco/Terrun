@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-15 — Ashley — CTZ-04 Cuentas de servicios (cierre)
+- Hecho: Render `terrun-api-qa` (Docker, Virginia, despliegue automático desde `main`) conectado a la rama `qa` de Neon; `/health` = Healthy, `/swagger` 200 y OpenAPI 3.1.1 con `servers` en `https` (gracias a `ASPNETCORE_FORWARDEDHEADERS_ENABLED`). Organización `terrun` en Expo con Diana (Admin) y Jorge, Rowlis, Rangelis y Jaime (Developer) invitados. LLD v1.6 (§8: variables y ambiente de QA).
+- Evidencia: https://terrun-api-qa.onrender.com/health; `docs/DECISIONES.md` (D-21).
+- Decisiones: D-21.
+- Siguiente paso: invitar a Rowlis y Diana a la organización de Neon; pasar `ESTADO.md` al S1 en la planificación.
+
 ## 2026-11-15 — Ashley — Reglas de `main` (D-20) y CTZ-04 (Neon)
 - Hecho: PR #115 (CTZ-03) mergeado. `main` ya no exige aprobación; quedan obligatorios los checks `autoria`, `integridad` y `backend`, la rama al día, las conversaciones resueltas y el bloqueo de push directo, push forzado y borrado, sin excepciones para administradores. Nuevo workflow `integridad` (`pull_request_target`): solo la dueña del repo cambia `.github/`. Etiquetas `v*` inmutables y alertas de Dependabot activas.
 - Hecho: CTZ-04, parte Neon: organización y proyecto `terrun` (Postgres 16, AWS us-east-1), base `terrun`, ramas `main` y `qa` con PostGIS 3.3.10 (es la versión que ofrece Neon para Postgres 16; local usa 3.5). La API local conectada a la rama `qa` respondió `/health` = Healthy. Las credenciales no están en el repo.
