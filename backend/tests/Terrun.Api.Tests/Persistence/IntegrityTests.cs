@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Terrun.Api.Tests.Infrastructure;
 using Terrun.Domain.Moderation;
 
 namespace Terrun.Api.Tests.Persistence;
@@ -65,6 +68,27 @@ public sealed class IntegrityTests(MigratedDatabaseFixture database)
     }
 
     [Fact]
+    public async Task SaveUser_ClockWithSubMicrosecondTicks_TrackedTimestampsMatchTheStoredRow()
+    {
+        // Linux clocks have 100 ns ticks and PostgreSQL keeps microseconds; the tracked value must equal the stored one
+        var ct = TestContext.Current.CancellationToken;
+        var clock = new FixedClock(new DateTimeOffset(2026, 11, 15, 12, 0, 0, TimeSpan.Zero).AddTicks(1234567));
+        await using var factory = new TerrunApiFactory(database.ConnectionString);
+        await using var app = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureTestServices(services => services.AddSingleton<TimeProvider>(clock)));
+        await using var scope = app.Services.CreateAsyncScope();
+        var db = MigratedDatabaseFixture.Db(scope);
+        var user = MigratedDatabaseFixture.NewUser();
+
+        db.Users.Add(user);
+        await db.SaveChangesAsync(ct);
+        var stored = await db.Users.AsNoTracking().SingleAsync(u => u.Id == user.Id, ct);
+
+        Assert.Equal(stored.CreatedAt, user.CreatedAt);
+        Assert.Equal(stored.UpdatedAt, user.UpdatedAt);
+    }
+
+    [Fact]
     public async Task SaveUser_New_StartsAtSecurityVersionOne()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -89,4 +113,9 @@ public sealed class IntegrityTests(MigratedDatabaseFixture database)
         await db.SaveChangesAsync(ct);
         return entry;
     }
+}
+
+internal sealed class FixedClock(DateTimeOffset now) : TimeProvider
+{
+    public override DateTimeOffset GetUtcNow() => now;
 }
