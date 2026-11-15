@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S0 — Diseño y arranque** · del martes 10 al viernes 13 de noviembre de 2026
 > **Weekly:** viernes 13 de noviembre · **Próximo hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
-> **Última actualización:** 14/11/2026 — Ashley
+> **Última actualización:** 15/11/2026 — Ashley
 
 Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
@@ -14,9 +14,9 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`.
 
 ### Ashley — Scrum Master + Backend
 - ✅ **CTZ-01** Entregar HLD y LLD (mié 11/11). *Entregables listos en `docs/entregables/`: HLD v2.0 como versión oficial para este período académico (MVP) tras las correcciones del profesor (`D-17`), HLD v1.2 conservado como referencia posterior al MVP (`HLD-Terrun-v1.2-post-MVP.docx`) y LLD v1.2.*
-- ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con 1 aprobación y el check `autoria` sin excepciones (push directo rechazado, verificado el 14/11).*
-- 👀 **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *En revisión (PR #115): solución .NET 10, `/health`, Swagger, compose con PostGIS y CI de formato, build y pruebas.*
-- ⬜ **CTZ-04** Cuentas en Neon, Render y Expo.
+- ✅ **CTZ-02** Crear el repo en GitHub, invitar al equipo y proteger `main`. *Los 6 integrantes tienen acceso a `AshFranco/Terrun`; `main` exige PR con los checks `autoria`, `integridad` y `backend`, sin excepciones (push directo rechazado, verificado el 14/11; reglas ajustadas el 15/11, D-20).*
+- ✅ **CTZ-03** Esqueleto del backend + Docker Compose con PostGIS + CI. *Mergeado (PR #115): solución .NET 10, `/health`, Swagger, compose con PostGIS y CI de formato, build y pruebas.*
+- 🔄 **CTZ-04** Cuentas en Neon, Render y Expo. *Neon listo (proyecto `terrun`, Postgres 16, ramas `main` y `qa` con PostGIS); faltan Expo y Render.*
 
 ### Diana — Product Owner
 - ✅ **CTZ-05** Enviar la encuesta a los corredores (`docs/producto/encuesta-corredores.md`). *Publicada en https://terrun-encuesta.netlify.app y compartida con los corredores; meta superada con 23 respuestas recibidas (meta inicial: 15).*
