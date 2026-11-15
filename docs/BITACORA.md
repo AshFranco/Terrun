@@ -21,6 +21,12 @@ Formato:
 - Antes del merge: crear la variable `Jwt__Key` en Render (sin ella QA no arranca). Pendiente: comprar el dominio y configurar SMTP para que QA envíe correos.
 - Siguiente paso: CTZ-16 (`GET /me` y `PATCH /me/profile`).
 
+## 2026-11-15 — Ashley — Evaluación de cumplimiento legal
+- Hecho: `docs/producto/legal/CUMPLIMIENTO.md` evalúa nueve puntos de cumplimiento contra lo que es Terrun (app gratuita con GPS en segundo plano que se publicará en Google Play): marco aplicable (Ley 172-13, Ley 136-03, eliminación de cuentas y ubicación en segundo plano de Google Play, licencia ODbL), estado de cada punto, responsable y contenido mínimo de la política de privacidad. No aplican, por ahora, la política de cookies (no se usan) ni la de reembolso (no se cobra).
+- Evidencia: revisión de `survey/index.html` (sin cookies ni analítica, aviso de privacidad y atribución de OpenStreetMap presentes) y del modelo de datos (`consent` por documento).
+- Decisiones pendientes: edad mínima (Diana); `DELETE /me` antes de publicar en Google Play; casilla de consentimiento en la encuesta o cerrarla.
+- Siguiente paso: Diana redacta los textos en CTZ-27 con el contenido mínimo; Ashley suma el "cómo" del consentimiento en CTZ-14.
+
 ## 2026-11-15 — Ashley — Revisión de completitud de CTZ-03 y CTZ-04
 - Hecho: revisión de lo ya mergeado contra el HLD y el LLD completos. En CTZ-03 faltaban las convenciones transversales de la API; quedaron en `src/Terrun.Api/Web/` (prefijo `/api/v1`, enums `snake_case`, errores con `code` y `traceId`, FluentValidation, límite de tasa, 2 MB, cabeceras de seguridad, HSTS y logs JSON). Guía del primer día: Rowlis también necesita .NET y Docker (D-16) y `dotnet tool restore`. Estándares §2.1: las constantes privadas usan `_camelCase`, como exige `.editorconfig`.
 - Evidencia: 34 pruebas en verde (13 nuevas de convenciones, una sobre Kestrel real para el tope de 2 MB); mutaciones verificadas (sin prefijo ni convertidor de enums fallan 7 pruebas); API en `Staging` con logs JSON y `traceId` igual en la respuesta y en el log.
