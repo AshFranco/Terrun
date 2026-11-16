@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-16 — Ashley — CI de la app (`mobile.yml`) para CTZ-08
+- Hecho: workflow `mobile.yml` (Node LTS con npm: `npm ci`, `lint`, `format:check`, `typecheck` y `test` dentro de `mobile/`). Corre en todos los PR como `backend.yml` y pasa sin revisar nada mientras no exista `mobile/package.json`, así entra a `main` antes que CTZ-08. Lo sube Ashley porque `integridad` solo deja cambiar `.github/` a la dueña del repo (D-20); con eso el PR de CTZ-08 puede cumplir "lint y pruebas en verde en la CI".
+- Evidencia: PR de `chore/ci-mobile-workflow`.
+- Decisiones: ninguna nueva (aplica D-20).
+- Siguiente paso: Rowlis usa npm con `package-lock.json` y esos nombres de scripts en CTZ-08; cuando CTZ-08 esté en `main`, Ashley agrega `mobile` como check obligatorio.
+
 ## 2026-11-15 — Ashley — CTZ-14 Registro, verificación, login, refresh y logout
 - Hecho: módulo `Identity` con `POST /api/v1/auth/register`, `verify-email`, `resend-verification`, `login`, `refresh` y `logout`. PBKDF2-SHA512 de 210.000 iteraciones, lista de 10.000 contraseñas comunes, JWT de 15 min con `sv` validado en cada solicitud, refresh de 30 días con rotación y revocación de la familia ante una reutilización, código de verificación de 6 dígitos (24 h, 5 intentos), evidencia del consentimiento (`method`, `app_version`), auditoría de cada inicio de sesión y correo por SMTP. Revisión de completitud: login sin pistas de tiempo, carrera de dos registros iguales resuelta por el índice único, límite de tasa por usuario (`sub`), logout que no dispara la alarma de robo, Bearer en OpenAPI y controladores con token por defecto.
 - Evidencia: 62 pruebas en verde (26 nuevas de autenticación); mutaciones de los tres criterios verificadas; prueba de humo en `Staging` (registro 201, login, logout 204, refresh posterior 401, log de correo sin el código).

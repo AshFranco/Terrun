@@ -1,0 +1,60 @@
+name: Mobile
+
+# Runs on every pull request (not only on mobile changes) for the same reason as backend.yml:
+# once this is a required check, a path filter would leave unrelated PRs waiting forever.
+# Until CTZ-08 adds mobile/package.json the job passes without checking anything.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Detect app
+        id: app
+        working-directory: .
+        run: |
+          if [ -f mobile/package.json ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No mobile/package.json yet (CTZ-08): nothing to check."
+          fi
+
+      - uses: actions/setup-node@v5
+        if: steps.app.outputs.present == 'true'
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install
+        if: steps.app.outputs.present == 'true'
+        run: npm ci
+
+      - name: Lint
+        if: steps.app.outputs.present == 'true'
+        run: npm run lint
+
+      - name: Check formatting
+        if: steps.app.outputs.present == 'true'
+        run: npm run format:check
+
+      - name: Typecheck
+        if: steps.app.outputs.present == 'true'
+        run: npm run typecheck
+
+      - name: Test
+        if: steps.app.outputs.present == 'true'
+        run: npm test
