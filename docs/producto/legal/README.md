@@ -44,8 +44,10 @@ En la migración inicial (`CTZ-13`, tabla `legal_document` del módulo `M1`) y e
 
 ## 3. Textos cortos de interfaz para la aplicación móvil (`src/i18n/es.json`)
 
-### 3.1 Casilla de consentimiento en Registro (`P-02`, `RF-01`, `RF-12`)
-> *"He leído y acepto los **Términos y Condiciones (v1.7)** y la **Política de Privacidad (v1.7)** de Terrun, incluyendo el tratamiento de mis datos de actividad deportiva y ubicación GPS conforme a la Ley No. 172-13."*
+### 3.1 Casillas de consentimiento separadas en Registro (`P-02`, `RF-01`, `RF-12`, `D-26`)
+Deben mostrarse **por separado y desmarcadas por defecto**:
+- **Casilla 1 (Términos):** *"He leído y acepto los **Términos y Condiciones (v1.7)** de Terrun."*
+- **Casilla 2 (Privacidad):** *"He leído y acepto la **Política de Privacidad (v1.7)** de Terrun, incluyendo el tratamiento de mis datos de actividad deportiva y ubicación GPS conforme a la Ley No. 172-13."*
 
 ### 3.2 Aviso previo al permiso de ubicación GPS (`P-06`, `RF-06`)
 > *"Para trackear tus carreras y conquistar zonas hexagonales aunque lleves el teléfono en el bolsillo con la pantalla bloqueada, Terrun necesita acceso a tu ubicación GPS en primer y segundo plano **únicamente mientras tengas una actividad en curso**. Tu ubicación nunca se muestra en vivo a otros usuarios y tus rutas en el muro recortan automáticamente los primeros y últimos 200 metros para proteger tu privacidad."*
