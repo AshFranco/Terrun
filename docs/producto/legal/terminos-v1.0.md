@@ -1,6 +1,6 @@
 # Términos y Condiciones de Uso de Terrun
 
-**Versión:** 1.7  
+**Versión:** 1.0  
 **Fecha de entrada en vigor:** 17 de noviembre de 2026  
 **Ámbito:** República Dominicana
 

@@ -1,6 +1,6 @@
 # Política de Privacidad y Protección de Datos Personales de Terrun
 
-**Versión:** 1.7  
+**Versión:** 1.0  
 **Fecha de entrada en vigor:** 17 de noviembre de 2026  
 **Marco legal:** Ley No. 172-13 de la República Dominicana (Protección de Datos de Carácter Personal)
 
@@ -45,6 +45,8 @@ Solo recopilamos la información necesaria para que puedas registrar tus activid
 | **4. Recorrido GPS y datos de tus actividades** (ruta, tiempo, distancia, ritmo y calorías estimadas) | Para calcular tus estadísticas deportivas, verificar que el recorrido corresponde a un desplazamiento no motorizado y acreditar las zonas que conquistas o dominas en el mapa. |
 | **5. Datos técnicos del dispositivo y de seguridad** (código técnico de notificaciones del teléfono, dirección IP —identificador de tu conexión a internet— al aceptar documentos o iniciar sesión, modelo de teléfono, versión de la Aplicación y registros técnicos de seguridad y errores del servidor) | Para enviarte notificaciones al teléfono cuando las actives, proteger tu cuenta contra accesos no autorizados, registrar tu aceptación legal y detectar fallos técnicos del servidor. Según el diseño del sistema, los registros técnicos del servidor están configurados para no guardar tus coordenadas GPS ni tu contraseña, y la Aplicación no integra servicios externos de estadísticas de comportamiento ni reportes automáticos de errores de terceros. |
 
+**Terrun no usa cookies.**
+
 ---
 
 ## 3. ¿Cuándo y cómo usamos el GPS de tu teléfono?
@@ -62,7 +64,7 @@ Para que entiendas exactamente qué ve la comunidad y qué queda privado:
 1. **Qué ve todo el mundo en tu perfil y en el juego:** tu @usuario y tu nombre visible aparecen como dueño actual de las zonas que dominas en el mapa general, en las tablas de posiciones (*rankings*), en los clubes a los que te unas y en el muro de actividad. Ten en cuenta que aparecer como dueño de una zona indica de forma aproximada las áreas de la ciudad por donde entrenas con frecuencia.
 2. **Diferencia entre el Mapa general y el Muro de actividad:**
    - **En el Mapa general de la ciudad:** los demás corredores solo ven qué zonas hexagonales están libres, conquistadas o dominadas y el @usuario del dueño actual, pero **nunca ven el trazo exacto de las calles por donde pasaste ni la hora exacta de tu recorrido**.
-   - **En el Muro de actividad:** cuando se publica una carrera, el muro es visible para los **usuarios registrados de Terrun**, pero el servidor **recorta y oculta automáticamente los primeros 200 metros desde donde empezaste y los últimos 200 metros donde terminaste**. Así, el punto exacto de tu casa o lugar de salida y llegada nunca aparece dibujado en el mapa del muro.
+   - **En el Muro de actividad:** cada actividad tiene visibilidad **pública, solo seguidores o privada**, y en el muro solo aparece según la visibilidad que elija la persona. Además, cuando una ruta se muestra en el muro, el servidor **recorta y oculta automáticamente los primeros 200 metros desde donde empezaste y los últimos 200 metros donde terminaste**. Así, el punto exacto de tu casa o lugar de salida y llegada nunca aparece dibujado en el mapa del muro.
 3. **Control sobre tus actividades:** nadie puede ver tu ubicación en tiempo real mientras corres. Además, puedes eliminar cualquiera de tus actividades desde la Aplicación cuando lo desees.
 
 ---
@@ -92,8 +94,7 @@ Para que entiendas exactamente qué ve la comunidad y qué queda privado:
 3. **Eliminación, qué se borra y qué se conserva:**
    - **Borrar una actividad desde la Aplicación:** puedes eliminar cualquiera de tus actividades desde la Aplicación. Al hacerlo, se borran sus puntos GPS y visitas asociadas, se recalculan tus zonas conquistadas y el dominio de las zonas afectadas (**si esa actividad era la única que te daba una conquista o dominio y tus demás salidas no alcanzan las 5 de 7 partes, la conquista se revierte**) y se ajusta tu experiencia acumulada.
    - **Eliminar tu cuenta completa:** la eliminación automática desde un botón en la Aplicación aún no está disponible en esta versión de pruebas; por eso, **puedes solicitar la eliminación completa de tu cuenta escribiendo a privacidad@terrun-info.com**, y la atenderemos en un plazo máximo de **10 días hábiles**.
-   - **Qué se borra al eliminar tu cuenta:** se eliminan tu perfil, foto, credenciales de acceso, actividades, puntos GPS, progreso, conquistas y notificaciones, y se recalculará el dominio de las zonas que ocupabas (dejando libre el territorio o asignándolo al siguiente corredor).
-   - **Qué se conserva y por cuánto tiempo:** conservaremos tus datos mientras tu cuenta esté activa. Tras eliminar tu cuenta, se conservará únicamente la **constancia de tu aceptación legal (fecha, dirección IP y versión aceptada)** y registros técnicos mínimos sin datos que te identifiquen durante **1 año** (para acreditar el cumplimiento legal y proteger la seguridad del sistema), tras lo cual serán eliminados definitivamente. De manera excepcional, si existe una investigación por abuso o fraude o un pedido oficial de una autoridad o juez, podremos conservar los datos estrictamente necesarios mientras dure ese proceso.
+   - **Qué se borra y qué se conserva al eliminar tu cuenta:** al eliminar tu cuenta, **en un máximo de 24 horas se borran tus datos** (perfil, foto, credenciales de acceso, actividades, puntos GPS, progreso, conquistas y notificaciones, recalculándose el dominio de las zonas que ocupabas) **y tu cuenta queda anonimizada**. Conservamos solo la **constancia de tu aceptación legal (fecha, versión e IP)** y registros de seguridad sin tu correo, para acreditar el cumplimiento de la ley. De manera excepcional, si existe una investigación por abuso o fraude o un pedido oficial de una autoridad o juez, podremos conservar los datos estrictamente necesarios mientras dure ese proceso.
 
 ---
 

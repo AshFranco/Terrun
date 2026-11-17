@@ -23,7 +23,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - Revisar los PR de backend de Rowlis: CTZ-15 y CTZ-17.
 
 ### Diana — Product Owner
-- ⬜ **CTZ-27** Términos y política de privacidad v1 en `docs/producto/legal/`. *Bloquea CTZ-17.*
+- 👀 **CTZ-27** Términos y política de privacidad v1.0 en `docs/producto/legal/`. *En revisión (PR #128).* *Bloquea CTZ-17.*
 - ⬜ **CTZ-25** Analizar las 23 respuestas de la encuesta y confirmar el orden de los P1.
 - ⬜ **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20).
 
