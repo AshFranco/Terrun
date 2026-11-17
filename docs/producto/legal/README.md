@@ -26,13 +26,13 @@ La semilla de documentos legales vive en `backend/src/Terrun.Infrastructure/Pers
   {
     "type": "terms",
     "version": "1.0",
-    "url": "https://github.com/AshFranco/Terrun/blob/development/docs/producto/legal/terminos-v1.0.md",
+    "url": "https://github.com/AshFranco/Terrun/blob/main/docs/producto/legal/terminos-v1.0.md",
     "effectiveFrom": "2026-11-17T00:00:00Z"
   },
   {
     "type": "privacy",
     "version": "1.0",
-    "url": "https://github.com/AshFranco/Terrun/blob/development/docs/producto/legal/privacidad-v1.0.md",
+    "url": "https://github.com/AshFranco/Terrun/blob/main/docs/producto/legal/privacidad-v1.0.md",
     "effectiveFrom": "2026-11-17T00:00:00Z"
   }
 ]

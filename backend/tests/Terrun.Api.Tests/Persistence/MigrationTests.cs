@@ -7,6 +7,8 @@ namespace Terrun.Api.Tests.Persistence;
 [Collection(MigratedDatabaseCollection.Name)]
 public sealed class MigrationTests(MigratedDatabaseFixture database)
 {
+    private const string _repositoryBlobUrl = "https://github.com/AshFranco/Terrun/blob/main/";
+
     private static readonly string[] _expectedTables =
     [
         "app_user", "audit_log", "consent", "external_login", "legal_document", "privacy_zone", "profile",
@@ -15,7 +17,7 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
 
     private static readonly string[] _publicSettings =
     [
-        "activity.auto_pause_speed_mps", "activity.max_points", "territory.conquest_threshold",
+        "activity.auto_pause_speed_mps", "activity.max_points", "privacy.route_trim_m", "territory.conquest_threshold",
         "territory.zone_resolution", "xp.level_curve",
     ];
 
@@ -48,15 +50,16 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
     }
 
     [Fact]
-    public async Task Migrate_EmptyDatabase_SeedsTheTwentySystemSettings()
+    public async Task Migrate_EmptyDatabase_SeedsTheTwentyOneSystemSettings()
     {
         await using var scope = database.CreateScope();
         var db = MigratedDatabaseFixture.Db(scope);
 
         var settings = await db.SystemSettings.AsNoTracking().ToListAsync(TestContext.Current.CancellationToken);
 
-        Assert.Equal(20, settings.Count);
+        Assert.Equal(21, settings.Count);
         Assert.Equal("5", settings.Single(s => s.Key == "territory.conquest_threshold").Value);
+        Assert.Equal("200", settings.Single(s => s.Key == "privacy.route_trim_m").Value);
         Assert.Equal("30", settings.Single(s => s.Key == "territory.ownership_window_days").Value);
         Assert.Equal(_publicSettings, settings.Where(s => s.IsPublic).Select(s => s.Key).Order());
     }
@@ -77,6 +80,25 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
         Assert.Contains(documents, d => d.Type == LegalDocumentType.Privacy && d.Version == "1.0");
     }
 
+    // CTZ-27: the runner accepts the texts the seed points to, so each URL must match a file of the repository
+    [Fact]
+    public async Task Migrate_EmptyDatabase_SeedsLegalDocumentsThatExistInTheRepository()
+    {
+        await using var scope = database.CreateScope();
+        var db = MigratedDatabaseFixture.Db(scope);
+
+        var documents = await db.LegalDocuments.AsNoTracking().ToListAsync(TestContext.Current.CancellationToken);
+
+        var repositoryRoot = FindRepositoryRoot();
+        Assert.All(documents, d =>
+        {
+            Assert.StartsWith(_repositoryBlobUrl, d.Url, StringComparison.Ordinal);
+            var relativePath = d.Url[_repositoryBlobUrl.Length..];
+            Assert.True(File.Exists(Path.Combine(repositoryRoot, relativePath)), $"{d.Url} has no file at {relativePath}");
+            Assert.Equal(new DateTimeOffset(2026, 11, 17, 0, 0, 0, TimeSpan.Zero), d.EffectiveFrom);
+        });
+    }
+
     [Fact]
     public async Task Model_ComparedWithTheMigrations_HasNoPendingChanges()
     {
@@ -84,5 +106,16 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
         var db = MigratedDatabaseFixture.Db(scope);
 
         Assert.False(db.Database.HasPendingModelChanges(), "Run dotnet ef migrations add: the model changed without a migration.");
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "backend", "Terrun.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        return directory?.FullName ?? throw new InvalidOperationException("Repository root not found.");
     }
 }
