@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Diana — CTZ-25 Análisis de encuesta a corredores (n = 28) y orden de P1
+- Hecho: tabuladas las 28 respuestas reales de `runner-survey` (meta de 15 superada en +87 %, 16 voluntarios beta sin correos en el repo) en `docs/producto/encuesta-corredores.md`, incluyendo limitaciones de la muestra y síntesis de respuestas abiertas; definido el orden tentativo de prioridad para P1 (Logros → Retos → Rankings → Clubes → Feed social, con avisos de voz como preferencia desactivable) y actualizado `docs/ESTADO.md`.
+- Evidencia: `docs/producto/encuesta-corredores.md` (`## Análisis (CTZ-25)`), `docs/DECISIONES.md` (`D-29`) y `docs/ESTADO.md`.
+- Decisiones: D-29.
+- Siguiente paso: revisar resultados tras la beta y completar CTZ-26 (criterios de aceptación de S2 y S3).
+
 ## 2026-11-17 — Ashley — Rama `development` antes de `main`
 - Hecho: `development` pasa a ser la rama de integración y la rama por defecto; `main` solo recibe PR desde `development`. Los workflows `backend`, `mobile`, `politica` e `integridad` corren en PR y push a las dos ramas; `integridad` rechaza PR a `main` desde cualquier otra rama (y se repite si cambian la base); el hook `pre-commit` bloquea commits directos en `development`; guía, CONTRIBUTING, primer día, README del backend y ESTADO apuntan a `development`.
 - Evidencia: PR de `chore/development-branch`.
