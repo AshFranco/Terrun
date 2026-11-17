@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Rowlis — CTZ-08 Esqueleto de la app móvil
+- Hecho: esqueleto en `mobile/` con Expo SDK 54 (`expo ~54.0.36`, `react 19.1.0`, `react-native 0.81.5`), TypeScript `strict` (`noUncheckedIndexedAccess`), Expo Router (`typedRoutes`) con las 5 pestañas vacías (`Mapa`, `Feed`, `Trackear`, `Clubes`, `Perfil`), `src/i18n/es.json` con helper `t()` tipado en compilación, tokens iniciales en `src/theme/`, script `npm run api:types` (`openapi-typescript` → `src/api/schema.d.ts`), ESLint 9 (`no-explicit-any: error`, `no-console: error`), Prettier y Jest (`jest-expo` + React Native Testing Library). Vinculado al proyecto EAS de la organización `terrun` (`9ca8c8c5-510a-468e-9dce-d6e360efac90`, esquema `terrun://`, paquete `com.terrun.app`).
+- Evidencia: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` (2 suites, 4 pruebas en verde) y `npx expo export --platform android` exitosos en local.
+- Decisiones: D-27.
+- Siguiente paso: abrir el PR de `feat/CTZ-08-mobile-app-skeleton` (cierra issue #15) y continuar con CTZ-09 y CTZ-22.
+
 ## 2026-11-16 — Ashley — CI de la app (`mobile.yml`) para CTZ-08
 - Hecho: workflow `mobile.yml` (Node LTS con npm: `npm ci`, `lint`, `format:check`, `typecheck` y `test` dentro de `mobile/`). Corre en todos los PR como `backend.yml` y pasa sin revisar nada mientras no exista `mobile/package.json`, así entra a `main` antes que CTZ-08. Lo sube Ashley porque `integridad` solo deja cambiar `.github/` a la dueña del repo (D-20); con eso el PR de CTZ-08 puede cumplir "lint y pruebas en verde en la CI".
 - Evidencia: PR de `chore/ci-mobile-workflow`.
