@@ -2,8 +2,8 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.10
-fecha: 15 de noviembre de 2026
+version: 1.11
+fecha: 17 de noviembre de 2026
 ---
 
 # Control del documento
@@ -20,6 +20,7 @@ fecha: 15 de noviembre de 2026
 | 1.7 | 15/11/2026 | Migración inicial (CTZ-13, D-22): variable `Database__MigrateOnStartup`, `app_user.security_version`, índice `refresh_token.family_id`, `audit_log` desde CTZ-13 y `TimeProvider` como reloj | Ashley |
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
+| 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
 | 1.10 | 15/11/2026 | Autenticación (CTZ-14, D-26): contrato de registro, login, refresh, logout y verificación por código; errores `VERIFICATION_CODE_INVALID` y `CONSENT_REQUIRED`; evidencia del consentimiento; variables SMTP | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
@@ -253,6 +254,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | `xp.level_curve` | {"base":100,"exponent":1.5} | XP para el nivel n = base × n^exponent |
 | `calories.default_weight_kg` | 70 | Peso cuando el perfil no lo tiene |
 | `map.max_zones_per_bbox` | 2000 | Máximo de zonas por consulta del mapa |
+| `privacy.route_trim_m` | 200 | Metros que se ocultan al inicio y al final de una ruta vista por terceros (§7.2); público para que la app lo muestre en sus textos |
 
 # 3. Contrato de la API REST
 
@@ -311,7 +313,7 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 | GET | `/activities/{id}` | aut | Detalle, estado del procesamiento y resultados | P0 |
 | PATCH | `/activities/{id}` | aut | Edita título, descripción, tipo, visibilidad y zapatilla (dueño) | P0 |
 | DELETE | `/activities/{id}` | aut | Elimina la actividad y recalcula su territorio (dueño) | P0 |
-| GET | `/activities/{id}/route` | aut | Ruta en GeoJSON; para terceros se recorta por zonas de privacidad | P0 |
+| GET | `/activities/{id}/route` | aut | Ruta en GeoJSON; para terceros sin los primeros ni los últimos `privacy.route_trim_m` metros ni los puntos en sus zonas de privacidad (§7.2) | P0 |
 | GET | `/activities/{id}/splits` | aut | Splits por km | P0 |
 | GET | `/activities/{id}/gpx` | aut | Exporta la actividad en GPX (dueño) | P1 |
 | GET | `/me/activities` | aut | Historial propio (paginado, filtros por tipo y fecha) | P0 |
@@ -554,6 +556,7 @@ process(activity):
   splits         = cut every 1000 m of cumulative distance (interpolating the exact instant)
   calories       = sum MET(leg speed) * weightKg * leg hours
   route          = Douglas-Peucker (5 m tolerance) over valid points
+                   # stored complete; the privacy trim for other users is applied on read (§7.2, MT-21)
 
   # 3. Anti-cheat verdict
   if elapsedTimeS < anticheat.min_duration_s           -> processed, no territory
@@ -756,7 +759,7 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 | Actividad `public` | Todos los usuarios autenticados, excepto los bloqueados en cualquiera de los dos sentidos |
 | Actividad `followers` | El dueño y sus seguidores con estado `accepted` |
 | Actividad `private` | Solo el dueño (sigue sumando territorio) |
-| Ruta de una actividad, vista por terceros | Se recortan los puntos dentro de las zonas de privacidad del dueño |
+| Ruta de una actividad, vista por terceros | Se ocultan los primeros y los últimos `privacy.route_trim_m` metros, medidos sobre el recorrido completo de la actividad (no por segmento), y los puntos dentro de las zonas de privacidad del dueño. Si la ruta mide `2 × privacy.route_trim_m` o menos, a terceros no se les devuelve trazo. Se aplica al leer (`/activities/{id}/route`, `/feed` y cualquier vista futura), así que un cambio del parámetro aplica a todas las actividades. El dueño ve su ruta completa (D-29) |
 | Perfil privado | Nombre, foto y nivel para todos; el resto solo para seguidores aceptados |
 | Territorio (dueño de una zona) | Público, porque es la mecánica del juego. Solo se muestran el @handle y los puntos |
 | Endpoints `/admin/*` | Según el rol (`moderator` o `admin`), verificado con políticas de autorización |
@@ -822,6 +825,7 @@ Cada caso se calcula a mano y se documenta con su entrada y su resultado esperad
 | MT-18 | Punto en una sub-celda cuyo padre geométrico parece ser otra zona | La zona se asigna por `cellToParent` |
 | MT-19 | A domina 3 zonas de Naco y B le roba una (B queda con 1) | A pierde el título (2 < 3 mínimo): evento `ruler_lost` |
 | MT-20 | Empate de zonas dominadas entre el rey actual y un retador | El rey actual conserva el título |
+| MT-21 | Ruta de 3 km vista por otro usuario, y otra de 350 m | La de 3 km llega sin sus primeros ni sus últimos 200 m (medidos sobre el recorrido) y el dueño la ve completa; la de 350 m no devuelve trazo a terceros |
 
 # 10. Matriz de trazabilidad: tabla → endpoint → pantalla
 
