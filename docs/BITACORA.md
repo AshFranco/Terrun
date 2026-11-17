@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
+- Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
+- Evidencia: 63 pruebas en verde (1 nueva), `dotnet format` sin cambios, build sin advertencias; PR de `fix/CTZ-27-legal-seed-and-route-trim`.
+- Decisiones: D-29.
+- Siguiente paso: tras el merge, QA aplica la migración al desplegar `development`; Rowlis puede empezar CTZ-17 (lee `privacy.route_trim_m` en `/settings/public`). El recorte se implementa en CTZ-31b/CTZ-32 con MT-21.
+
 ## 2026-11-17 — Diana — CTZ-27 Términos y Condiciones y Política de Privacidad v1.0
 - Hecho: redactados y publicados los documentos legales v1.0 (vigencia desde 17/11/2026) en `docs/producto/legal/terminos-v1.0.md` y `privacidad-v1.0.md` con lenguaje cercano para el usuario final, cuadro "Lo esencial", cumplimiento de la Ley 172-13 (no uso de cookies, visibilidad por actividad, recorte de 200 m, borrado en 24 h con anonimización de auditoría, correos oficiales `privacidad@terrun-info.com` y `soporte@terrun-info.com`, regiones verificadas y plazo de respuesta de 10 días hábiles); actualizados `legal/README.md` (con `LegalDocumentSeed.cs` y las dos casillas separadas de registro con declaración de 18 años), `CUMPLIMIENTO.md`, `NOTA-FASE-REAL.md` y `ESTADO.md`.
 - Evidencia: PR #128 (`docs/CTZ-27-legal-documents-v1` → `development`).

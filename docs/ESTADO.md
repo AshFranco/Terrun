@@ -23,7 +23,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - Revisar los PR de backend de Rowlis: CTZ-15 y CTZ-17.
 
 ### Diana — Product Owner
-- 👀 **CTZ-27** Términos y política de privacidad v1.0 en `docs/producto/legal/`. *En revisión (PR #128).* *Bloquea CTZ-17.*
+- ✅ **CTZ-27** Términos y política de privacidad v1.0 en `docs/producto/legal/`. *Mergeado (PR #128), revisado por Ashley; vigencia del 17/11 cargada en la semilla (D-29).*
 - ⬜ **CTZ-25** Analizar las 23 respuestas de la encuesta y confirmar el orden de los P1.
 - ⬜ **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20).
 
@@ -37,7 +37,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `development` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
 - ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
-- ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Depende de CTZ-13 y CTZ-27.*
+- ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Desbloqueada: CTZ-13 y CTZ-27 hechas.*
 - ⬜ **CTZ-23** Pantallas P-01 a P-04 contra QA. *Depende de CTZ-22 y CTZ-14.*
 - ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16.*
 - ⬜ **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley.
