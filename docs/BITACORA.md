@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Diana — CTZ-27 Términos y Condiciones y Política de Privacidad v1.0
+- Hecho: redactados y publicados los documentos legales v1.0 (vigencia desde 17/11/2026) en `docs/producto/legal/terminos-v1.0.md` y `privacidad-v1.0.md` con lenguaje cercano para el usuario final, cuadro "Lo esencial", cumplimiento de la Ley 172-13 (no uso de cookies, visibilidad por actividad, recorte de 200 m, borrado en 24 h con anonimización de auditoría, correos oficiales `privacidad@terrun-info.com` y `soporte@terrun-info.com`, regiones verificadas y plazo de respuesta de 10 días hábiles); actualizados `legal/README.md` (con `LegalDocumentSeed.cs` y las dos casillas separadas de registro con declaración de 18 años), `CUMPLIMIENTO.md`, `NOTA-FASE-REAL.md` y `ESTADO.md`.
+- Evidencia: PR #128 (`docs/CTZ-27-legal-documents-v1` → `development`).
+- Decisiones: D-28 (edad mínima 18 años, exclusión temporal de *handbike*, plazo de 10 días hábiles, proveedores y regiones).
+- Siguiente paso: tras el merge del PR #128, Ashley actualiza la vigencia en `LegalDocumentSeed.cs` y Rowlis consume `/legal/current` en `CTZ-17` y `CTZ-23`.
+
 ## 2026-11-17 — Ashley — Rama `development` antes de `main`
 - Hecho: `development` pasa a ser la rama de integración y la rama por defecto; `main` solo recibe PR desde `development`. Los workflows `backend`, `mobile`, `politica` e `integridad` corren en PR y push a las dos ramas; `integridad` rechaza PR a `main` desde cualquier otra rama (y se repite si cambian la base); el hook `pre-commit` bloquea commits directos en `development`; guía, CONTRIBUTING, primer día, README del backend y ESTADO apuntan a `development`.
 - Evidencia: PR de `chore/development-branch`.
