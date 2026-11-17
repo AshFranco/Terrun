@@ -17,8 +17,26 @@ Formato:
 ## 2026-11-17 — Rowlis — CTZ-08 Esqueleto de la app móvil
 - Hecho: esqueleto en `mobile/` con Expo SDK 54 (`expo ~54.0.36`, `react 19.1.0`, `react-native 0.81.5`), TypeScript `strict` (`noUncheckedIndexedAccess`), Expo Router (`typedRoutes`) con las 5 pestañas vacías (`Mapa`, `Feed`, `Trackear`, `Clubes`, `Perfil`), `src/i18n/es.json` con helper `t()` tipado en compilación, tokens iniciales en `src/theme/`, script `npm run api:types` (`openapi-typescript` → `src/api/schema.d.ts`), ESLint 9 (`no-explicit-any: error`, `no-console: error`), Prettier y Jest (`jest-expo` + React Native Testing Library). Vinculado al proyecto EAS de la organización `terrun` (`9ca8c8c5-510a-468e-9dce-d6e360efac90`, esquema `terrun://`, paquete `com.terrun.app`).
 - Evidencia: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` (2 suites, 4 pruebas en verde) y `npx expo export --platform android` exitosos en local.
+- Decisiones: D-30.
+- Siguiente paso: abrir el PR de `feat/CTZ-08-mobile-app-skeleton` contra `development` (cierra issue #15) y continuar con CTZ-09, CTZ-17 y CTZ-22.
+
+## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
+- Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
+- Evidencia: 63 pruebas en verde (1 nueva), `dotnet format` sin cambios, build sin advertencias; PR de `fix/CTZ-27-legal-seed-and-route-trim`.
+- Decisiones: D-29.
+- Siguiente paso: tras el merge, QA aplica la migración al desplegar `development`; Rowlis puede empezar CTZ-17 (lee `privacy.route_trim_m` en `/settings/public`). El recorte se implementa en CTZ-31b/CTZ-32 con MT-21.
+
+## 2026-11-17 — Diana — CTZ-27 Términos y Condiciones y Política de Privacidad v1.0
+- Hecho: redactados y publicados los documentos legales v1.0 (vigencia desde 17/11/2026) en `docs/producto/legal/terminos-v1.0.md` y `privacidad-v1.0.md` con lenguaje cercano para el usuario final, cuadro "Lo esencial", cumplimiento de la Ley 172-13 (no uso de cookies, visibilidad por actividad, recorte de 200 m, borrado en 24 h con anonimización de auditoría, correos oficiales `privacidad@terrun-info.com` y `soporte@terrun-info.com`, regiones verificadas y plazo de respuesta de 10 días hábiles); actualizados `legal/README.md` (con `LegalDocumentSeed.cs` y las dos casillas separadas de registro con declaración de 18 años), `CUMPLIMIENTO.md`, `NOTA-FASE-REAL.md` y `ESTADO.md`.
+- Evidencia: PR #128 (`docs/CTZ-27-legal-documents-v1` → `development`).
+- Decisiones: D-28 (edad mínima 18 años, exclusión temporal de *handbike*, plazo de 10 días hábiles, proveedores y regiones).
+- Siguiente paso: tras el merge del PR #128, Ashley actualiza la vigencia en `LegalDocumentSeed.cs` y Rowlis consume `/legal/current` en `CTZ-17` y `CTZ-23`.
+
+## 2026-11-17 — Ashley — Rama `development` antes de `main`
+- Hecho: `development` pasa a ser la rama de integración y la rama por defecto; `main` solo recibe PR desde `development`. Los workflows `backend`, `mobile`, `politica` e `integridad` corren en PR y push a las dos ramas; `integridad` rechaza PR a `main` desde cualquier otra rama (y se repite si cambian la base); el hook `pre-commit` bloquea commits directos en `development`; guía, CONTRIBUTING, primer día, README del backend y ESTADO apuntan a `development`.
+- Evidencia: PR de `chore/development-branch`.
 - Decisiones: D-27.
-- Siguiente paso: abrir el PR de `feat/CTZ-08-mobile-app-skeleton` (cierra issue #15) y continuar con CTZ-09 y CTZ-22.
+- Siguiente paso: tras el merge, Ashley crea `development` desde `main`, le aplica la protección, la deja como rama por defecto y cambia en Render la rama de `terrun-api-qa` a `development`. Rowlis abre el PR de CTZ-08 contra `development`.
 
 ## 2026-11-16 — Ashley — CI de la app (`mobile.yml`) para CTZ-08
 - Hecho: workflow `mobile.yml` (Node LTS con npm: `npm ci`, `lint`, `format:check`, `typecheck` y `test` dentro de `mobile/`). Corre en todos los PR como `backend.yml` y pasa sin revisar nada mientras no exista `mobile/package.json`, así entra a `main` antes que CTZ-08. Lo sube Ashley porque `integridad` solo deja cambiar `.github/` a la dueña del repo (D-20); con eso el PR de CTZ-08 puede cumplir "lint y pruebas en verde en la CI".

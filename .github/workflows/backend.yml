@@ -4,9 +4,9 @@ name: Backend
 # a required check that is skipped by a path filter leaves documentation-only PRs waiting forever.
 on:
   pull_request:
-    branches: [main]
+    branches: [main, development]
   push:
-    branches: [main]
+    branches: [main, development]
 
 permissions:
   contents: read

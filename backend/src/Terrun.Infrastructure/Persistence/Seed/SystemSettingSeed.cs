@@ -7,6 +7,8 @@ internal static class SystemSettingSeed
 {
     private static readonly DateTimeOffset _seededAt = new(2026, 11, 15, 0, 0, 0, TimeSpan.Zero);
 
+    private static readonly DateTimeOffset _routeTrimAddedAt = new(2026, 11, 17, 0, 0, 0, TimeSpan.Zero);
+
     public static readonly SystemSetting[] All =
     [
         Setting("territory.zone_resolution", "9", "H3 resolution of a zone", isPublic: true),
@@ -29,14 +31,15 @@ internal static class SystemSettingSeed
         Setting("xp.level_curve", """{"base":100,"exponent":1.5}""", "XP for level n = base * n^exponent", isPublic: true),
         Setting("calories.default_weight_kg", "70", "Weight used when the profile has none, in kg"),
         Setting("map.max_zones_per_bbox", "2000", "Maximum zones per map query"),
+        Setting("privacy.route_trim_m", "200", "Meters hidden at the start and at the end of a route seen by other users", isPublic: true, updatedAt: _routeTrimAddedAt),
     ];
 
-    private static SystemSetting Setting(string key, string value, string description, bool isPublic = false) => new()
+    private static SystemSetting Setting(string key, string value, string description, bool isPublic = false, DateTimeOffset? updatedAt = null) => new()
     {
         Key = key,
         Value = value,
         Description = description,
         IsPublic = isPublic,
-        UpdatedAt = _seededAt,
+        UpdatedAt = updatedAt ?? _seededAt,
     };
 }

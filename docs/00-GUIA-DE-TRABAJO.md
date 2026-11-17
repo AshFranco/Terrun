@@ -63,7 +63,7 @@ Cuando alguien pregunte qué toca hacer, el asistente **debe**:
 ## 5. Protocolo: empezar una tarea
 
 1. Confirmar que la tarea está en `ESTADO.md` y asignada a quien la va a hacer. Si no está, **no se empieza**: se avisa a Diana o a Ashley.
-2. Actualizar `main` y crear la rama: `git switch main && git pull && git switch -c feat/CTZ-XX-short-description`.
+2. Actualizar `development` y crear la rama: `git switch development && git pull && git switch -c feat/CTZ-XX-short-description`. El PR va contra `development`, nunca contra `main` (D-27).
 3. Leer las secciones del LLD que correspondan (las cita cada historia del backlog) y `docs/04-ESTANDARES-DESARROLLO.md`.
 4. Marcar la tarea en `ESTADO.md` como `🔄 en curso` y mover su tarjeta a **En curso** en el tablero.
 5. Trabajar **solo dentro de tu carpeta** (§3). Si hace falta un endpoint que no existe o un cambio de contrato: primero se actualiza `docs/02-LLD.md` §3 en un PR propio, se avisa a Ashley y, mientras tanto, el front trabaja con un mock.
@@ -99,7 +99,7 @@ Después de la weekly, cuando Ashley pida "planifica el siguiente sprint":
 ## 8. Reglas no negociables
 
 1. **Autoría humana.** Los commits y PR los firman las personas. Prohibido `Co-authored-by` de herramientas de IA y firmas tipo "Generated with…". Lo bloquean el hook `commit-msg` y la CI.
-2. **Nadie hace push directo a `main`.** Todo entra por PR con los checks `autoria`, `integridad` y `backend` en verde; la revisión se pide siempre pero no bloquea el merge, y los cambios en `.github/` solo los hace Ashley (D-20).
+2. **Nadie hace push directo a `main` ni a `development`.** Todo entra por PR a `development` con los checks `autoria`, `integridad` y `backend` en verde; la revisión se pide siempre pero no bloquea el merge, y los cambios en `.github/` solo los hace Ashley (D-20). A `main` solo llega un PR desde `development`, cuando lo integrado se verificó en QA (D-27).
 3. **El contrato de API vive en `docs/02-LLD.md` §3** y los tipos de la app se generan desde el OpenAPI. No se escriben a mano.
 4. **Ningún parámetro del juego en el código** (umbral 5, 30 días, 25 km/h, XP…): todo sale de `system_setting`.
 5. **El servidor siempre recalcula.** La app muestra; el backend decide la distancia oficial, la conquista y el dominio.

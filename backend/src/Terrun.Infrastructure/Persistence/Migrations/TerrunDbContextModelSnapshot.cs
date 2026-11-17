@@ -242,7 +242,7 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("6f1c2d0e-7a4b-4c5d-9e8f-0a1b2c3d4e01"),
-                            EffectiveFrom = new DateTimeOffset(new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EffectiveFrom = new DateTimeOffset(new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = LegalDocumentType.Terms,
                             Url = "https://github.com/AshFranco/Terrun/blob/main/docs/producto/legal/terminos-v1.0.md",
                             Version = "1.0"
@@ -250,7 +250,7 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("6f1c2d0e-7a4b-4c5d-9e8f-0a1b2c3d4e02"),
-                            EffectiveFrom = new DateTimeOffset(new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            EffectiveFrom = new DateTimeOffset(new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Type = LegalDocumentType.Privacy,
                             Url = "https://github.com/AshFranco/Terrun/blob/main/docs/producto/legal/privacidad-v1.0.md",
                             Version = "1.0"
@@ -627,6 +627,14 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                             IsPublic = false,
                             UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = "2000"
+                        },
+                        new
+                        {
+                            Key = "privacy.route_trim_m",
+                            Description = "Meters hidden at the start and at the end of a route seen by other users",
+                            IsPublic = true,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = "200"
                         });
                 });
 
