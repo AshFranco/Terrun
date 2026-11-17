@@ -15,7 +15,7 @@ Detalle y criterios de aceptación de cada historia: `docs/03-BACKLOG.md`. Compr
 Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a otros.
 
 ### Ashley — Scrum Master + Backend
-- ✅ **CTZ-18** Despliegue de QA: Render + Neon `qa`, despliegue automático al hacer merge a `main`. *Adelantado en CTZ-04 (D-21): `/health` = Healthy y Swagger visible.*
+- ✅ **CTZ-18** Despliegue de QA: Render + Neon `qa`, despliegue automático al hacer merge a `development` (D-27). *Adelantado en CTZ-04 (D-21): `/health` = Healthy y Swagger visible.*
 - 👀 **CTZ-13** Migración inicial: tablas de M1, M2 y M13 + datos iniciales de `system_setting` y `legal_document`. *Bloquea CTZ-14 y CTZ-17.*
 - 👀 **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.* *En revisión (PR #124).*
 - ⬜ **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.*
@@ -34,7 +34,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-21** Mapa base MapLibre en la pestaña Mapa. *Depende de CTZ-08.*
 
 ### Rowlis — Front y apoyo puntual en Backend
-- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `main` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
+- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `development` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
 - ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
 - ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Depende de CTZ-13 y CTZ-27.*

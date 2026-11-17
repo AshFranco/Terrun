@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Ashley — Rama `development` antes de `main`
+- Hecho: `development` pasa a ser la rama de integración y la rama por defecto; `main` solo recibe PR desde `development`. Los workflows `backend`, `mobile`, `politica` e `integridad` corren en PR y push a las dos ramas; `integridad` rechaza PR a `main` desde cualquier otra rama (y se repite si cambian la base); el hook `pre-commit` bloquea commits directos en `development`; guía, CONTRIBUTING, primer día, README del backend y ESTADO apuntan a `development`.
+- Evidencia: PR de `chore/development-branch`.
+- Decisiones: D-27.
+- Siguiente paso: tras el merge, Ashley crea `development` desde `main`, le aplica la protección, la deja como rama por defecto y cambia en Render la rama de `terrun-api-qa` a `development`. Rowlis abre el PR de CTZ-08 contra `development`.
+
 ## 2026-11-16 — Ashley — CI de la app (`mobile.yml`) para CTZ-08
 - Hecho: workflow `mobile.yml` (Node LTS con npm: `npm ci`, `lint`, `format:check`, `typecheck` y `test` dentro de `mobile/`). Corre en todos los PR como `backend.yml` y pasa sin revisar nada mientras no exista `mobile/package.json`, así entra a `main` antes que CTZ-08. Lo sube Ashley porque `integridad` solo deja cambiar `.github/` a la dueña del repo (D-20); con eso el PR de CTZ-08 puede cumplir "lint y pruebas en verde en la CI".
 - Evidencia: PR de `chore/ci-mobile-workflow`.

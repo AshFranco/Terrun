@@ -44,7 +44,7 @@ Respóndeme siempre en español. No escribas código de la app en esta sesión.
   Respóndele con mi número sin preguntarme otra vez:
   1 Ashley · 2 Diana · 3 Jorge · 4 Rowlis · 5 Rangelis · 6 Jaime
   Ejemplo para Jorge: printf '3\n' | sh scripts/configurar-entorno.sh
-- El script activa los hooks de .githooks (bloquean commits en main, archivos .env,
+- El script activa los hooks de .githooks (bloquean commits en main y development, archivos .env,
   CLAUDE*.md, llaves y atribuciones a IA) y crea CLAUDE.local.md con mi nombre y rol.
 - Confirma que CLAUDE.local.md existe y que git status NO lo muestra (está en .gitignore).
 
@@ -77,7 +77,8 @@ No instales nada sin mi permiso.
   "¿qué me toca?" (§4), empezar una tarea (§5) y cerrar una sesión (§6),
   y las reglas no negociables (§8). Si algo que te pido contradice la guía, avísame antes de hacerlo.
 - Solo toco las carpetas de mi rol (tabla de §3 de la guía).
-- Nunca trabajo en main: cada tarea va en su rama feat/CTZ-XX-short-description, sacada de un main actualizado.
+- Nunca trabajo en main ni en development: cada tarea va en su rama feat/CTZ-XX-short-description, sacada de un
+  development actualizado, y su PR va contra development (main solo recibe PR desde development).
 - Commits y PR sin ninguna atribución a IA: nada de Co-Authored-By ni "Generated with…".
   El hook y la CI los rechazan.
 - No hagas push ni abras PR sin que yo te lo pida.

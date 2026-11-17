@@ -16,7 +16,12 @@ Usar asistentes para escribir código está bien; atribuirles autoría en el his
 
 ## Ramas
 
-`main` está protegida: solo se entra por PR con los checks `autoria`, `integridad` y `backend` en verde y la rama al día con `main`. No se puede hacer push directo, push forzado ni borrar `main`, ni siquiera los administradores. La revisión se pide siempre pero no bloquea el merge, y los cambios en `.github/` (CI y reglas) solo los hace Ashley (D-20). Las etiquetas `v*` de las entregas no se pueden mover ni borrar.
+Hay dos ramas protegidas (D-27):
+
+- **`development`** (rama por defecto): aquí llega todo el trabajo. Cada rama de tarea sale de `development` y vuelve a `development` por PR, con los checks `autoria`, `integridad` y `backend` en verde y la rama al día con `development`. QA se despliega desde aquí.
+- **`main`**: solo recibe PR **desde `development`** (el check `integridad` rechaza cualquier otro origen), cuando lo integrado se verificó en QA. Es lo estable y lo que se entrega.
+
+En ninguna de las dos se puede hacer push directo, push forzado ni borrarla, ni siquiera los administradores. La revisión se pide siempre pero no bloquea el merge, y los cambios en `.github/` (CI y reglas) solo los hace Ashley (D-20). Las etiquetas `v*` de las entregas no se pueden mover ni borrar.
 
 ```text
 feat/CTZ-XX-short-description     funcionalidad nueva
@@ -25,7 +30,7 @@ docs/CTZ-XX-short-description     solo documentación
 chore/CTZ-XX-short-description    configuración, dependencias, CI
 ```
 
-Siempre desde `main` actualizado: `git switch main && git pull && git switch -c feat/CTZ-XX-...`. El nombre de la rama va en inglés.
+Siempre desde `development` actualizado: `git switch development && git pull && git switch -c feat/CTZ-XX-...`, y el PR se abre contra `development` (la base que GitHub propone por defecto). El nombre de la rama va en inglés.
 
 ## Commits
 
@@ -60,7 +65,7 @@ Una historia entra al sprint solo si:
 
 Una historia se cierra solo si:
 
-- [ ] Está en `main` mediante un PR con la CI en verde.
+- [ ] Está en `development` mediante un PR con la CI en verde (llega a `main` en la siguiente liberación, D-27).
 - [ ] Cumple `docs/04-ESTANDARES-DESARROLLO.md` (idioma, nombres, glosario, formato).
 - [ ] Los criterios de aceptación los verificó alguien distinto del autor (QA o PO).
 - [ ] **Revisión de completitud:** se revisó contra el diseño completo (HLD, LLD §1–§10 y estándares), no solo contra los criterios de aceptación, y contra lo que necesitan las historias que dependen de esta. Lo que falta se agrega o queda como issue, y el PR dice qué se revisó y qué se dejó fuera y por qué (D-23).

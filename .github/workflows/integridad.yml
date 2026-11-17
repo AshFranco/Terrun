@@ -1,11 +1,12 @@
 name: Integridad
 
-# pull_request_target runs the copy of this file that lives in main, so a PR cannot edit or skip it.
+# pull_request_target runs the copy of this file that lives in the base branch (main or development), so a PR cannot edit or skip it.
 # It never checks out or runs code from the PR: it only reads the list of changed files.
+# Because it cannot be skipped, it also enforces that main only receives PRs from development (D-27).
 on:
   pull_request_target:
-    branches: [main]
-    types: [opened, synchronize, reopened]
+    branches: [main, development]
+    types: [opened, synchronize, reopened, edited]  # edited: re-check when someone changes the base branch
 
 permissions:
   contents: read
@@ -15,6 +16,18 @@ jobs:
   integridad:
     runs-on: ubuntu-latest
     steps:
+      - name: A main solo se entra desde development (D-27)
+        env:
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ "$BASE" = "main" ] && { [ "$HEAD" != "development" ] || [ "$HEAD_REPO" != "$REPO" ]; }; then
+            echo "::error::A main solo se entra con un PR desde development de este repo (D-27). Cambia la base del PR a development."
+            exit 1
+          fi
+          echo "Origen permitido: $HEAD_REPO:$HEAD -> $BASE."
       - name: Solo la duena del repo cambia la CI y las reglas (.github/)
         env:
           GH_TOKEN: ${{ github.token }}

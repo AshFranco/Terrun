@@ -5,9 +5,9 @@ name: Mobile
 # Until CTZ-08 adds mobile/package.json the job passes without checking anything.
 on:
   pull_request:
-    branches: [main]
+    branches: [main, development]
   push:
-    branches: [main]
+    branches: [main, development]
 
 permissions:
   contents: read

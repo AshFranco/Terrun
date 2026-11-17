@@ -2,7 +2,7 @@ name: Politica de commits
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, development]
 
 jobs:
   autoria:
