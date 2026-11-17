@@ -34,7 +34,7 @@ dotnet run --project src/Terrun.Api
 
 En `Development` la cadena de conexión sale de `appsettings.Development.json`. En QA y producción se pasa con la variable `ConnectionStrings__Db` (LLD §8); nunca se escribe en el repo.
 
-**QA:** https://terrun-api-qa.onrender.com (`/health`, `/swagger`). Se despliega solo con cada merge a `main` y usa la rama `qa` de Neon (D-21). El plan gratis de Render se duerme tras unos minutos sin tráfico: la primera llamada puede tardar hasta un minuto.
+**QA:** https://terrun-api-qa.onrender.com (`/health`, `/swagger`). Se despliega solo con cada merge a `development` y usa la rama `qa` de Neon (D-21, D-27). El plan gratis de Render se duerme tras unos minutos sin tráfico: la primera llamada puede tardar hasta un minuto.
 
 ## Migraciones de la base
 

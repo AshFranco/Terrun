@@ -16,8 +16,8 @@ fi
 
 # Rama protegida
 RAMA=$(git symbolic-ref --short HEAD 2>/dev/null)
-if [ "$RAMA" = "main" ] && [ -z "$PERMITIR_MAIN" ]; then
-    echo "  COMMIT RECHAZADO: no se hace commit directo en main. Crea una rama: git switch -c feat/CTZ-XX-..."
+if { [ "$RAMA" = "main" ] || [ "$RAMA" = "development" ]; } && [ -z "$PERMITIR_MAIN" ]; then
+    echo "  COMMIT RECHAZADO: no se hace commit directo en $RAMA. Crea una rama desde development: git switch development && git pull && git switch -c feat/CTZ-XX-..."
     exit 1
 fi
 
