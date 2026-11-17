@@ -7,7 +7,8 @@ internal static class LegalDocumentSeed
 {
     private const string _legalTextsBaseUrl = "https://github.com/AshFranco/Terrun/blob/main/docs/producto/legal/";
 
-    private static readonly DateTimeOffset _effectiveFrom = new(2026, 11, 15, 0, 0, 0, TimeSpan.Zero);
+    // CTZ-27 published the texts on 17/11/2026 (the initial migration had a provisional 15/11)
+    private static readonly DateTimeOffset _effectiveFrom = new(2026, 11, 17, 0, 0, 0, TimeSpan.Zero);
 
     public static readonly LegalDocument[] All =
     [
