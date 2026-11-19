@@ -172,7 +172,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 | Servicio externo | Propósito en Terrun | Mecanismo de integración |
 |---|---|---|
 | **MapTiler / OpenStreetMap** | Proveer la cartografía vectorial de calles y parques de Santo Domingo. | Descarga de teselas vectoriales desde **MapLibre** por HTTPS. |
-| **Resend y Google OAuth** | Envío de correos transaccionales y autenticación opcional con cuenta de Google. | Consumo de API REST por HTTPS y validación de tokens de identidad en el servidor. |
+| **Resend y Google OAuth** | Envío de correos transaccionales y autenticación opcional con cuenta de Google. | Envío por SMTP autenticado desde el servidor (Resend) y validación de tokens de identidad por HTTPS (Google OAuth). |
 | **Cloudflare R2 y Expo Push / FCM** | Almacenamiento de avatares en la nube y entrega de notificaciones *push* al teléfono. | Subida mediante enlaces firmados temporales y envío de alertas desde el servidor. |
 
 ---
@@ -216,7 +216,7 @@ El sistema emplea una arquitectura **Cliente-Servidor basada en un Monolito Modu
 | **RNF-04** | **Tiempos de respuesta** | Consultas del mapa y perfil en menos de **500 ms** (p95) y validación completa de una carrera en menos de **10 s**. | P0 |
 | **RNF-05** | **Fluidez del mapa** | Carga de hexágonos visibles del sector en menos de **1 segundo** al desplazar el mapa. | P0 |
 | **RNF-06** | **Seguridad** | Tráfico cifrado por HTTPS, contraseñas con hash irreversible y sesiones con tokens `JWT` de corta duración. | P0 |
-| **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte automático de los primeros y últimos 200 m de cada ruta en el muro. | P0 |
+| **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte automático de los primeros y últimos 200 m de cada ruta frente a terceros. | P0 |
 | **RNF-08** | **Disponibilidad** | Servidor disponible y operativo durante las sesiones de pruebas de campo y la demostración final. | P1 |
 | **RNF-09** | **Compatibilidad móvil** | Operación en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta Apple Developer)**. En caso de no contar con cuenta de Apple Developer, la validación de la entrega académica se limita a Android y iOS queda fuera de los criterios de aceptación. | P0 |
 | **RNF-10** | **Usabilidad** | Inicio del trackeo en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. | P0 |

@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-19 — Diana — Actualización de ambos HLD y entregables
+- Hecho: precisados ambos documentos de alto nivel (`docs/01-HLD.md` y `docs/01-HLD-v1.2-post-MVP.md`) y sus entregables (`HLD-Terrun.docx`, `HLD-Terrun.pdf` y `HLD-Terrun-v1.2-post-MVP.docx`) para reflejar el recorte automático de 200 m al inicio y al final de cada ruta frente a terceros (`RF-09`, `RF-20`, `RF-32`, `RNF-07`), la reversión de conquista al eliminar las actividades que la originaron (`§1.4`, `§1.5`, `RF-20`, `RF-49`, `RF-53`) y `Resend` por SMTP autenticado como proveedor definitivo de correo (`D-03`, `§3.2`).
+- Evidencia: PR #132 (`docs/hld-correcciones` → `development`).
+- Decisiones: ninguna nueva (aplica D-27 y D-29).
+- Siguiente paso: revisión y merge de Ashley en PR #132 hacia `development`.
+
 ## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
 - Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
 - Evidencia: 63 pruebas en verde (1 nueva), `dotnet format` sin cambios, build sin advertencias; PR de `fix/CTZ-27-legal-seed-and-route-trim`.

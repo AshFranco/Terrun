@@ -332,7 +332,7 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 | Servicio externo | Propósito en Terrun | Mecanismo de conexión |
 |---|---|---|
 | **MapTiler / OpenStreetMap** | Mostrar el plano de calles y parques de la ciudad. | Descarga de teselas vectoriales desde **MapLibre** por HTTPS. |
-| **Resend** | Enviar correos de verificación de cuenta y recuperación de clave. | Solicitud API HTTPS desde el servidor con llave privada. |
+| **Resend** | Enviar correos de verificación de cuenta y recuperación de clave. | Envío por SMTP autenticado desde el servidor. |
 | **Cloudflare R2** | Almacenar fotos de perfil e imágenes de clubes. | Subida y lectura mediante permisos temporales (*URL firmadas*). |
 | **Google y Apple (Etapa P2)** | Inicio de sesión social en la segunda versión. | Validación de firma oficial de *ID Token* (OIDC) en el servidor. |
 | **Expo Push (Etapa P2)** | Envío de notificaciones emergentes fuera de la app. | Despacho por HTTPS desde el servidor hacia Google FCM y Apple APNs. |
@@ -387,7 +387,7 @@ El sistema se organiza en tres bloques: una **aplicación móvil offline-first**
 | **RNF-04** | **Tiempos de respuesta** | Consultas habituales en menos de **500 ms** (p95) y procesamiento completo de una carrera en menos de **10 segundos**. |
 | **RNF-05** | **Fluidez del mapa** | Carga de zonas visibles en menos de **1 segundo**, soportando hasta 2.000 hexágonos en pantalla. |
 | **RNF-06** | **Seguridad** | Comunicación cifrada por HTTPS, contraseñas protegidas con hash irreversible y sesiones mediante tokens JWT de corta duración. |
-| **RNF-07** | **Privacidad (Ley 172-13)** | Cumplimiento de la ley dominicana de datos personales: consentimiento informado, prohibición de exponer ubicaciones en vivo y recorte automático de los primeros y últimos 200 m de cada ruta en el muro. |
+| **RNF-07** | **Privacidad (Ley 172-13)** | Cumplimiento de la ley dominicana de datos personales: consentimiento informado, prohibición de exponer ubicaciones en vivo y recorte automático de los primeros y últimos 200 m de cada ruta frente a terceros. |
 | **RNF-08** | **Disponibilidad** | Servidor en línea al menos el **99 % del tiempo** durante el periodo de pruebas y demostración. |
 | **RNF-09** | **Compatibilidad móvil** | Operación en teléfonos **Android 10+** e **iPhone con iOS 16+**. |
 | **RNF-10** | **Usabilidad** | Inicio de grabación en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. |
