@@ -63,12 +63,12 @@ Dividimos el mapa urbano en **zonas hexagonales** de unos 174 m de lado (0,10 km
 ![Cómo se divide una zona en 7 sub-celdas y cómo se conquista](diagramas/05-mecanica-h3.png)
 
 ### 2. Exploración personal y competencia territorial
-- **Conquista permanente (5 de 7 sub-celdas):** al pisar al menos **5 de las 7 sub-celdas** de una zona (en una o varias salidas), el corredor la conquista para siempre en su historial personal.
+- **Conquista permanente (5 de 7 sub-celdas):** al pisar al menos **5 de las 7 sub-celdas** de una zona (en una o varias salidas), el corredor la conquista de forma permanente en su historial personal, salvo que elimine las actividades válidas que la originaron.
 - **Dominio competitivo (30 días) y robo de zonas:** quien pise más sub-celdas dentro de una zona en los **últimos 30 días** es su **dueño actual**; si otro corredor supera esa marca reciente, **le roba la zona**.
 - **Barrios del polígono central:** agrupamos los hexágonos dentro de **6 barrios de Santo Domingo** (*Piantini, Naco, Evaristo Morales, Serrallés, Paraíso y Bella Vista*); quien domine más zonas activas dentro de un barrio recibe la corona de **rey o reina del barrio**.
 
 ### 3. Medición deportiva móvil, juego limpio y comunidad
-Durante la carrera, el teléfono calcula en vivo el tiempo, la distancia y el ritmo; al finalizar, el servidor valida la ruta contra trampas en vehículo y calcula las métricas oficiales (*splits*, elevación y calorías), integrando clubes, muro de actividad con recorte de privacidad, niveles por **XP**, rachas, logros, retos y *rankings*.
+Durante la carrera, el teléfono calcula en vivo el tiempo, la distancia y el ritmo; al finalizar, el servidor valida la ruta contra trampas en vehículo y calcula las métricas oficiales (*splits*, elevación y calorías), integrando clubes, muro de actividad con recorte automático de 200 m al inicio y al final de cada ruta, niveles por **XP**, rachas, logros, retos y *rankings*.
 
 ## 1.5 Acrónimos y definiciones
 
@@ -77,7 +77,7 @@ Durante la carrera, el teléfono calcula en vivo el tiempo, la distancia y el ri
 | **MVP y P0 / P1** | **MVP:** Producto Mínimo Viable para la entrega académica. **P0:** requisito imprescindible del núcleo. **P1:** complemento competitivo y social sujeto al cierre de P0. |
 | **Actividad y Trackeo** | Salida a correr, trotar o caminar cuyo recorrido se registra (*trackea*) con el **GPS** (Sistema de Posicionamiento Global) del teléfono. |
 | **Zona y Sub-celda (H3)** | **Zona:** hexágono grande del mapa (Uber H3 nivel 9, unos 174 m de lado). **Sub-celda:** cada una de las **7 partes pequeñas** (H3 nivel 10) que forman el interior de una Zona. |
-| **Conquista (Regla 5 de 7)** | Logro personal **permanente** al pisar al menos **5 de las 7 sub-celdas** de una zona entre una o varias carreras. |
+| **Conquista (Regla 5 de 7)** | Logro personal **permanente** al pisar al menos **5 de las 7 sub-celdas** de una zona entre una o varias carreras (se revierte si el corredor elimina las actividades que la originaron y no mantiene el umbral). |
 | **Dominio (30 días) y Robo** | Propiedad **activa** de una zona: pertenece a quien sume más sub-celdas visitadas en los **últimos 30 días**. Si otro corredor supera esa marca, ocurre un **robo de zona**. |
 | **Barrio y Rey/Reina** | Cada uno de los 6 sectores del alcance inicial en Santo Domingo preasignados a los hexágonos del mapa; quien domine más zonas en él lidera el barrio. |
 | **Ritmo (Pace) y Split** | **Ritmo:** tiempo empleado por kilómetro (`min/km`) en movimiento. **Split:** parcial individual de cada kilómetro completado. |
@@ -106,7 +106,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 |---|---|---|---|
 | **D-01** | Dependencia | **Plataformas móviles y cuenta de publicación:** operación con el GPS interno en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta de pago en Apple Developer para TestFlight)**. | Demostración oficial garantizada en dispositivos Android reales y soporte multiplataforma en código. En caso de no contar con cuenta de Apple Developer, la validación de la entrega académica se limita a Android y iOS queda fuera de los criterios de aceptación. |
 | **D-02** | Dependencia | **Instalador de desarrollo para GPS en segundo plano:** el sistema operativo móvil exige un binario compilado (*development build*) para mantener activo el GPS con la pantalla bloqueada. | Generación de compilaciones de desarrollo desde los primeros sprints en lugar de usar visores limitados. |
-| **D-03** | Dependencia | **Servicios externos en capa gratuita:** disponibilidad y cuotas sin costo de *MapTiler / OpenStreetMap* (mapas), *Render* (servidor), *Neon* (base de datos), *Brevo / Resend* (correos) y *Cloudflare R2* (imágenes). | Caché de zonas en el teléfono y consumo acotado al volumen de usuarios de validación académica. |
+| **D-03** | Dependencia | **Servicios externos en capa gratuita:** disponibilidad y cuotas sin costo de *MapTiler / OpenStreetMap* (mapas), *Render* (servidor), *Neon* (base de datos), *Resend* (correos) y *Cloudflare R2* (imágenes). | Caché de zonas en el teléfono y consumo acotado al volumen de usuarios de validación académica. |
 | **D-04** | Dependencia | **Cartografía semilla de barrios:** delimitación de los 6 barrios iniciales de Santo Domingo (*Piantini, Naco, Evaristo Morales, Serrallés, Paraíso y Bella Vista*). | Cada hexágono H3 lleva preasignado su barrio en la carga inicial de base de datos, evitando cálculos geométricos pesados por carrera. |
 | **S-01** | Asunción | **Conectividad móvil intermitente en calle:** el corredor puede perder señal de datos móviles durante el recorrido o al pasar entre edificios. | Arquitectura *offline-first* que guarda cada punto GPS en `SQLite` local y sincroniza al recuperar conexión. |
 
@@ -130,7 +130,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 | **RF-06** | **Onboarding** | **Solicitar permiso de ubicación GPS:** explicar en español por qué se requiere el GPS en primer y segundo plano antes de mostrar el diálogo de permisos del teléfono. | P0 | — |
 | **RF-07** | **Perfil y cuenta** | **Gestionar perfil propio:** consultar y editar nombre visible, `@handle`, foto de perfil, ciudad, datos físicos (para estimar calorías) y resumen de estadísticas propias. | P0 | `RF-02` |
 | **RF-08** | **Navegación** | **Navegar por pestañas y pantalla de inicio:** organizar la app en pestañas principales con resumen rápido del corredor y botón para iniciar el trackeo en máximo dos toques. | P0 | `RF-02` |
-| **RF-09** | **Comunidad** | **Consultar muro de actividad (Feed) con privacidad:** mostrar carreras, conquistas, dominios, coronas de barrio y logros recientes ocultando los metros iniciales y finales cerca del hogar. | P1 | `RF-17`, `RF-20`, `RF-22`, `RF-23`, `RF-25` |
+| **RF-09** | **Comunidad** | **Consultar muro de actividad (Feed) con privacidad:** mostrar carreras, conquistas, dominios, coronas de barrio y logros recientes ocultando automáticamente los primeros y últimos 200 m de cada ruta frente a terceros. | P1 | `RF-17`, `RF-20`, `RF-22`, `RF-23`, `RF-25` |
 | **RF-10** | **Notificaciones** | **Enviar notificaciones push y bandeja de avisos:** alertar al teléfono cuando otro corredor roba una zona o al desbloquear logros, listando los avisos dentro de la aplicación. | P1 | `RF-02`, `RF-22`, `RF-25` |
 | **RF-11** | **Configuración** | **Configurar preferencias de carrera y avisos:** activar o desactivar la *auto-pausa* en paradas, los anuncios de voz por kilómetro y las alertas de territorio. | P1 | `RF-02` |
 | **RF-12** | **Soporte legal** | **Aceptar términos y política de privacidad (Ley 172-13):** mostrar los documentos legales en español y registrar la fecha y versión aceptadas al crear la cuenta. | P0 | — |
@@ -146,7 +146,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 | **RF-17** | **Trackeo deportivo** | **Calcular métricas deportivas oficiales y parciales (Splits):** calcular en el servidor la distancia oficial, tiempo en movimiento, ritmo (`min/km`), elevación, calorías y parciales por kilómetro. | P0 | `RF-16`, `RF-28` |
 | **RF-18** | **Trackeo deportivo** | **Mostrar resumen post-carrera e historial de actividades:** presentar al finalizar el mapa del trazo, las métricas oficiales y las zonas ganadas, y listar el historial de carreras propias. | P0 | `RF-17` |
 | **RF-19** | **Territorio H3** | **Visualizar mapa interactivo de zonas hexagonales:** dibujar sobre el mapa urbano las zonas H3 coloreadas según su estado (*libre, en progreso, conquistada, dominada por mí o por otro*). | P0 | `RF-08` |
-| **RF-20** | **Territorio H3** | **Otorgar conquista permanente de zona (Regla 5 de 7):** proyectar el trazo validado sobre las 7 sub-celdas H3 internas y conceder la conquista definitiva al acumular al menos **5 de 7**. | P0 | `RF-17`, `RF-28` |
+| **RF-20** | **Territorio H3** | **Otorgar conquista permanente de zona (Regla 5 de 7):** proyectar el trazo validado sobre las 7 sub-celdas H3 internas y conceder la conquista permanente al acumular al menos **5 de 7** (revirtiéndose si se elimina la actividad que la originó y las restantes no alcanzan el umbral). | P0 | `RF-17`, `RF-28` |
 | **RF-21** | **Territorio H3** | **Consultar ficha de sub-celdas y balance territorial:** mostrar al tocar un hexágono el avance de sus 7 sub-celdas, su dueño actual y el total de zonas del corredor. | P0 | `RF-19`, `RF-20` |
 | **RF-22** | **Territorio H3** | **Calcular dominio competitivo (30 días) y robo de zonas:** asignar el dominio activo de cada zona a quien sume más sub-celdas en los últimos 30 días, recalcular vencimientos y registrar robos. | P0 | `RF-20` |
 | **RF-23** | **Barrios** | **Coronar rey o reina del barrio:** contabilizar las zonas activas dominadas dentro de cada uno de los 6 barrios del alcance inicial y coronar a quien lidere cada sector. | P1 | `RF-22` |
@@ -172,7 +172,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 | Servicio externo | Propósito en Terrun | Mecanismo de integración |
 |---|---|---|
 | **MapTiler / OpenStreetMap** | Proveer la cartografía vectorial de calles y parques de Santo Domingo. | Descarga de teselas vectoriales desde **MapLibre** por HTTPS. |
-| **Brevo / Resend y Google OAuth** | Envío de correos transaccionales y autenticación opcional con cuenta de Google. | Consumo de API REST por HTTPS y validación de tokens de identidad en el servidor. |
+| **Resend y Google OAuth** | Envío de correos transaccionales y autenticación opcional con cuenta de Google. | Consumo de API REST por HTTPS y validación de tokens de identidad en el servidor. |
 | **Cloudflare R2 y Expo Push / FCM** | Almacenamiento de avatares en la nube y entrega de notificaciones *push* al teléfono. | Subida mediante enlaces firmados temporales y envío de alertas desde el servidor. |
 
 ---
@@ -183,7 +183,7 @@ El funcionamiento y la entrega del sistema dependen de las siguientes condicione
 1. **Trackeo deportivo autónomo** (*offline-first*): registro continuo de carreras a pie con el GPS del teléfono en primer y segundo plano, métricas en vivo y resguardo local en `SQLite` ante cortes de internet.
 2. **Motor territorial H3 de doble capa:** conversión de rutas reales en progreso acumulativo sobre sub-celdas (nivel 10) para otorgar conquistas permanentes (**regla 5 de 7**) y disputar el dominio activo de zonas (nivel 9) en ventanas móviles de **30 días**.
 3. **Validación antitrampas en el servidor:** el teléfono captura el trazo en bruto, pero únicamente el servidor filtra saltos de GPS, descarta recorridos en vehículo y adjudica territorio y métricas oficiales.
-4. **Barrios, clubes y comunidad:** liderazgo por barrios de Santo Domingo, agrupación en clubes para sumar territorio colectivo y muro de actividad con recorte de privacidad cerca del hogar.
+4. **Barrios, clubes y comunidad:** liderazgo por barrios de Santo Domingo, agrupación en clubes para sumar territorio colectivo y muro de actividad con recorte automático de 200 m al inicio y al final de cada ruta.
 5. **Progresión y motivación continua:** sistema de experiencia (**XP**) y niveles, rachas semanales, desbloqueo automático de medallas, retos deportivos y tablas de *rankings*.
 
 ### 2. Arquitectura general y tecnologías
@@ -216,7 +216,7 @@ El sistema emplea una arquitectura **Cliente-Servidor basada en un Monolito Modu
 | **RNF-04** | **Tiempos de respuesta** | Consultas del mapa y perfil en menos de **500 ms** (p95) y validación completa de una carrera en menos de **10 s**. | P0 |
 | **RNF-05** | **Fluidez del mapa** | Carga de hexágonos visibles del sector en menos de **1 segundo** al desplazar el mapa. | P0 |
 | **RNF-06** | **Seguridad** | Tráfico cifrado por HTTPS, contraseñas con hash irreversible y sesiones con tokens `JWT` de corta duración. | P0 |
-| **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte de ruta cerca del domicilio en el muro. | P0 |
+| **RNF-07** | **Privacidad (Ley 172-13)** | Consentimiento informado, prohibición de exponer ubicación en vivo y recorte automático de los primeros y últimos 200 m de cada ruta en el muro. | P0 |
 | **RNF-08** | **Disponibilidad** | Servidor disponible y operativo durante las sesiones de pruebas de campo y la demostración final. | P1 |
 | **RNF-09** | **Compatibilidad móvil** | Operación en **Android 10+ (prioridad de entrega)** e **iOS 16+ (sujeto a disponibilidad de cuenta Apple Developer)**. En caso de no contar con cuenta de Apple Developer, la validación de la entrega académica se limita a Android y iOS queda fuera de los criterios de aceptación. | P0 |
 | **RNF-10** | **Usabilidad** | Inicio del trackeo en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. | P0 |

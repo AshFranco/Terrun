@@ -62,7 +62,7 @@ Dividimos el mapa en **zonas hexagonales** de unos 174 m de lado (0,10 km²). Pa
 ![Cómo se divide una zona en 7 sub-celdas y cómo se conquista](diagramas/05-mecanica-h3.png)
 
 ### 2. Combinamos exploración personal y competencia activa
-- **Conquista permanente (5 de 7 sub-celdas):** al pisar al menos **5 de las 7 sub-celdas** de una zona (en una o varias salidas), el corredor la conquista para siempre en su mapa personal.
+- **Conquista permanente (5 de 7 sub-celdas):** al pisar al menos **5 de las 7 sub-celdas** de una zona (en una o varias salidas), el corredor la conquista de forma permanente en su mapa personal, salvo que elimine las actividades válidas que la originaron.
 - **Dominio competitivo (30 días):** quien sume más puntos de sub-celdas dentro de una zona en los **últimos 30 días** (mínimo 3 puntos) es su **dueño actual**; si otro corredor lo supera, **le roba la zona**.
 - **Barrios reales:** agrupamos los hexágonos dentro de los barrios oficiales de la ciudad; quien domine más zonas dentro de un barrio (mínimo 3) recibe la corona de **rey o reina del barrio**.
 
@@ -78,7 +78,7 @@ Calculamos gratuitamente distancia, ritmo (`min/km`), elevación, calorías, *sp
 | **Actividad** | Salida a correr, trotar o caminar grabada con el GPS del teléfono. |
 | **Zona** | Hexágono grande del mapa (celda H3 nivel 9, unos 174 m de lado) que se conquista y disputa. |
 | **Sub-celda** | Cada una de las **7 partes hexagonales pequeñas** (H3 nivel 10) que forman el interior de una Zona. |
-| **Conquista (Regla 5 de 7)** | Logro personal **permanente** al pisar al menos **5 de las 7 sub-celdas** de una zona. |
+| **Conquista (Regla 5 de 7)** | Logro personal **permanente** al pisar al menos **5 de las 7 sub-celdas** de una zona (se revierte si el corredor elimina las actividades que la originaron y no mantiene el umbral). |
 | **Punto de zona** | Cada sub-celda distinta pisada en una actividad válida suma **1 punto** (máximo 7 por carrera en una zona). |
 | **Dominio (30 días)** | Propiedad **temporal** de una zona: el dueño es quien suma más puntos en los **últimos 30 días** (mínimo 3; empate conserva al dueño). |
 | **Robo de zona** | Ocurre cuando otro corredor supera los puntos de los últimos 30 días del dueño actual y toma el dominio. |
@@ -185,8 +185,8 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 | Código | Nombre del RF | Descripción | Prioridad | Depende de |
 |---|---|---|---|---|
 | **RF-19** | **Navegar por pestañas principales** | Organizar la app en una barra inferior de 5 pestañas (*Mapa, Feed, Grabar, Clubes y Perfil*), abriendo el Mapa como inicio (*Home*) para grabar en dos toques. | P0 | `RF-03` |
-| **RF-20** | **Consultar muro de actividad (Feed básico)** | Mostrar en la pestaña *Feed* la cronología de conquistas de zonas, reinados de barrio, logros y resúmenes de carrera del club sin exponer el trazo GPS privado de terceros. | P1 | `RF-19`, `RF-42` |
-| **RF-20 (V2)** | **Ampliar muro de actividad con red de seguidores** | Actualizar el *Feed* en la segunda etapa para mostrar las actividades y rutas autorizadas de los corredores seguidos junto con sus *kudos* y comentarios. | P2 | `RF-20`, `RF-76` |
+| **RF-20** | **Consultar muro de actividad (Feed básico)** | Mostrar en la pestaña *Feed* la cronología de conquistas de zonas, reinados de barrio, logros y resúmenes de carrera del club ocultando automáticamente los primeros y últimos 200 m de cada ruta frente a terceros. | P1 | `RF-19`, `RF-42` |
+| **RF-20 (V2)** | **Ampliar muro de actividad con red de seguidores** | Actualizar el *Feed* en la segunda etapa para mostrar las actividades y rutas autorizadas de los corredores seguidos (aplicando el recorte automático de 200 m al inicio y al final) junto con sus *kudos* y comentarios. | P2 | `RF-20`, `RF-76` |
 | **RF-21** | **Buscar corredores** | Encontrar a otros usuarios registrados escribiendo su nombre visible o su identificador `@handle`. | P1 | `RF-19` |
 | **RF-22** | **Buscar clubes de corredores** | Encontrar clubes deportivos filtrando por su nombre o por la ciudad a la que pertenecen. | P1 | `RF-19` |
 
@@ -208,7 +208,7 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 | **RF-29** | **Configurar privacidad del perfil** | Definir si el perfil es público o privado (exigiendo aprobar manualmente a cada nuevo seguidor). | P2 | `RF-12` |
 | **RF-30** | **Configurar visibilidad por defecto de rutas** | Elegir quién puede ver el mapa de las actividades nuevas: *Público, Solo seguidores o Privado (solo yo)*. | P2 | `RF-03` |
 | **RF-31** | **Configurar preferencias de avisos** | Encender o silenciar individualmente cada categoría de notificación emergente (*push*). | P2 | `RF-11` |
-| **RF-32** | **Gestionar zonas de privacidad del hogar** | Crear y eliminar áreas circulares alrededor de casa o trabajo para recortar el inicio y fin de las rutas frente a terceros. | P2 | `RF-03` |
+| **RF-32** | **Gestionar zonas de privacidad del hogar** | Crear y eliminar áreas circulares alrededor de casa o trabajo que complementan el recorte automático de 200 m al inicio y fin de las rutas frente a terceros. | P2 | `RF-03` |
 | **RF-33** | **Bloquear y desbloquear usuarios** | Bloquear a un usuario (impidiendo visibilidad mutua), consultar la lista de bloqueados y desbloquearlo. | P2 | `RF-03` |
 
 ### Módulo 7 — Soporte legal y reporte de problemas
@@ -239,7 +239,7 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 | **RF-46** | **Consultar detalle y ruta de una actividad** | Mostrar la vista detallada de una carrera propia con su trazo sobre el mapa y su tabla de *splits* por kilómetro. | P0 | `RF-43`, `RF-45` |
 | **RF-47** | **Consultar resúmenes de progreso por periodo** | Mostrar los totales acumulados de distancia, tiempo y carreras por semana, mes o año comparados con el periodo anterior. | P1 | `RF-45` |
 | **RF-48** | **Editar información de una actividad** | Modificar el título, descripción, tipo de ejercicio o visibilidad de una actividad propia. | P2 | `RF-46` |
-| **RF-49** | **Eliminar una actividad registrada** | Borrar una actividad propia revirtiendo sus visitas de sub-celdas, su XP y recalculando el dominio de las zonas afectadas. | P2 | `RF-46` |
+| **RF-49** | **Eliminar una actividad registrada** | Borrar una actividad propia revirtiendo sus visitas de sub-celdas, sus conquistas si las salidas restantes no alcanzan 5 de 7, su XP y recalculando el dominio de las zonas afectadas. | P2 | `RF-46` |
 | **RF-50** | **Detectar récords personales automáticamente** | Identificar tras cada carrera si el corredor logró su mejor tiempo en **1 km, 5 km, 10 km, 21,1 km o 42,2 km**, o su mayor distancia. | P1 | `RF-42` |
 
 ### Módulo 9 — Territorio, conquista hexagonal H3 y barrios
@@ -248,7 +248,7 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 |---|---|---|---|---|
 | **RF-51** | **Visualizar mapa de zonas hexagonales por estado** | Mostrar sobre el mapa las zonas H3 (resolución 9) coloreadas según su estado (*libre, en progreso, conquistada, dominada por mí o por otro*). | P0 | `RF-19` |
 | **RF-52** | **Registrar progreso de sub-celdas visitadas** | Convertir el trazo válido de cada carrera en sub-celdas H3 (resolución 10, de 0 a 6) y actualizar el progreso (de 7 partes) en cada zona. | P0 | `RF-42` |
-| **RF-53** | **Otorgar conquista permanente de zona (Regla 5 de 7)** | Conceder la conquista definitiva de una zona al acumular al menos **5 de sus 7 sub-celdas** visitadas entre una o varias carreras. | P0 | `RF-52` |
+| **RF-53** | **Otorgar conquista permanente de zona (Regla 5 de 7)** | Conceder la conquista permanente de una zona al acumular al menos **5 de sus 7 sub-celdas** visitadas entre una o varias carreras (reversible si el usuario elimina la actividad que la originó y no alcanza el umbral). | P0 | `RF-52` |
 | **RF-54** | **Calcular dominio competitivo de zona (30 días)** | Asignar como dueño actual de una zona a quien sume más puntos de sub-celdas en los **últimos 30 días** (mínimo 3 puntos; empate conserva al dueño). | P1 | `RF-52` |
 | **RF-55** | **Recalcular vencimiento nocturno de dominio** | Descontar cada noche los puntos con más de 30 días de antigüedad, liberando o cambiando de dueño las zonas no defendidas. | P1 | `RF-54` |
 | **RF-56** | **Notificar robo o pérdida de dominio de zona** | Registrar el evento territorial (*robo, defensa o pérdida*) y avisar en la bandeja del dueño anterior cuando le arrebatan su zona. | P1 | `RF-25`, `RF-54` |
@@ -332,7 +332,7 @@ El sistema utiliza los servicios externos descritos en la **Sección 3.2** y par
 | Servicio externo | Propósito en Terrun | Mecanismo de conexión |
 |---|---|---|
 | **MapTiler / OpenStreetMap** | Mostrar el plano de calles y parques de la ciudad. | Descarga de teselas vectoriales desde **MapLibre** por HTTPS. |
-| **Brevo / Resend** | Enviar correos de verificación de cuenta y recuperación de clave. | Solicitud API HTTPS desde el servidor con llave privada. |
+| **Resend** | Enviar correos de verificación de cuenta y recuperación de clave. | Solicitud API HTTPS desde el servidor con llave privada. |
 | **Cloudflare R2** | Almacenar fotos de perfil e imágenes de clubes. | Subida y lectura mediante permisos temporales (*URL firmadas*). |
 | **Google y Apple (Etapa P2)** | Inicio de sesión social en la segunda versión. | Validación de firma oficial de *ID Token* (OIDC) en el servidor. |
 | **Expo Push (Etapa P2)** | Envío de notificaciones emergentes fuera de la app. | Despacho por HTTPS desde el servidor hacia Google FCM y Apple APNs. |
@@ -387,7 +387,7 @@ El sistema se organiza en tres bloques: una **aplicación móvil offline-first**
 | **RNF-04** | **Tiempos de respuesta** | Consultas habituales en menos de **500 ms** (p95) y procesamiento completo de una carrera en menos de **10 segundos**. |
 | **RNF-05** | **Fluidez del mapa** | Carga de zonas visibles en menos de **1 segundo**, soportando hasta 2.000 hexágonos en pantalla. |
 | **RNF-06** | **Seguridad** | Comunicación cifrada por HTTPS, contraseñas protegidas con hash irreversible y sesiones mediante tokens JWT de corta duración. |
-| **RNF-07** | **Privacidad (Ley 172-13)** | Cumplimiento de la ley dominicana de datos personales: consentimiento informado y prohibición de exponer ubicaciones en vivo. |
+| **RNF-07** | **Privacidad (Ley 172-13)** | Cumplimiento de la ley dominicana de datos personales: consentimiento informado, prohibición de exponer ubicaciones en vivo y recorte automático de los primeros y últimos 200 m de cada ruta en el muro. |
 | **RNF-08** | **Disponibilidad** | Servidor en línea al menos el **99 % del tiempo** durante el periodo de pruebas y demostración. |
 | **RNF-09** | **Compatibilidad móvil** | Operación en teléfonos **Android 10+** e **iPhone con iOS 16+**. |
 | **RNF-10** | **Usabilidad** | Inicio de grabación en máximo **2 toques** desde la pantalla principal, con interfaz íntegra en español. |
