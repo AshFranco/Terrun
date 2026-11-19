@@ -25,7 +25,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 ### Diana — Product Owner
 - ✅ **CTZ-27** Términos y política de privacidad v1.0 en `docs/producto/legal/`. *Mergeado (PR #128), revisado por Ashley; vigencia del 17/11 cargada en la semilla (D-29).*
 - ⬜ **CTZ-25** Analizar las 23 respuestas de la encuesta y confirmar el orden de los P1.
-- ⬜ **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20).
+- 👀 **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20) en `docs/producto/criterios-S2-S3.md`. *En revisión.*
 
 ### Jorge — Front, experiencia de usuario y núcleo técnico
 - ⬜ **CTZ-10** Sistema de diseño base + wireframes de P-01 a P-09. *Viene de S0. Lo usan las pantallas de Rowlis (CTZ-23 y CTZ-24).*

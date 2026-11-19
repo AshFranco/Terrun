@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-19 — Diana — CTZ-26 Criterios de aceptación detallados de S2 y S3
+- Hecho: redactadas las 22 historias de los sprints S2 (12 historias) y S3 (10 historias) en `docs/producto/criterios-S2-S3.md` con descripción estructurada (*Como / Quiero / Para*) y criterios de aceptación verificables alineados con `docs/02-LLD.md` (incluyendo la aclaración de `CTZ-33` sobre métricas en pantalla y segundo plano, recorte de `200 m`, reversión de conquista `MT-13` y `CTZ-104`); enlazado en `docs/03-BACKLOG.md` y `docs/producto/README.md`, y actualizado `docs/ESTADO.md` a en revisión.
+- Evidencia: rama `docs/CTZ-26-criterios-S2-S3` → `development`.
+- Decisiones: ninguna nueva.
+- Siguiente paso: revisión de Ashley para aprobar *Definition of Ready* de S2 y S3 antes de la weekly del viernes 20.
+
 ## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
 - Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
 - Evidencia: 63 pruebas en verde (1 nueva), `dotnet format` sin cambios, build sin advertencias; PR de `fix/CTZ-27-legal-seed-and-route-trim`.
