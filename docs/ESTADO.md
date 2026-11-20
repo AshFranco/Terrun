@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S1 — Cuenta, perfil y prueba de GPS** · del sábado 14 al viernes 20 de noviembre de 2026
 > **Weekly:** viernes 20 de noviembre · **Hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
-> **Última actualización:** 15/11/2026 — Ashley
+> **Última actualización:** 20/11/2026 — Rowlis
 
 Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
@@ -34,7 +34,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-21** Mapa base MapLibre en la pestaña Mapa. *Depende de CTZ-08.*
 
 ### Rowlis — Front y apoyo puntual en Backend
-- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `development` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
+- 👀 **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. En revisión (PR #131). El ID del proyecto de Expo está en el issue #15.*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
 - ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
 - ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Desbloqueada: CTZ-13 y CTZ-27 hechas.*

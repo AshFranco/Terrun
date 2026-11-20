@@ -107,7 +107,7 @@ Orden promedio asignado por los 28 corredores (**1 = más importante**, **7 = me
 - 9 de 28 no usan app y 11 de 28 corren una sola vez por semana; parte de la muestra puede estar lejos del corredor objetivo de Terrun.
 - Con `n = 28`, las diferencias pequeñas entre promedios no son concluyentes; la encuesta sirve para orientar prioridades, no para fijarlas de forma definitiva.
 
-### 5. Conclusión y orden de prioridad de `P1` (`D-30`)
+### 5. Conclusión y orden de prioridad de `P1` (`D-31`)
 
 1. Métricas ratifica su lugar como núcleo `P0`. Mapa de territorio queda empatado en 3.º lugar con Retos, por debajo de Logros (`P1`), y el interés por conquistar zonas es positivo pero moderado (promedio `3,46`; `46,4 %` alto). Se confirma como `P0` por ser la propuesta central del producto, no porque los corredores lo pidan por encima de todo; conviene reforzar su propuesta de valor en la beta.
 2. Entre los módulos **`P1`**, los datos sugieren que la motivación por metas personales (**Logros `3,04`** y **Retos `3,82`**) pesa más que el componente social (**Clubes `5,21`** y **Feed `5,32`**), con **Rankings (`4,25`)** en el punto intermedio. Las 5 respuestas nuevas no cambiaron el orden de los `P1`.

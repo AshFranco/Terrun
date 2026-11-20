@@ -14,11 +14,23 @@ Formato:
 
 ---
 
+## 2026-11-19 — Diana — Actualización de ambos HLD y entregables
+- Hecho: precisados ambos documentos de alto nivel (`docs/01-HLD.md` y `docs/01-HLD-v1.2-post-MVP.md`) y sus entregables (`HLD-Terrun.docx`, `HLD-Terrun.pdf` y `HLD-Terrun-v1.2-post-MVP.docx`) para reflejar el recorte automático de 200 m al inicio y al final de cada ruta frente a terceros (`RF-09`, `RF-20`, `RF-32`, `RNF-07`), la reversión de conquista al eliminar las actividades que la originaron (`§1.4`, `§1.5`, `RF-20`, `RF-49`, `RF-53`) y `Resend` por SMTP autenticado como proveedor definitivo de correo (`D-03`, `§3.2`).
+- Evidencia: PR #132 (`docs/hld-correcciones` → `development`).
+- Decisiones: ninguna nueva (aplica D-27 y D-29).
+- Siguiente paso: revisión y merge de Ashley en PR #132 hacia `development`.
+
 ## 2026-11-17 — Diana — CTZ-25 Análisis de encuesta a corredores (n = 28) y orden de P1
 - Hecho: tabuladas las 28 respuestas reales de `runner-survey` (meta de 15 superada en +87 %, 16 voluntarios beta sin correos en el repo) en `docs/producto/encuesta-corredores.md`, incluyendo limitaciones de la muestra y síntesis de respuestas abiertas; definido el orden tentativo de prioridad para P1 (Logros → Retos → Rankings → Clubes → Feed social, con avisos de voz como preferencia desactivable) y actualizado `docs/ESTADO.md`.
-- Evidencia: PR #130 (`docs/CTZ-25-survey-analysis` → `development`), `docs/producto/encuesta-corredores.md` (`## Análisis (CTZ-25)`), `docs/DECISIONES.md` (`D-30`) y `docs/ESTADO.md`.
-- Decisiones: D-30.
+- Evidencia: PR #130 (`docs/CTZ-25-survey-analysis` → `development`), `docs/producto/encuesta-corredores.md` (`## Análisis (CTZ-25)`), `docs/DECISIONES.md` (`D-31`) y `docs/ESTADO.md`.
+- Decisiones: D-31.
 - Siguiente paso: revisar resultados tras la beta y completar CTZ-26 (criterios de aceptación de S2 y S3).
+
+## 2026-11-17 — Rowlis — CTZ-08 Esqueleto de la app móvil
+- Hecho: esqueleto en `mobile/` con Expo SDK 54 (`expo ~54.0.36`, `react 19.1.0`, `react-native 0.81.5`), TypeScript `strict` (`noUncheckedIndexedAccess`), Expo Router (`typedRoutes`) con las 5 pestañas vacías (`Mapa`, `Feed`, `Trackear`, `Clubes`, `Perfil`), `src/i18n/es.json` con helper `t()` tipado en compilación, tokens iniciales en `src/theme/`, script `npm run api:types` (`openapi-typescript` → `src/api/schema.d.ts`), ESLint 9 (`no-explicit-any: error`, `no-console: error`), Prettier y Jest (`jest-expo` + React Native Testing Library). Vinculado al proyecto EAS de la organización `terrun` (`9ca8c8c5-510a-468e-9dce-d6e360efac90`, esquema `terrun://`, paquete `com.terrun.app`).
+- Evidencia: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` (2 suites, 4 pruebas en verde) y `npx expo export --platform android` exitosos en local.
+- Decisiones: D-30.
+- Siguiente paso: abrir el PR de `feat/CTZ-08-mobile-app-skeleton` contra `development` (cierra issue #15) y continuar con CTZ-09, CTZ-17 y CTZ-22.
 
 ## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
 - Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
