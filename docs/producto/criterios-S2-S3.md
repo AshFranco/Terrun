@@ -31,8 +31,8 @@
   - [ ] Migración aplicada con las tablas del módulo M3/M4 e índices necesarios para consultar actividades por usuario y fecha.
   - [ ] `POST /activities` autenticado devuelve `202 Accepted` con el `id` y estado `pending` al recibir una actividad nueva válida, encolándola para procesamiento.
   - [ ] Enviar la misma actividad con el mismo `clientId` para el mismo usuario responde `200 OK` con la actividad existente sin duplicar puntos ni efectos (`MT-09`).
-  - [ ] Una actividad que supere los `30.000` puntos GPS responde `413 Payload Too Large` con el catálogo de errores en español.
-  - [ ] Si el rango de fechas (`startedAt`–`endedAt`) se superpone con otra actividad válida del mismo usuario, el servidor rechaza la petición (`409 Conflict` / código de error correspondiente).
+  - [ ] Una actividad que supere los `30.000` puntos GPS responde `413 PAYLOAD_TOO_LARGE` con el catálogo de errores en español.
+  - [ ] Si el rango de fechas (`startedAt`–`endedAt`) se superpone con otra actividad válida del mismo usuario, el servidor rechaza la petición con `409 ACTIVITY_OVERLAP`.
   - [ ] Pruebas automatizadas en verde cubriendo idempotencia (`MT-09`), límite de tamaño, superposición y permisos.
 
 ---
@@ -50,7 +50,7 @@
   - [ ] Tramos entre puntos consecutivos del mismo segmento cuya velocidad supere `anticheat.max_speed_kmh` (`25 km/h`) se marcan como inválidos y no suman distancia ni territorio (`MT-03`).
   - [ ] Pausas entre segmentos no suman distancia entre el fin de un segmento y el inicio del siguiente (`MT-14`).
   - [ ] Actividades con ritmo promedio inferior a `anticheat.min_pace_s_per_km` (`< 2:30 min/km`) o con más del `20 %` de la distancia en tramos inválidos quedan en estado `in_review` y crean registro en `activity_review` (`MT-04`).
-  - [ ] Todos los casos matemáticos `MT-01`, `MT-02`, `MT-03`, `MT-04`, `MT-14` y `MT-15` pasan en verde.
+  - [ ] Todos los casos matemáticos `MT-01`, `MT-02`, `MT-03`, `MT-04` y `MT-14` pasan en verde.
 
 ---
 
@@ -112,7 +112,7 @@
 - **Criterios de aceptación:**
   - [ ] Desde la pantalla principal se puede iniciar el trackeo en máximo `2 toques` (`RNF-10`), aplicando la máquina de estados `idle → recording ↔ paused → finished` (`LLD §5.1`).
   - [ ] En pantalla abierta (`P-08`) se muestran en vivo tiempo en movimiento, distancia y ritmo; en Android con pantalla bloqueada se mantiene visible la notificación persistente con el avance (ej. distancia y tiempo).
-  - [ ] La *auto-pausa* (activa por defecto) pausa si la velocidad baja de `0,5 m/s` durante `10 s` y reanuda al superar `1 m/s`, abriendo un nuevo segmento en cada pausa (manual o automática).
+  - [ ] La *auto-pausa* (activa por defecto) toma el umbral `activity.auto_pause_speed_mps` desde `GET /settings/public` (sin valores fijos en código), pausa durante `10 s` por debajo del umbral y reanuda al superar `1 m/s`, abriendo un nuevo segmento en cada pausa (manual o automática).
   - [ ] Cada punto GPS (`BestForNavigation`, `2 s` o `5 m`) se persiste inmediatamente en `SQLite` local.
   - [ ] Si el sistema operativo cierra la app forzosamente en plena carrera, al reabrirla se detecta la sesión pendiente en `SQLite` y se ofrece reanudar o finalizar sin perder los puntos guardados.
 
@@ -221,7 +221,7 @@
   - **Para:** transformar cada carrera válida en avance y conquista real sobre la malla hexagonal de la ciudad.
 - **Criterios de aceptación:**
   - [ ] Migración aplicada con tablas de M5 (`zone`, `cell_visit`, `zone_progress`, `conquest`, etc.) e índices espaciales/consulta definidos en `LLD §2.3`.
-  - [ ] El motor densifica cada tramo válido cada `territory.densify_step_m` (`20 m`), obtiene la sub-celda nivel 10 y asigna su zona padre únicamente mediante `cellToParent` (`MT-18`), actualizando `cell_mask`.
+  - [ ] El motor densifica cada tramo válido cada `territory.densify_step_m` (`10 m`), obtiene la sub-celda nivel 10 y asigna su zona padre únicamente mediante `cellToParent` (`MT-18`), actualizando `cell_mask`.
   - [ ] Al alcanzar `>= 5` de `7` sub-celdas (`territory.conquest_threshold`) entre una o varias actividades válidas, registra `conquest` (única por usuario y zona) y suma `xp.conquest` (`+50 XP`) sin duplicar (`MT-06`, `MT-07`, `MT-08`).
   - [ ] Al eliminar una actividad (`DELETE /activities/{id}`), se recalculan `cell_mask` y conquistas: si una zona baja de 5 de 7, se revierte la conquista y se ajusta el XP (`MT-13`).
   - [ ] Pruebas unitarias en verde cubriendo `MT-06`, `MT-07`, `MT-08`, `MT-09`, `MT-13` y `MT-18`, con cobertura del motor `>= 80 %` (`RNF-11`).
@@ -238,7 +238,7 @@
 - **Criterios de aceptación:**
   - [ ] `GET /zones?bbox=minLon,minLat,maxLon,maxLat` devuelve GeoJSON con el estado por usuario (`free`, `in_progress`, `conquered`, `owned_by_me`, `owned_by_other`) en `< 1 s` para hasta `2.000` zonas (`RNF-05`).
   - [ ] Si el `bbox` solicitado excede `map.max_zones_per_bbox` (`2.000` zonas), el endpoint responde `422` con código `BBOX_TOO_LARGE`.
-  - [ ] `GET /zones/{h3}` devuelve el dueño actual (si existe), puntos, máscara de progreso propio (0–6) y top 5 de los últimos 30 días.
+  - [ ] `GET /zones/{h3}` devuelve el dueño actual (si existe), puntos, máscara de progreso propio (7 bits, uno por sub-celda) y top 5 de los últimos 30 días.
   - [ ] `GET /me/territory` y `GET /me/conquests` devuelven totales y listado paginado de zonas conquistadas con la actividad que las originó, en `< 500 ms` p95 (`RNF-04`).
 
 ---
