@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Terrun",
+    "slug": "terrun",
+    "owner": "terrun",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "terrun",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.terrun.app"
+    },
+    "android": {
+      "package": "com.terrun.app",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9ca8c8c5-510a-468e-9dce-d6e360efac90"
+      }
+    }
+  }
+}
