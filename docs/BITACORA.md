@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-17 — Rowlis — CTZ-08 Esqueleto de la app móvil
+- Hecho: esqueleto en `mobile/` con Expo SDK 54 (`expo ~54.0.36`, `react 19.1.0`, `react-native 0.81.5`), TypeScript `strict` (`noUncheckedIndexedAccess`), Expo Router (`typedRoutes`) con las 5 pestañas vacías (`Mapa`, `Feed`, `Trackear`, `Clubes`, `Perfil`), `src/i18n/es.json` con helper `t()` tipado en compilación, tokens iniciales en `src/theme/`, script `npm run api:types` (`openapi-typescript` → `src/api/schema.d.ts`), ESLint 9 (`no-explicit-any: error`, `no-console: error`), Prettier y Jest (`jest-expo` + React Native Testing Library). Vinculado al proyecto EAS de la organización `terrun` (`9ca8c8c5-510a-468e-9dce-d6e360efac90`, esquema `terrun://`, paquete `com.terrun.app`).
+- Evidencia: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` (2 suites, 4 pruebas en verde) y `npx expo export --platform android` exitosos en local.
+- Decisiones: D-30.
+- Siguiente paso: abrir el PR de `feat/CTZ-08-mobile-app-skeleton` contra `development` (cierra issue #15) y continuar con CTZ-09, CTZ-17 y CTZ-22.
+
 ## 2026-11-17 — Ashley — Revisión de CTZ-27, semilla legal y recorte de 200 m
 - Hecho: revisé y mergeé el PR #128 de Diana tras dos rondas (versión 1.0 con los nombres de la semilla, conservación alineada con LLD §4.5, visibilidad por actividad, cookies, D-28). Migración `AlignLegalEffectiveDateAndAddRouteTrimSetting`: vigencia de los textos 1.0 al 17/11 y parámetro público `privacy.route_trim_m = 200`. Prueba nueva que comprueba que cada URL de `legal_document` corresponde a un archivo del repositorio. LLD v1.11 con el recorte en §2.4, §3, §4.1, §7.2 y el caso MT-21; backlog: CTZ-31b citaba MT-16 (récord de 5 km) en lugar del caso del recorte; README legal con las URLs de `main`, como la semilla.
 - Evidencia: 63 pruebas en verde (1 nueva), `dotnet format` sin cambios, build sin advertencias; PR de `fix/CTZ-27-legal-seed-and-route-trim`.
