@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S1 — Cuenta, perfil y prueba de GPS** · del sábado 14 al viernes 20 de noviembre de 2026
 > **Weekly:** viernes 20 de noviembre · **Hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
-> **Última actualización:** 15/11/2026 — Ashley
+> **Última actualización:** 20/11/2026 — Rowlis
 
 Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
@@ -24,8 +24,8 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 
 ### Diana — Product Owner
 - ✅ **CTZ-27** Términos y política de privacidad v1.0 en `docs/producto/legal/`. *Mergeado (PR #128), revisado por Ashley; vigencia del 17/11 cargada en la semilla (D-29).*
-- ⬜ **CTZ-25** Analizar las 23 respuestas de la encuesta y confirmar el orden de los P1.
-- 👀 **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20) en `docs/producto/criterios-S2-S3.md`. *En revisión.*
+- ✅ **CTZ-25** Analizar las 28 respuestas de la encuesta y confirmar el orden de los P1. *Mergeado (PR #130), revisado por Ashley; orden de los P1 en D-31.*
+- 👀 **CTZ-26** Criterios de aceptación detallados de S2 y S3 (*Definition of Ready* el viernes 20) en `docs/producto/criterios-S2-S3.md`. *En revisión (PR #133).*
 
 ### Jorge — Front, experiencia de usuario y núcleo técnico
 - ⬜ **CTZ-10** Sistema de diseño base + wireframes de P-01 a P-09. *Viene de S0. Lo usan las pantallas de Rowlis (CTZ-23 y CTZ-24).*
@@ -34,7 +34,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-21** Mapa base MapLibre en la pestaña Mapa. *Depende de CTZ-08.*
 
 ### Rowlis — Front y apoyo puntual en Backend
-- ⬜ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. Bloquea a Jorge (CTZ-09, CTZ-20, CTZ-21) y a ti mismo: debe estar en `development` a más tardar el martes 17. El ID del proyecto de Expo está en el issue #15.*
+- 👀 **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. En revisión (PR #131). El ID del proyecto de Expo está en el issue #15.*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
 - ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
 - ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Desbloqueada: CTZ-13 y CTZ-27 hechas.*

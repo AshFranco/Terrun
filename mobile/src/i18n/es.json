@@ -1,0 +1,42 @@
+{
+  "app": {
+    "name": "Terrun",
+    "tagline": "Conquista tu zona · Cada carrera suma territorio"
+  },
+  "tabs": {
+    "map": "Mapa",
+    "feed": "Feed",
+    "record": "Trackear",
+    "clubs": "Clubes",
+    "profile": "Perfil",
+    "accessibility": {
+      "map": "Pestaña de mapa de territorio",
+      "feed": "Pestaña del muro de actividad",
+      "record": "Pestaña para trackear actividad",
+      "clubs": "Pestaña de clubes",
+      "profile": "Pestaña de mi perfil"
+    }
+  },
+  "screens": {
+    "map": {
+      "title": "Mapa de territorio",
+      "subtitle": "Explora las zonas H3 de tu sector y planifica tu próxima ruta."
+    },
+    "feed": {
+      "title": "Muro de actividad",
+      "subtitle": "Carreras, conquistas y dominios recientes de la comunidad."
+    },
+    "record": {
+      "title": "Trackear actividad",
+      "subtitle": "Registra tu recorrido con GPS y conquista nuevas zonas."
+    },
+    "clubs": {
+      "title": "Clubes",
+      "subtitle": "Únete a un club para sumar territorio en equipo."
+    },
+    "profile": {
+      "title": "Mi perfil",
+      "subtitle": "Consulta tus estadísticas, zonas conquistadas y preferencias."
+    }
+  }
+}
