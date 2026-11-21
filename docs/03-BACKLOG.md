@@ -54,7 +54,7 @@ Regla de recorte (`01-HLD-v1.2-post-MVP.md`, Anexo C, riesgo R-03): si al 11 de 
 
 ## S2 — 21 al 27 de noviembre · Actividades y trackeo deportivo
 
-**Objetivo:** trackear una carrera real, guardarla sin conexión, subirla y ver distancia, ritmo y splits calculados por el servidor.
+**Objetivo:** trackear una carrera real, guardarla sin conexión, subirla y ver distancia, ritmo y splits calculados por el servidor. *(Descripción detallada y criterios en [`docs/producto/criterios-S2-S3.md`](producto/criterios-S2-S3.md).)*
 
 | ID | Historia | Responsable | P | Depende de | Criterios de aceptación |
 |---|---|---|---|---|---|
@@ -73,7 +73,7 @@ Regla de recorte (`01-HLD-v1.2-post-MVP.md`, Anexo C, riesgo R-03): si al 11 de 
 
 ## S3 — 28 de noviembre al 4 de diciembre · Territorio H3 y calibración antitrampas
 
-**Objetivo:** al terminar una carrera aparecen las zonas en progreso y conquistadas (regla 5 de 7) en el mapa y se validan en calle los umbrales antitrampas.
+**Objetivo:** al terminar una carrera aparecen las zonas en progreso y conquistadas (regla 5 de 7) en el mapa y se validan en calle los umbrales antitrampas. *(Descripción detallada y criterios en [`docs/producto/criterios-S2-S3.md`](producto/criterios-S2-S3.md).)*
 
 | ID | Historia | Responsable | P | Depende de | Criterios de aceptación |
 |---|---|---|---|---|---|

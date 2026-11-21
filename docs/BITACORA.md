@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-19 — Diana — CTZ-26 Criterios de aceptación detallados de S2 y S3
+- Hecho: redactadas las 22 historias de los sprints S2 (12 historias) y S3 (10 historias) en `docs/producto/criterios-S2-S3.md` con descripción estructurada (*Como / Quiero / Para*) y criterios de aceptación verificables alineados con `docs/02-LLD.md` (incluyendo la aclaración de `CTZ-33` sobre métricas en pantalla y segundo plano, recorte de `200 m`, reversión de conquista `MT-13` y `CTZ-104`); enlazado en `docs/03-BACKLOG.md` y `docs/producto/README.md`, y actualizado `docs/ESTADO.md` a en revisión.
+- Evidencia: PR #133 (`docs/CTZ-26-criterios-S2-S3` → `development`).
+- Decisiones: ninguna nueva.
+- Siguiente paso: revisión de Ashley para aprobar *Definition of Ready* de S2 y S3 antes de la weekly del viernes 20.
+
 ## 2026-11-19 — Diana — Actualización de ambos HLD y entregables
 - Hecho: precisados ambos documentos de alto nivel (`docs/01-HLD.md` y `docs/01-HLD-v1.2-post-MVP.md`) y sus entregables (`HLD-Terrun.docx`, `HLD-Terrun.pdf` y `HLD-Terrun-v1.2-post-MVP.docx`) para reflejar el recorte automático de 200 m al inicio y al final de cada ruta frente a terceros (`RF-09`, `RF-20`, `RF-32`, `RNF-07`), la reversión de conquista al eliminar las actividades que la originaron (`§1.4`, `§1.5`, `RF-20`, `RF-49`, `RF-53`) y `Resend` por SMTP autenticado como proveedor definitivo de correo (`D-03`, `§3.2`).
 - Evidencia: PR #132 (`docs/hld-correcciones` → `development`).
