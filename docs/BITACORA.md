@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-21 — Ashley — Revisión y merge de CTZ-25 y CTZ-26
+- Hecho: revisé y mergeé los PR de Diana. PR #130 (CTZ-25): verifiqué que cada pregunta sume 28 respuestas, los promedios y el ranking (suma 28,00); decisión renumerada a D-31. PR #133 (CTZ-26): verifiqué las 22 historias contra el LLD tras dos rondas (`densify_step_m` 10 m, `409`/`413` del catálogo, umbral de auto-pausa desde `/settings/public`, `MT-15` solo en CTZ-31b, máscara de 7 bits) y resolví los conflictos con `development` en `BITACORA.md` y `ESTADO.md`.
+- Evidencia: PR #130 (`4c54d49`), PR #133 (`f9dd8de`) y este PR (CTZ-26 marcado como mergeado en `docs/ESTADO.md`, cierra la issue #34).
+- Decisiones: ninguna nueva (D-31 la registró Diana en CTZ-25).
+- Siguiente paso: arrancar S2 (21–27 nov) con los criterios de `docs/producto/criterios-S2-S3.md`.
+
 ## 2026-11-19 — Diana — CTZ-26 Criterios de aceptación detallados de S2 y S3
 - Hecho: redactadas las 22 historias de los sprints S2 (12 historias) y S3 (10 historias) en `docs/producto/criterios-S2-S3.md` con descripción estructurada (*Como / Quiero / Para*) y criterios de aceptación verificables alineados con `docs/02-LLD.md` (incluyendo la aclaración de `CTZ-33` sobre métricas en pantalla y segundo plano, recorte de `200 m`, reversión de conquista `MT-13` y `CTZ-104`); enlazado en `docs/03-BACKLOG.md` y `docs/producto/README.md`, y actualizado `docs/ESTADO.md` a en revisión.
 - Evidencia: PR #133 (`docs/CTZ-26-criterios-S2-S3` → `development`).
