@@ -19,20 +19,29 @@ public sealed partial class AuthTestApp : IAsyncDisposable
 
     private readonly TerrunApiFactory _factory;
 
-    public AuthTestApp(MigratedDatabaseFixture database)
+    public AuthTestApp(MigratedDatabaseFixture database, Action<IServiceCollection>? services = null, Dictionary<string, string?>? settings = null)
     {
+        var allSettings = new Dictionary<string, string?> { ["RateLimiting:AuthPerIpPerMinute"] = "10000" };
+        foreach (var (key, value) in settings ?? [])
+        {
+            allSettings[key] = value;
+        }
+
         _factory = new TerrunApiFactory(database.ConnectionString)
         {
-            Settings = new() { ["RateLimiting:AuthPerIpPerMinute"] = "10000" },
-            TestServices = services =>
+            Settings = allSettings,
+            TestServices = collection =>
             {
-                services.AddSingleton(Mailbox);
-                services.AddScoped<IEmailSender>(provider => provider.GetRequiredService<CapturingEmailSender>());
-                services.AddSingleton<TimeProvider>(Clock);
+                collection.AddSingleton(Mailbox);
+                collection.AddScoped<IEmailSender>(provider => provider.GetRequiredService<CapturingEmailSender>());
+                collection.AddSingleton<TimeProvider>(Clock);
+                services?.Invoke(collection);
             },
         };
         Client = _factory.CreateClient();
     }
+
+    public IServiceProvider Services => _factory.Services;
 
     public HttpClient Client { get; }
 

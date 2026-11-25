@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
 using Terrun.Api.Modules.Activities.Contracts;
+using Terrun.Api.Modules.Activities.Processing;
 using Terrun.Api.Modules.Platform.Services;
 using Terrun.Domain.Activities;
 using Terrun.Domain.Errors;
@@ -11,7 +12,7 @@ namespace Terrun.Api.Modules.Activities.Services;
 
 // RF-16 (CTZ-30): the phone uploads a finished activity. It is stored as pending with its raw points and the processor
 // (CTZ-31a/31b, queued by CTZ-104) computes the official results. Every check is scoped to the caller's own activities
-public sealed class ActivityUploadService(TerrunDbContext db, SystemSettingsReader settings)
+public sealed class ActivityUploadService(TerrunDbContext db, SystemSettingsReader settings, ActivityQueue queue)
 {
     private const string _copyGpsPoints =
         "COPY gps_point (activity_id, seq, segment, recorded_at, lat, lon, altitude_m, accuracy_m, speed_mps) FROM STDIN (FORMAT BINARY)";
@@ -29,7 +30,14 @@ public sealed class ActivityUploadService(TerrunDbContext db, SystemSettingsRead
 
         try
         {
-            return (await InsertAsync(userId, request, cancellationToken), true);
+            var result = await InsertAsync(userId, request, cancellationToken);
+            if (result.IsNew)
+            {
+                // LLD §6: processed right away by ActivityQueueWorker; the API is awake because the upload is incoming traffic
+                queue.Enqueue(result.Activity.Id);
+            }
+
+            return result;
         }
         catch (DbUpdateException exception) when (IsViolationOf(exception.InnerException, DatabaseConstraints.ActivityClientIdUnique))
         {
@@ -61,25 +69,31 @@ public sealed class ActivityUploadService(TerrunDbContext db, SystemSettingsRead
             throw new FieldValidationException("shoeId", "The shoe does not exist or is not yours.");
         }
 
-        // D-34: the exclusion constraint is the guarantee; this check gives the same 409 without opening a transaction
-        var startedAt = request.StartedAt.ToUniversalTime();
-        var endedAt = request.EndedAt.ToUniversalTime();
-        var overlaps = await db.Activities.AnyAsync(
-            a => a.UserId == userId
-                && a.Status != ActivityStatus.Rejected
-                && a.Status != ActivityStatus.Failed
-                && a.StartedAt < endedAt
-                && a.EndedAt > startedAt,
-            cancellationToken);
-        if (overlaps)
+        // Fast path: most overlaps are answered here, without opening a transaction
+        if (await OverlapsAsync(userId, request, cancellationToken))
         {
             throw Overlap();
         }
     }
 
+    private Task<bool> OverlapsAsync(Guid userId, CreateActivityRequest request, CancellationToken cancellationToken)
+    {
+        var startedAt = request.StartedAt.ToUniversalTime();
+        var endedAt = request.EndedAt.ToUniversalTime();
+        // The same clientId is the same activity (a retry racing this one), never an overlap: the locked path returns it
+        return db.Activities.AnyAsync(
+            a => a.UserId == userId
+                && a.ClientId != request.ClientId
+                && a.Status != ActivityStatus.Rejected
+                && a.Status != ActivityStatus.Failed
+                && a.StartedAt < endedAt
+                && a.EndedAt > startedAt,
+            cancellationToken);
+    }
+
     // The activity and its points commit together; the points go through binary COPY because an upload can carry up to
     // activity.max_points rows and one INSERT per point would take seconds
-    private async Task<ActivityUploadResponse> InsertAsync(Guid userId, CreateActivityRequest request, CancellationToken cancellationToken)
+    private async Task<(ActivityUploadResponse Activity, bool IsNew)> InsertAsync(Guid userId, CreateActivityRequest request, CancellationToken cancellationToken)
     {
         var visibility = await db.UserPreferences.AsNoTracking()
             .Where(p => p.UserId == userId)
@@ -100,12 +114,27 @@ public sealed class ActivityUploadService(TerrunDbContext db, SystemSettingsRead
         };
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+
+        // D-34: uploads of the same runner go one at a time. Concurrent overlapping inserts that wait on an EXCLUDE
+        // constraint can deadlock each other (PostgreSQL), which would answer 500 instead of 409. Inside the lock the
+        // retry and overlap checks are exact; the unique index and the constraint stay as the last guarantee
+        await db.Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock(hashtextextended({userId.ToString()}, 0))", cancellationToken);
+        if (await FindExistingAsync(userId, request.ClientId, cancellationToken) is { } existing)
+        {
+            return (existing, false);
+        }
+
+        if (await OverlapsAsync(userId, request, cancellationToken))
+        {
+            throw Overlap();
+        }
+
         db.Activities.Add(activity);
         await db.SaveChangesAsync(cancellationToken);
         await CopyPointsAsync(activity.Id, request.Points!, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        return new ActivityUploadResponse(activity.Id, activity.Status);
+        return (new ActivityUploadResponse(activity.Id, activity.Status), true);
     }
 
     private async Task CopyPointsAsync(Guid activityId, IReadOnlyList<GpsPointRequest> points, CancellationToken cancellationToken)

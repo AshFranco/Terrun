@@ -42,6 +42,8 @@ public sealed class TerrunDbContext(DbContextOptions<TerrunDbContext> options) :
 
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
 
+    public DbSet<JobRun> JobRuns => Set<JobRun>();
+
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

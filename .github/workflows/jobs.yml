@@ -1,0 +1,60 @@
+name: Jobs
+
+# LLD §6 (D-25): the external trigger of the scheduled jobs. Render free sleeps after 15 minutes without traffic, so its
+# own timers never fire; this workflow wakes the API every hour and asks it to run the jobs that are due.
+# Minute 17 keeps away from minute 00, when GitHub delays scheduled workflows the most. Scheduled workflows run from the
+# default branch (development), so this triggers QA. Needs the repository variable JOBS_API_URL (for example
+# https://terrun-api-qa.onrender.com) and the secret JOBS_KEY, equal to Jobs__Key in Render.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: jobs
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      API_URL: ${{ vars.JOBS_API_URL }}
+      JOBS_KEY: ${{ secrets.JOBS_KEY }}
+    steps:
+      - name: Check configuration
+        run: |
+          if [ -z "$API_URL" ] || [ -z "$JOBS_KEY" ]; then
+            echo "::error::Set the variable JOBS_API_URL and the secret JOBS_KEY in the repository settings."
+            exit 1
+          fi
+
+      # A cold start on Render takes about a minute; wait up to 3 minutes for /health
+      - name: Wake up the API
+        run: |
+          for attempt in $(seq 1 18); do
+            if curl --silent --fail --max-time 10 "$API_URL/health" | grep -q Healthy; then
+              echo "API awake after $attempt attempt(s)."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::The API did not answer /health within 3 minutes."
+          exit 1
+
+      - name: Run the due jobs
+        run: |
+          status=$(curl --silent --show-error --max-time 300 --output response.json --write-out "%{http_code}" \
+            --request POST --header "X-Jobs-Key: $JOBS_KEY" "$API_URL/api/v1/internal/jobs/run")
+          cat response.json
+          echo
+          if [ "$status" != "200" ]; then
+            echo "::error::POST /internal/jobs/run answered $status."
+            exit 1
+          fi
+          if grep -q '"outcome":"failed"' response.json; then
+            echo "::error::At least one job failed; its error is in job_run.last_error and in the API logs."
+            exit 1
+          fi
