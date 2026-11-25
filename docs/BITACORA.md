@@ -18,6 +18,7 @@ Formato:
 - Hecho: módulo `Profiles/` con `GET /me` (usuario, perfil, preferencias y estadísticas en una consulta) y `PATCH /me/profile` con semántica de *JSON merge patch*; validaciones del perfil (edad mínima 18, peso, estatura, país ISO, longitudes); cambio de `@handle` con 409 `HANDLE_TAKEN` y auditoría `handle_changed`; la foto queda para `/me/photo/upload-url` (P1). LLD v1.12 (§1.2, §3.3, §7.3) y entregable LLD regenerado (docx + pdf).
 - Evidencia: 86 pruebas en verde (23 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
 - Decisiones: D-32 (merge patch, `@handle` libre con auditoría, foto fuera del PATCH, módulo `Profiles/`).
+- Pendientes abiertos como issues (revisión de completitud): #135 CTZ-105 foto de perfil con R2 (CTZ-24 la pide y no tenía historia), #136 CTZ-106 respuestas de error en el OpenAPI (antes de CTZ-19), #137 pregunta a Diana sobre la prioridad de `PUT /me/preferences` y P-30 (LLD P0 vs CTZ-78 P1). Diana agrega CTZ-105 y CTZ-106 al backlog.
 - Siguiente paso: PR a `development`; tras el merge, verificar en QA y avisar a Rowlis (CTZ-24) y arrancar CTZ-19 con él.
 
 ## 2026-11-21 — Ashley — Revisión y merge de CTZ-25 y CTZ-26
