@@ -14,6 +14,11 @@ Formato:
 
 ---
 
+## 2026-11-25 — Rowlis — CTZ-19 Tipos de la app generados desde el OpenAPI de QA
+- Hecho: verificado `/health` = `Healthy` en QA y regenerado `mobile/src/api/schema.d.ts` (1.817 líneas) con `openapi-typescript` desde `https://terrun-api-qa.onrender.com/openapi/v1.json`, incorporando los contratos de autenticación (`CTZ-14`), perfil (`CTZ-16`), errores `ApiProblem` (`CTZ-106`) y actividades (`CTZ-30` a `CTZ-32`). Exportados `ApiProblem` y la unión exhaustiva `ErrorCode` (18 códigos) en `mobile/src/api/index.ts`, con prueba automatizada en `mobile/src/api/index.test.ts` (incluyendo verificación negativa `@ts-expect-error` para códigos fuera del catálogo). Documentado el procedimiento en `README.md` y `mobile/README.md`.
+- Evidencia: PR #146; `npm run lint`, `npm run format:check`, `npm run typecheck` y `npm test` (3 suites, 5 pruebas en verde).
+- Siguiente paso: revisión y merge del PR #146 en `development` (cierra issue #26, revisa Ashley), y continuar con `CTZ-22` y `CTZ-17`.
+
 ## 2026-11-25 — Ashley — CTZ-32 Lectura y edición de actividades
 - Hecho: `GET /activities/{id}`, `/route` (GeoJSON, con el recorte de 200 m para terceros), `/splits`, `GET /me/activities` (cursor y filtros por tipo y fechas), `GET /me/summary` (semana, mes y año en AST, con el periodo anterior), `PATCH /activities/{id}` (*merge patch*; recalcula las calorías si cambia el tipo) y `DELETE /activities/{id}` (borra en cascada y resta de `user_stats`). La visibilidad va dentro de la consulta SQL (`ActivityVisibility`). Se extrajo `ProcessingSettings`, que comparten las etapas y el recálculo. LLD v1.18 (§3.3) con el entregable regenerado.
 - Hallazgos corregidos al generar los tipos de la app: los parámetros de consulta salían en PascalCase en el OpenAPI (`Limit`) y también en las claves de los errores, y los mensajes de validación seguían el idioma del servidor; además, `type` de la ruta GeoJSON salía opcional. Los tipos generados con `openapi-typescript` 7.13 ahora compilan con `tsc --strict`.

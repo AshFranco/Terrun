@@ -51,6 +51,20 @@ Tablero del equipo: [Terrun — Backlog y Sprints](https://github.com/users/AshF
 
 App React Native + Expo (TypeScript) · API .NET 10 + EF Core · PostgreSQL + PostGIS · H3 · MapLibre · Render · Neon · Expo EAS.
 
+## Generar los tipos de la app desde el OpenAPI (`CTZ-19`)
+
+Cada vez que cambie el contrato del backend (`docs/02-LLD.md` §3), regenera `mobile/src/api/schema.d.ts` desde `mobile/` (nunca a mano; detalle completo en [`mobile/README.md`](mobile/README.md)):
+
+```bash
+cd mobile
+# Contra la API local (http://localhost:5080/openapi/v1.json)
+npm run api:types
+
+# Contra QA (verificar antes que https://terrun-api-qa.onrender.com/health responda Healthy)
+OPENAPI_URL=https://terrun-api-qa.onrender.com/openapi/v1.json npm run api:types
+npm run typecheck
+```
+
 ## Regenerar el LLD
 
 El HLD (`docs/entregables/HLD-Terrun.docx`) se edita en Word desde la v1.2 y no se regenera; `docs/01-HLD.md` es su versión de lectura.
