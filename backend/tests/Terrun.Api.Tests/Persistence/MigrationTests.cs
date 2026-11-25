@@ -11,7 +11,7 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
 
     private static readonly string[] _expectedTables =
     [
-        "activity", "app_user", "audit_log", "consent", "external_login", "gps_point", "job_run", "legal_document",
+        "activity", "activity_review", "app_user", "audit_log", "consent", "external_login", "gps_point", "job_run", "legal_document",
         "personal_record", "privacy_zone", "profile", "refresh_token", "shoe", "split", "system_setting",
         "user_preference", "user_stats", "verification_token",
     ];
@@ -51,14 +51,14 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
     }
 
     [Fact]
-    public async Task Migrate_EmptyDatabase_SeedsTheTwentyTwoSystemSettings()
+    public async Task Migrate_EmptyDatabase_SeedsTheTwentyFourSystemSettings()
     {
         await using var scope = database.CreateScope();
         var db = MigratedDatabaseFixture.Db(scope);
 
         var settings = await db.SystemSettings.AsNoTracking().ToListAsync(TestContext.Current.CancellationToken);
 
-        Assert.Equal(22, settings.Count);
+        Assert.Equal(24, settings.Count);
         Assert.Equal("24", settings.Single(s => s.Key == "activity.max_duration_h").Value);
         Assert.Equal("5", settings.Single(s => s.Key == "territory.conquest_threshold").Value);
         Assert.Equal("200", settings.Single(s => s.Key == "privacy.route_trim_m").Value);

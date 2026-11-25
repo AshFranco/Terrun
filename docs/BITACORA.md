@@ -14,6 +14,19 @@ Formato:
 
 ---
 
+## 2026-11-24 — Ashley — CTZ-31a Limpieza de GPS y antitrampas
+- Hecho: motor puro `Terrun.Engine/Tracks` (`Geo.HaversineM`, `TrackCleaner` y `AntiCheatJudge`): descarta puntos por precisión, tiempo repetido o hacia atrás y saltos; mide los tramos entre puntos conservados del mismo segmento; marca inválidos los tramos sobre `anticheat.max_speed_kmh`; calcula la distancia válida e inválida y el tiempo en movimiento; y emite las violaciones `min_pace` e `invalid_distance`. Etapa `CleaningStep`: lee los límites de `system_setting` en una consulta, marca `gps_point.is_discarded` y `discard_reason`, y deja la actividad `in_review` (`status_reason = anticheat`) con su `activity_review`. Tabla `activity_review` y parámetros nuevos `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`. Cálculos a mano de MT-01, MT-02, MT-03, MT-04 y MT-14 en `docs/qa/04-CASOS/`. LLD v1.16 con el entregable regenerado.
+- Evidencia: 174 pruebas en verde (19 nuevas: 14 del motor con `[Trait("Case", "MT-NN")]` y 5 de la etapa contra PostGIS real); `dotnet format` limpio.
+- Decisiones: D-36 (la etapa se activa junto con CTZ-31b y Ashley documenta los casos MT, ambas decididas por la usuaria).
+- A tener en cuenta (quedan fuera de CTZ-31a):
+  - **CTZ-31b:** registrar `CleaningStep` y su etapa de métricas en `ActivitiesModule` en el mismo PR. La prueba `Production_BeforeCtz31b_RegistersNoProcessingStage` va a fallar a propósito: hay que reemplazarla por una que compruebe las dos etapas. Las métricas usan `context.Cleaning` (solo tramos válidos); MT-05 (menos de `anticheat.min_duration_s`: `processed` sin territorio) es de CTZ-31b.
+  - Al activarse, el procesador toma todas las actividades `pending` de QA, incluidas las de las pruebas de humo.
+  - **MT-04 tal como está escrito** va a revisión por distancia inválida, no por ritmo: con 25 km/h de límite, la regla de ritmo mínimo solo salta sola entre 2:24 y 2:30 min/km. Está documentado en `docs/qa/04-CASOS/MT-04.md` y hay una prueba de ritmo solo.
+  - **Rangelis (CTZ-38):** revisar los cálculos de `docs/qa/04-CASOS/`.
+  - **Moderación en P2:** las actividades `in_review` solo se resuelven con CTZ-77 (cola de moderación), que es P2; en el MVP quedarían en revisión para siempre. Decisión pendiente de Diana (issue #142). P-09 (CTZ-34, Jorge) tiene que explicar en español que la actividad está en revisión.
+  - Falta verificar en QA después del merge (migración de `activity_review` y de los 2 parámetros).
+- Siguiente paso: PR #143 a `development` (revisa Jorge); después, CTZ-31b.
+
 ## 2026-11-24 — Ashley — CTZ-104 Programador de trabajos
 - Hecho: tabla `job_run` (con `last_finished_at`); `JobScheduler` que ejecuta solo los trabajos vencidos según su cron (Cronos, hora AST) y los reserva con un `UPDATE` condicional y 30 min de reserva; `POST /api/v1/internal/jobs/run` con `X-Jobs-Key` (401 sin clave, con una clave incorrecta o si `Jobs__Key` no está configurada; fuera del OpenAPI); workflow `.github/workflows/jobs.yml` cada hora en el minuto 17, que espera hasta 3 min el arranque en frío. Cola en memoria (`ActivityQueue`) que `POST /activities` alimenta, `ActivityQueueWorker` que barre las `pending` al arrancar y procesa cada subida, y `ActivityProcessor` por etapas (SKIP LOCKED, una transacción, 3 intentos y luego `failed`), sin etapas registradas hasta CTZ-31a (D-35). Trabajos registrados: `activity_processor` y `token_cleanup`. LLD v1.15 con el entregable regenerado.
 - Corrección de CTZ-30 (ya en QA): las subidas de un mismo corredor se serializan con `pg_advisory_xact_lock`. Al probar aparecieron dos carreras: subidas superpuestas simultáneas podían caer en un *deadlock* de la restricción `EXCLUDE` (500 en vez de 409), y un reintento simultáneo del mismo `clientId` podía recibir 409 en vez de 200. La prueba de concurrencia ahora hace 3 rondas de 8 subidas; 0 fallas en 8 corridas.

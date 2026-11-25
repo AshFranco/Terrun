@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.15
+version: 1.16
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.16 | 24/11/2026 | Limpieza y antitrampas (CTZ-31a, D-36): parámetros `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`, umbral de movimiento = `activity.auto_pause_speed_mps`, motor puro `Terrun.Engine/Tracks`, casos MT en `docs/qa/04-CASOS/` y nota sobre MT-04 | Ashley |
 | 1.15 | 24/11/2026 | Programador de trabajos (CTZ-104, D-35): `job_run.last_finished_at` y reserva de 30 min, zona horaria AST, respuesta de `/internal/jobs/run`, tubería de procesamiento por etapas, `TokenCleanupJob`, variable `Jobs__Key`; subidas de un corredor serializadas con *advisory lock* (D-34) | Ashley |
 | 1.14 | 24/11/2026 | Subida de actividades (CTZ-30, D-34): tablas M3/M4, restricción `EXCLUDE` contra la superposición (extensión `btree_gist`), `activity.max_duration_h`, contrato y validaciones de `POST /activities`, `record_type` con `km1`/`km5`/`km10` | Ashley |
 | 1.13 | 24/11/2026 | Errores en el OpenAPI (CTZ-106, D-33): esquema `ApiProblem` y respuestas de error declaradas en cada operación (§3.1) | Ashley |
@@ -248,7 +249,9 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | `anticheat.max_speed_kmh` | 25 | Velocidad máxima de un tramo |
 | `anticheat.min_pace_s_per_km` | 150 | Ritmo sostenido sospechoso (2:30 min/km) |
 | `anticheat.min_duration_s` | 180 | Duración mínima para sumar territorio |
-| `anticheat.max_jump_m` | 200 | Salto máximo en menos de 5 s |
+| `anticheat.max_jump_m` | 200 | Salto máximo dentro de `anticheat.jump_window_s` |
+| `anticheat.jump_window_s` | 5 | Ventana de un salto de GPS, en segundos (D-36) |
+| `anticheat.max_invalid_distance_pct` | 20 | Porcentaje de la distancia en tramos inválidos que manda una actividad a revisión (D-36) |
 | `activity.max_points` | 30000 | Máximo de puntos por actividad |
 | `activity.max_duration_h` | 24 | Duración máxima de una actividad, en horas (D-34); público |
 | `activity.auto_pause_speed_mps` | 0.5 | Umbral de auto-pausa (lo usa la app) |
@@ -580,12 +583,12 @@ process(activity):
   for each consecutive pair (a, b) in the same segment:
     d = haversine(a, b);  dt = b.recordedAt - a.recordedAt
     if dt <= 0                                          -> discard(b, "timestamp")
-    if d > anticheat.max_jump_m and dt < 5 s            -> discard(b, "jump")
+    if d > anticheat.max_jump_m and dt < anticheat.jump_window_s -> discard(b, "jump")
     if d / dt > anticheat.max_speed_kmh                 -> mark leg invalid
 
   # 2. Metrics (valid points only)
   distanceM      = sum haversine of valid legs within each segment
-  movingTimeS    = sum dt of valid legs with speed >= 0.5 m/s
+  movingTimeS    = sum dt of valid legs with speed >= activity.auto_pause_speed_mps
   avgPaceSPerKm  = movingTimeS / (distanceM / 1000)
   elevation      = 5-point moving average of altitude + 3 m hysteresis
   splits         = cut every 1000 m of cumulative distance (interpolating the exact instant)
@@ -596,13 +599,20 @@ process(activity):
   # 3. Anti-cheat verdict
   if elapsedTimeS < anticheat.min_duration_s           -> processed, no territory
   if avgPaceSPerKm < anticheat.min_pace_s_per_km        -> in_review (creates activity_review)
-  if more than 20 % of distance is in invalid legs      -> in_review
+  if invalid distance % > anticheat.max_invalid_distance_pct -> in_review
 
   # 4. Territory (only if processed and valid)  -> §4.2
   # 5. Progression: XP, stats, streaks, records, achievements, challenges -> §4.4
   # 6. Notifications -> outbox (notification table)
   everything in ONE transaction; on failure: attempts += 1, status = failed after 3 attempts
 ```
+
+Notas de la limpieza y el veredicto (CTZ-31a, D-36):
+
+- Los pares se forman entre el último punto **conservado** y el siguiente del mismo segmento: un punto descartado no corta el recorrido, y el cambio de segmento sí (MT-14). Un punto sin `accuracyM` se conserva.
+- El ritmo promedio se mide sobre la distancia válida. Con los parámetros actuales, la regla de ritmo mínimo solo salta sola entre 2:24 min/km (25 km/h) y 2:30 min/km; más rápido, todos los tramos son inválidos y lo que manda a revisión es la distancia inválida (así ocurre en MT-04, ver `docs/qa/04-CASOS/MT-04.md`).
+- `activity_review.violated_rules` guarda `[{ "rule", "value", "limit" }]` con nombres estables: `min_pace` e `invalid_distance`. La actividad queda `in_review` con `status_reason = anticheat`.
+- El cálculo vive en el proyecto puro `Terrun.Engine` (`Tracks/`: `Geo`, `TrackCleaner`, `AntiCheatJudge`), sin EF ni HTTP; la etapa `CleaningStep` lo conecta con la base.
 
 Tabla MET usada para las calorías (carrera): 8 km/h → 8,3; 9,7 km/h → 9,8; 11,3 km/h → 11,0; 12,9 km/h → 11,8; 14,5 km/h → 12,8; 16,1 km/h → 14,5. Caminata: 5 km/h → 3,5; 6,4 km/h → 5,0. Entre valores se interpola linealmente.
 

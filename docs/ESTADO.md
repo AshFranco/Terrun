@@ -21,6 +21,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - 👀 **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.* *En revisión (PR #138); contrato en LLD §3.3 (v1.12, D-32). Pendientes: #135, #136, #137.*
 - 👀 **CTZ-106** Respuestas de error en el OpenAPI (`ApiProblem` + `[ApiError]`, D-33). *En revisión (PR #139). Va antes de CTZ-19 para que los tipos traigan la forma del error (issue #136).*
 - ⬜ **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16, CTZ-106 y CTZ-08.*
+- 👀 **CTZ-31a** (S2) Limpieza de GPS y antitrampas: motor puro, etapa `CleaningStep`, `activity_review` y casos MT en `docs/qa/04-CASOS/` (D-36). *En revisión (PR #143). La etapa se activa con CTZ-31b. Issue #39.*
 - 👀 **CTZ-104** (S2) Programador de trabajos: `job_run`, `POST /internal/jobs/run`, cola en memoria, barrido al arrancar y `jobs.yml` cada hora (D-35). *En revisión (PR #141). Issue #122.*
 - 👀 **CTZ-30** (S2) Tablas M3/M4 y `POST /activities` idempotente, con límite de puntos y sin superposición (D-34). *En revisión (PR #140). Bloquea CTZ-31a, CTZ-32 y CTZ-34 (Jorge). Issue #38.*
 - ⬜ **CTZ-105** Foto de perfil: bucket R2 y `POST /me/photo/upload-url` (issue #135). *Sprint por decidir (Diana). La necesita CTZ-24.*
