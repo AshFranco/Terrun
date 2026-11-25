@@ -9,6 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Terrun.Domain.Activities;
 using Terrun.Domain.Common;
 using Terrun.Domain.Identity;
+using Terrun.Domain.Moderation;
 using Terrun.Domain.Profiles;
 using Terrun.Infrastructure.Persistence;
 
@@ -33,6 +34,7 @@ namespace Terrun.Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "legal_document_type", new[] { "privacy", "terms" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "login_provider", new[] { "apple", "google" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "record_type", new[] { "half_marathon", "km1", "km10", "km5", "longest", "marathon" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "review_status", new[] { "approved", "pending", "rejected" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "sex", new[] { "female", "male", "other", "undisclosed" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "token_type", new[] { "email_verification", "password_reset" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "unit_system", new[] { "imperial", "metric" });
@@ -739,6 +741,60 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                     b.ToTable("verification_token", (string)null);
                 });
 
+            modelBuilder.Entity("Terrun.Domain.Moderation.ActivityReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasColumnName("note");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("resolved_at");
+
+                    b.Property<Guid?>("ReviewerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reviewer_id");
+
+                    b.Property<ReviewStatus>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("review_status")
+                        .HasDefaultValue(ReviewStatus.Pending)
+                        .HasColumnName("status");
+
+                    b.Property<string>("ViolatedRules")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("violated_rules");
+
+                    b.HasKey("Id")
+                        .HasName("pk_activity_review");
+
+                    b.HasIndex("ActivityId")
+                        .IsUnique()
+                        .HasDatabaseName("uk_activity_review_activity_id");
+
+                    b.HasIndex("ReviewerId")
+                        .HasDatabaseName("ix_activity_review_reviewer_id");
+
+                    b.ToTable("activity_review", (string)null);
+                });
+
             modelBuilder.Entity("Terrun.Domain.Moderation.AuditLog", b =>
                 {
                     b.Property<long>("Id")
@@ -945,10 +1001,26 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         new
                         {
                             Key = "anticheat.max_jump_m",
-                            Description = "Maximum jump in less than 5 seconds, in meters",
+                            Description = "Maximum jump within anticheat.jump_window_s, in meters",
                             IsPublic = false,
                             UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Value = "200"
+                        },
+                        new
+                        {
+                            Key = "anticheat.jump_window_s",
+                            Description = "Window of a GPS jump, in seconds (D-36)",
+                            IsPublic = false,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = "5"
+                        },
+                        new
+                        {
+                            Key = "anticheat.max_invalid_distance_pct",
+                            Description = "Share of distance in invalid legs that sends an activity to review, in percent (D-36)",
+                            IsPublic = false,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = "20"
                         },
                         new
                         {
@@ -1425,6 +1497,22 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_verification_token_app_user_user_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Moderation.ActivityReview", b =>
+                {
+                    b.HasOne("Terrun.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_activity_review_activity_activity_id");
+
+                    b.HasOne("Terrun.Domain.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("ReviewerId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_activity_review_users_reviewer_id");
                 });
 
             modelBuilder.Entity("Terrun.Domain.Moderation.AuditLog", b =>

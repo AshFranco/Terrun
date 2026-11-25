@@ -10,6 +10,13 @@ public sealed class SystemSettingsReader(TerrunDbContext db)
 {
     public const string ActivityMaxPoints = "activity.max_points";
     public const string ActivityMaxDurationHours = "activity.max_duration_h";
+    public const string ActivityAutoPauseSpeedMps = "activity.auto_pause_speed_mps";
+    public const string AntiCheatMaxAccuracyM = "anticheat.max_accuracy_m";
+    public const string AntiCheatMaxJumpM = "anticheat.max_jump_m";
+    public const string AntiCheatJumpWindowS = "anticheat.jump_window_s";
+    public const string AntiCheatMaxSpeedKmh = "anticheat.max_speed_kmh";
+    public const string AntiCheatMinPaceSPerKm = "anticheat.min_pace_s_per_km";
+    public const string AntiCheatMaxInvalidDistancePct = "anticheat.max_invalid_distance_pct";
 
     public async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken)
     {
@@ -19,7 +26,24 @@ public sealed class SystemSettingsReader(TerrunDbContext db)
             .SingleOrDefaultAsync(cancellationToken)
             ?? throw new InvalidOperationException($"The system setting '{key}' does not exist.");
 
-        return JsonSerializer.Deserialize<T>(value)
-            ?? throw new InvalidOperationException($"The system setting '{key}' has no value.");
+        return Parse<T>(key, value);
     }
+
+    // Several settings in one query, for code that needs a whole group (the anti-cheat limits of one activity)
+    public async Task<IReadOnlyDictionary<string, double>> GetNumbersAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken)
+    {
+        var values = await db.SystemSettings.AsNoTracking()
+            .Where(s => keys.Contains(s.Key))
+            .ToDictionaryAsync(s => s.Key, s => s.Value, cancellationToken);
+        var missing = keys.Where(key => !values.ContainsKey(key)).ToList();
+        if (missing.Count > 0)
+        {
+            throw new InvalidOperationException($"Missing system settings: {string.Join(", ", missing)}.");
+        }
+
+        return values.ToDictionary(v => v.Key, v => Parse<double>(v.Key, v.Value));
+    }
+
+    private static T Parse<T>(string key, string value) =>
+        JsonSerializer.Deserialize<T>(value) ?? throw new InvalidOperationException($"The system setting '{key}' has no value.");
 }

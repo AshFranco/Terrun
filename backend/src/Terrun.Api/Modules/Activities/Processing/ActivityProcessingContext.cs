@@ -1,4 +1,5 @@
 using Terrun.Domain.Activities;
+using Terrun.Engine.Tracks;
 using Terrun.Infrastructure.Persistence;
 
 namespace Terrun.Api.Modules.Activities.Processing;
@@ -10,4 +11,7 @@ public sealed class ActivityProcessingContext(Activity activity, TerrunDbContext
     public Activity Activity { get; } = activity;
 
     public TerrunDbContext Db { get; } = db;
+
+    // Set by the cleaning stage (CTZ-31a) and read by the later ones: metrics (CTZ-31b) and territory use only valid legs
+    public CleaningResult? Cleaning { get; set; }
 }

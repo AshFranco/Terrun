@@ -46,6 +46,8 @@ public sealed class TerrunDbContext(DbContextOptions<TerrunDbContext> options) :
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
+    public DbSet<ActivityReview> ActivityReviews => Set<ActivityReview>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // LLD §2.1
