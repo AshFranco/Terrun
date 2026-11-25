@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.11
+version: 1.12
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.12 | 24/11/2026 | Perfil propio (CTZ-16, D-32): contrato de `GET /me` y `PATCH /me/profile` con semántica de *JSON merge patch*, validaciones del perfil, auditoría del cambio de `@handle` y módulo `Profiles/` | Ashley |
 | 1.10 | 15/11/2026 | Autenticación (CTZ-14, D-26): contrato de registro, login, refresh, logout y verificación por código; errores `VERIFICATION_CODE_INVALID` y `CONSENT_REQUIRED`; evidencia del consentimiento; variables SMTP | Ashley |
 
 Este documento detalla la implementación del diseño descrito en el **HLD v2.0** (alcance del MVP); lo posterior al MVP se describe en el HLD v1.2 post-MVP (`docs/01-HLD-v1.2-post-MVP.md`). Las decisiones de arquitectura, alcance y prioridades se justifican allí; aquí se especifica *cómo* se construye.
@@ -51,7 +52,7 @@ backend/
 │   ├── Terrun.Api/              host: Program.cs, middleware, Swagger, DI
 │   │   ├── Modules/
 │   │   │   ├── Identity/                 Controllers, Services, Contracts, Validators
-│   │   │   ├── Profile/
+│   │   │   ├── Profiles/                 /me and /me/profile (CTZ-16)
 │   │   │   ├── Activities/
 │   │   │   ├── Territory/
 │   │   │   ├── Social/
@@ -484,6 +485,26 @@ Respuestas: `202 Accepted` con `{ "id": "...", "status": "pending" }`; si el `cl
 
 Errores: `401 INVALID_CREDENTIALS` (login), `401 INVALID_TOKEN` (refresh vencido, revocado o reutilizado), `403 USER_SUSPENDED`. **POST `/auth/logout`** (`{ "refreshToken" }`, con token de acceso): `204`. **POST `/auth/verify-email`** (`{ "email", "code" }`): `204` o `400 VERIFICATION_CODE_INVALID`. **POST `/auth/resend-verification`** (`{ "email" }`): siempre `202`, exista o no la cuenta; envía un código nuevo como máximo una vez por minuto e invalida el anterior.
 
+**GET `/me`** (CTZ-16): `200 OK` con todo lo que necesitan P-15 y P-17 en una sola llamada. El usuario sale siempre del token; no hay `id` en la ruta.
+
+```json
+{
+  "user": { "id": "...", "email": "ashley@example.com", "isEmailVerified": true, "role": "runner", "createdAt": "2026-11-15T21:40:00Z" },
+  "profile": { "displayName": "Ashley", "handle": "ashley", "photoUrl": null, "bio": null, "city": "Santo Domingo", "country": "DO",
+               "birthDate": "1999-05-10", "sex": "female", "weightKg": 61.5, "heightCm": 165, "isPrivate": false, "updatedAt": "2026-11-24T14:02:11Z" },
+  "preferences": { "units": "metric", "defaultVisibility": "followers", "isAutoPauseEnabled": true, "isVoiceCuesEnabled": true, "voiceCueIntervalKm": 1.0,
+                   "notifyZoneStolen": true, "notifyKudos": true, "notifyComments": true, "notifyFollowers": true, "notifyChallenges": true },
+  "stats": { "totalDistanceM": 0, "totalTimeS": 0, "totalActivities": 0, "zonesConquered": 0, "zonesOwned": 0, "totalSteals": 0,
+             "totalXp": 0, "level": 1, "currentStreakWeeks": 0, "longestStreakWeeks": 0, "lastActivityAt": null }
+}
+```
+
+**PATCH `/me/profile`** (CTZ-16, D-32): *JSON merge patch* (RFC 7396). Un campo que no viene queda igual; un `null` explícito (o un texto en blanco) borra un campo opcional. Campos: `displayName`, `handle`, `bio`, `city`, `country`, `birthDate`, `sex`, `weightKg`, `heightCm`, `isPrivate`. Responde `200 OK` con el mismo cuerpo de `GET /me`.
+
+- `displayName`: hasta 60 caracteres, no se puede borrar. `handle`: mismas reglas del registro, no se puede borrar; puede cambiarse cuando esté libre y cada cambio queda en `audit_log` (`handle_changed`). `bio` hasta 300 y `city` hasta 80 caracteres. `country`: ISO 3166-1 alfa-2 (se guarda en mayúsculas). `birthDate`: desde 1900 y con 18 años cumplidos (D-28). `sex`: `female`, `male`, `other` o `undisclosed`, no se puede borrar. `weightKg`: de 25 a 300 con hasta 2 decimales. `heightCm`: de 100 a 250. `isPrivate`: no se puede borrar.
+- La foto **no** se cambia aquí: llega con `/me/photo/upload-url` (P1), para no aceptar URL externas. Un `photoUrl` en el cuerpo se ignora.
+- Errores: `400 VALIDATION_ERROR` (con `errors` por campo), `409 HANDLE_TAKEN`, `401` sin token.
+
 **GET `/zones?bbox=-69.95,18.44,-69.88,18.50`**
 
 ```json
@@ -773,7 +794,7 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 - Cabeceras de seguridad; HSTS en producción.
 - Los logs no registran coordenadas, tokens ni contraseñas.
 - Escaneo de dependencias (Dependabot) y de secretos en la CI.
-- Se registran en `audit_log`: inicio de sesión (éxito y fallo), cambio y restablecimiento de contraseña, eliminación de cuenta, cambio de rol, suspensión, resolución de reportes y revisiones, y cambios de parámetros.
+- Se registran en `audit_log`: inicio de sesión (éxito y fallo), cambio de `@handle` (`handle_changed`, D-32), cambio y restablecimiento de contraseña, eliminación de cuenta, cambio de rol, suspensión, resolución de reportes y revisiones, y cambios de parámetros.
 
 # 8. Configuración y observabilidad
 
