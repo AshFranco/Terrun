@@ -25,7 +25,7 @@ Formato:
   - **Totales del corredor (`user_stats`)**: adelantados de CTZ-51 a pedido de la usuaria. `StatsStep` suma distancia, tiempo en movimiento, número de actividades y última actividad de cada actividad `processed` (las `in_review` no suman). **CTZ-32** tiene que restarlos al eliminar una actividad, y la moderación (#142), sumarlos al aprobar una revisión. XP, nivel, rachas, récords (MT-16) y kilómetros de la zapatilla siguen en CTZ-51 y en la progresión (§4.4).
   - Zonas de privacidad (P1): el recorte de §7.2 también tiene que ocultar los puntos dentro de ellas cuando existan.
   - Falta verificar en QA después del merge.
-- Siguiente paso: PR a `development`; después, CTZ-32.
+- Siguiente paso: PR #NN a `development` (revisa Jorge); después, CTZ-32.
 
 ## 2026-11-24 — Ashley — CTZ-31a Limpieza de GPS y antitrampas
 - Hecho: motor puro `Terrun.Engine/Tracks` (`Geo.HaversineM`, `TrackCleaner` y `AntiCheatJudge`): descarta puntos por precisión, tiempo repetido o hacia atrás y saltos; mide los tramos entre puntos conservados del mismo segmento; marca inválidos los tramos sobre `anticheat.max_speed_kmh`; calcula la distancia válida e inválida y el tiempo en movimiento; y emite las violaciones `min_pace` e `invalid_distance`. Etapa `CleaningStep`: lee los límites de `system_setting` en una consulta, marca `gps_point.is_discarded` y `discard_reason`, y deja la actividad `in_review` (`status_reason = anticheat`) con su `activity_review`. Tabla `activity_review` y parámetros nuevos `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`. Cálculos a mano de MT-01, MT-02, MT-03, MT-04 y MT-14 en `docs/qa/04-CASOS/`. LLD v1.16 con el entregable regenerado.
