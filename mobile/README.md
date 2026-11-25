@@ -35,14 +35,23 @@ npm run format
 
 ## Generar tipos desde el OpenAPI del backend (`CTZ-19`)
 
-Con la API corriendo en local (`http://localhost:5080/openapi/v1.json`) o apuntando a QA:
+El contrato OpenAPI 3.1 del backend (`/openapi/v1.json`) es la única fuente de verdad de los tipos de red. **Nunca se edita `src/api/schema.d.ts` a mano** (`docs/00-GUIA-DE-TRABAJO.md` §8 regla 3).
 
-```bash
-# Desde el backend local (por defecto)
-npm run api:types
+1. **Desde el backend local** (con `docker compose up -d --build` corriendo en `backend/`):
+   ```bash
+   npm run api:types
+   ```
+2. **Desde el ambiente de QA** (primero abre `https://terrun-api-qa.onrender.com/health` y espera `Healthy`, ya que el plan gratis de Render duerme tras 15 min sin tráfico):
+   ```bash
+   # Bash / macOS / Linux
+   OPENAPI_URL=https://terrun-api-qa.onrender.com/openapi/v1.json npm run api:types
 
-# Desde el ambiente de QA
-OPENAPI_URL=https://terrun-api-qa.onrender.com/openapi/v1.json npm run api:types
-```
+   # PowerShell (Windows)
+   $env:OPENAPI_URL="https://terrun-api-qa.onrender.com/openapi/v1.json"; npm run api:types
+   ```
+3. Verifica que la app compile con el nuevo contrato:
+   ```bash
+   npm run typecheck && npm test
+   ```
 
-El comando regenera `src/api/schema.d.ts`. Ningún tipo del contrato de la API se escribe a mano (`docs/00-GUIA-DE-TRABAJO.md` §8 regla 3).
+Desde `src/api/index.ts` (`@/api`) se reexportan `paths`, `components`, `operations`, `ApiProblem` (errores RFC 7807) y la unión exhaustiva `ErrorCode`.

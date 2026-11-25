@@ -4,6 +4,203 @@
  */
 
 export interface paths {
+    "/api/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MeResponse"];
+                        "application/json": components["schemas"]["MeResponse"];
+                        "text/json": components["schemas"]["MeResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateProfileRequest"];
+                    "text/json": components["schemas"]["UpdateProfileRequest"];
+                    "application/*+json": components["schemas"]["UpdateProfileRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MeResponse"];
+                        "application/json": components["schemas"]["MeResponse"];
+                        "text/json": components["schemas"]["MeResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: HANDLE_TAKEN. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v1/auth/register": {
         parameters: {
             query?: never;
@@ -37,6 +234,60 @@ export interface paths {
                         "text/plain": components["schemas"]["AuthResponse"];
                         "application/json": components["schemas"]["AuthResponse"];
                         "text/json": components["schemas"]["AuthResponse"];
+                    };
+                };
+                /** @description Error codes: CONSENT_REQUIRED, VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: EMAIL_ALREADY_REGISTERED, HANDLE_TAKEN. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
                     };
                 };
             };
@@ -82,6 +333,69 @@ export interface paths {
                         "text/json": components["schemas"]["AuthResponse"];
                     };
                 };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_CREDENTIALS. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: USER_SUSPENDED. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
             };
         };
         delete?: never;
@@ -125,6 +439,69 @@ export interface paths {
                         "text/json": components["schemas"]["AuthResponse"];
                     };
                 };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: USER_SUSPENDED. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
             };
         };
         delete?: never;
@@ -163,6 +540,60 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
                 };
             };
         };
@@ -203,6 +634,51 @@ export interface paths {
                     };
                     content?: never;
                 };
+                /** @description Error codes: VALIDATION_ERROR, VERIFICATION_CODE_INVALID. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
             };
         };
         delete?: never;
@@ -242,8 +718,750 @@ export interface paths {
                     };
                     content?: never;
                 };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateActivityRequest"];
+                    "text/json": components["schemas"]["CreateActivityRequest"];
+                    "application/*+json": components["schemas"]["CreateActivityRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ActivityUploadResponse"];
+                        "application/json": components["schemas"]["ActivityUploadResponse"];
+                        "text/json": components["schemas"]["ActivityUploadResponse"];
+                    };
+                };
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ActivityUploadResponse"];
+                        "application/json": components["schemas"]["ActivityUploadResponse"];
+                        "text/json": components["schemas"]["ActivityUploadResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: ACTIVITY_OVERLAP. */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ActivityResponse"];
+                        "application/json": components["schemas"]["ActivityResponse"];
+                        "text/json": components["schemas"]["ActivityResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: FORBIDDEN. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateActivityRequest"];
+                    "text/json": components["schemas"]["UpdateActivityRequest"];
+                    "application/*+json": components["schemas"]["UpdateActivityRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ActivityResponse"];
+                        "application/json": components["schemas"]["ActivityResponse"];
+                        "text/json": components["schemas"]["ActivityResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: FORBIDDEN. */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: PAYLOAD_TOO_LARGE. */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/activities/{id}/route": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["RouteResponse"];
+                        "application/json": components["schemas"]["RouteResponse"];
+                        "text/json": components["schemas"]["RouteResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activities/{id}/splits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["SplitResponse"][];
+                        "application/json": components["schemas"]["SplitResponse"][];
+                        "text/json": components["schemas"]["SplitResponse"][];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: NOT_FOUND. */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    type?: components["schemas"]["ActivityType"];
+                    from?: string;
+                    to?: string;
+                    limit?: number | string;
+                    cursor?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ActivityPage"];
+                        "application/json": components["schemas"]["ActivityPage"];
+                        "text/json": components["schemas"]["ActivityPage"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query: {
+                    period: components["schemas"]["SummaryPeriod"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["SummaryResponse"];
+                        "application/json": components["schemas"]["SummaryResponse"];
+                        "text/json": components["schemas"]["SummaryResponse"];
+                    };
+                };
+                /** @description Error codes: VALIDATION_ERROR. */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INVALID_TOKEN. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: RATE_LIMITED. */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+                /** @description Error codes: INTERNAL_ERROR. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ApiProblem"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -254,6 +1472,110 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ActivityListItem: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["ActivityType"];
+            title: null | string;
+            visibility: components["schemas"]["Visibility"];
+            status: components["schemas"]["ActivityStatus"];
+            statusReason: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: string;
+            /** Format: double */
+            distanceM: null | number | string;
+            /** Format: int32 */
+            movingTimeS: null | number | string;
+            /** Format: int32 */
+            avgPaceSPerKm: null | number | string;
+            /** Format: double */
+            elevationGainM: null | number | string;
+            /** Format: int32 */
+            calories: null | number | string;
+            /** Format: int16 */
+            newZones: number | string;
+        };
+        ActivityOwnerResponse: {
+            /** Format: uuid */
+            id: string;
+            displayName: string;
+            handle: string;
+        };
+        ActivityPage: {
+            items: components["schemas"]["ActivityListItem"][];
+            nextCursor: null | string;
+        };
+        ActivityResponse: {
+            /** Format: uuid */
+            id: string;
+            owner: components["schemas"]["ActivityOwnerResponse"];
+            isOwner: boolean;
+            type: components["schemas"]["ActivityType"];
+            title: null | string;
+            description: null | string;
+            visibility: components["schemas"]["Visibility"];
+            status: components["schemas"]["ActivityStatus"];
+            statusReason: null | string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: string;
+            /** Format: int32 */
+            elapsedTimeS: null | number | string;
+            /** Format: int32 */
+            movingTimeS: null | number | string;
+            /** Format: double */
+            distanceM: null | number | string;
+            /** Format: int32 */
+            avgPaceSPerKm: null | number | string;
+            /** Format: double */
+            maxSpeedMps: null | number | string;
+            /** Format: double */
+            elevationGainM: null | number | string;
+            /** Format: double */
+            elevationLossM: null | number | string;
+            /** Format: int32 */
+            calories: null | number | string;
+            /** Format: int16 */
+            newZones: number | string;
+            /** Format: int32 */
+            xpEarned: number | string;
+            /** Format: uuid */
+            shoeId: null | string;
+            device: null | string;
+            appVersion: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            processedAt: null | string;
+        };
+        /** @enum {unknown} */
+        ActivityStatus: "pending" | "processing" | "processed" | "in_review" | "rejected" | "failed";
+        /** @enum {unknown} */
+        ActivityType: "run" | "jog" | "walk" | null;
+        ActivityUploadResponse: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["ActivityStatus"];
+        };
+        /** @description Error in RFC 7807 format. The app translates `code` into a Spanish message (LLD §3.4). */
+        ApiProblem: {
+            type?: null | string;
+            title?: null | string;
+            /** Format: int32 */
+            status: number;
+            detail?: null | string;
+            instance?: null | string;
+            /** @enum {string} */
+            code: "VALIDATION_ERROR" | "INVALID_CREDENTIALS" | "INVALID_TOKEN" | "EMAIL_NOT_VERIFIED" | "VERIFICATION_CODE_INVALID" | "CONSENT_REQUIRED" | "FORBIDDEN" | "USER_SUSPENDED" | "NOT_FOUND" | "EMAIL_ALREADY_REGISTERED" | "HANDLE_TAKEN" | "ACTIVITY_OVERLAP" | "CONCURRENCY_CONFLICT" | "PAYLOAD_TOO_LARGE" | "BBOX_TOO_LARGE" | "BUSINESS_RULE_VIOLATION" | "RATE_LIMITED" | "INTERNAL_ERROR";
+            traceId: string;
+            /** @description Only in 400 VALIDATION_ERROR: messages per field, in camelCase. */
+            errors?: {
+                [key: string]: string[];
+            };
+        };
         AuthResponse: {
             accessToken: string;
             /** Format: date-time */
@@ -272,6 +1594,38 @@ export interface components {
             isEmailVerified: boolean;
             role: components["schemas"]["UserRole"];
         };
+        CreateActivityRequest: {
+            /** Format: uuid */
+            clientId: string;
+            type: null | components["schemas"]["ActivityType"];
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: string;
+            points: null | components["schemas"]["GpsPointRequest"][];
+            /** Format: uuid */
+            shoeId?: null | string;
+            device?: null | string;
+            appVersion?: null | string;
+        };
+        GpsPointRequest: {
+            /** Format: int32 */
+            seq: number | string;
+            /** Format: int16 */
+            segment: number | string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** Format: double */
+            lat: null | number | string;
+            /** Format: double */
+            lon: null | number | string;
+            /** Format: float */
+            altitudeM?: null | number | string;
+            /** Format: float */
+            accuracyM?: null | number | string;
+            /** Format: float */
+            speedMps?: null | number | string;
+        };
         LoginRequest: {
             email: string;
             password: string;
@@ -279,6 +1633,94 @@ export interface components {
         };
         LogoutRequest: {
             refreshToken: string;
+        };
+        MePreferencesResponse: {
+            units: components["schemas"]["UnitSystem"];
+            defaultVisibility: components["schemas"]["Visibility"];
+            isAutoPauseEnabled: boolean;
+            isVoiceCuesEnabled: boolean;
+            /** Format: double */
+            voiceCueIntervalKm: number | string;
+            notifyZoneStolen: boolean;
+            notifyKudos: boolean;
+            notifyComments: boolean;
+            notifyFollowers: boolean;
+            notifyChallenges: boolean;
+        };
+        MeProfileResponse: {
+            displayName: string;
+            handle: string;
+            photoUrl: null | string;
+            bio: null | string;
+            city: null | string;
+            country: null | string;
+            /** Format: date */
+            birthDate: null | string;
+            sex: components["schemas"]["Sex"];
+            /** Format: double */
+            weightKg: null | number | string;
+            /** Format: int16 */
+            heightCm: null | number | string;
+            isPrivate: boolean;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        MeResponse: {
+            user: components["schemas"]["MeUserResponse"];
+            profile: components["schemas"]["MeProfileResponse"];
+            preferences: components["schemas"]["MePreferencesResponse"];
+            stats: components["schemas"]["MeStatsResponse"];
+        };
+        MeStatsResponse: {
+            /** Format: int64 */
+            totalDistanceM: number | string;
+            /** Format: int64 */
+            totalTimeS: number | string;
+            /** Format: int32 */
+            totalActivities: number | string;
+            /** Format: int32 */
+            zonesConquered: number | string;
+            /** Format: int32 */
+            zonesOwned: number | string;
+            /** Format: int32 */
+            totalSteals: number | string;
+            /** Format: int32 */
+            totalXp: number | string;
+            /** Format: int16 */
+            level: number | string;
+            /** Format: int16 */
+            currentStreakWeeks: number | string;
+            /** Format: int16 */
+            longestStreakWeeks: number | string;
+            /** Format: date-time */
+            lastActivityAt: null | string;
+        };
+        MeUserResponse: {
+            /** Format: uuid */
+            id: string;
+            email: string;
+            isEmailVerified: boolean;
+            role: components["schemas"]["UserRole"];
+            /** Format: date-time */
+            createdAt: string;
+        };
+        PeriodTotals: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            /** Format: int32 */
+            activities: number | string;
+            /** Format: double */
+            distanceM: number | string;
+            /** Format: int64 */
+            movingTimeS: number | string;
+            /** Format: double */
+            elevationGainM: number | string;
+            /** Format: int64 */
+            calories: number | string;
+            /** Format: int32 */
+            avgPaceSPerKm: null | number | string;
         };
         RefreshRequest: {
             refreshToken: string;
@@ -296,12 +1738,74 @@ export interface components {
         ResendVerificationRequest: {
             email: string;
         };
+        RouteGeometry: {
+            type: string;
+            coordinates: (number | string)[][];
+        };
+        RouteProperties: {
+            isTrimmed: boolean;
+            /** Format: int32 */
+            trimM: number | string;
+        };
+        RouteResponse: {
+            type: string;
+            geometry: null | components["schemas"]["RouteGeometry"];
+            properties: components["schemas"]["RouteProperties"];
+        };
+        /** @enum {unknown} */
+        Sex: "female" | "male" | "other" | "undisclosed";
+        SplitResponse: {
+            /** Format: int16 */
+            number: number | string;
+            /** Format: double */
+            distanceM: number | string;
+            /** Format: int32 */
+            durationS: number | string;
+            /** Format: int32 */
+            paceSPerKm: number | string;
+            /** Format: double */
+            elevationM: null | number | string;
+        };
+        /** @enum {unknown} */
+        SummaryPeriod: "week" | "month" | "year";
+        SummaryResponse: {
+            period: components["schemas"]["SummaryPeriod"];
+            current: components["schemas"]["PeriodTotals"];
+            previous: components["schemas"]["PeriodTotals"];
+        };
+        /** @enum {unknown} */
+        UnitSystem: "metric" | "imperial";
+        UpdateActivityRequest: {
+            title?: null | string;
+            description?: null | string;
+            type?: null | components["schemas"]["ActivityType"];
+            visibility?: null | components["schemas"]["Visibility"];
+            /** Format: uuid */
+            shoeId?: null | string;
+        };
+        UpdateProfileRequest: {
+            displayName?: null | string;
+            handle?: null | string;
+            bio?: null | string;
+            city?: null | string;
+            country?: null | string;
+            /** Format: date */
+            birthDate?: null | string;
+            sex?: null | components["schemas"]["Sex"];
+            /** Format: double */
+            weightKg?: null | number | string;
+            /** Format: int16 */
+            heightCm?: null | number | string;
+            isPrivate?: null | boolean;
+        };
         /** @enum {unknown} */
         UserRole: "runner" | "moderator" | "admin";
         VerifyEmailRequest: {
             email: string;
             code: string;
         };
+        /** @enum {unknown} */
+        Visibility: "public" | "followers" | "private";
     };
     responses: never;
     parameters: never;
