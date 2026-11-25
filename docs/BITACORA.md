@@ -14,6 +14,20 @@ Formato:
 
 ---
 
+## 2026-11-24 — Ashley — CTZ-30 Tablas M3/M4 y POST /activities
+- Hecho: tablas `activity`, `gps_point`, `split`, `personal_record` y `shoe` con sus enums e índices; restricción `EXCLUDE` contra la superposición (extensión `btree_gist`); parámetro `activity.max_duration_h` = 24 (público). `POST /activities`: idempotente por `clientId` (200 con la existente), 413 si pasa `activity.max_points`, 409 `ACTIVITY_OVERLAP`, validación de tiempos y puntos, zapatilla propia, visibilidad tomada de las preferencias y puntos guardados con `COPY` binario en la misma transacción. Lector `SystemSettingsReader` (Platform) y `FieldValidationException` para errores por campo desde un servicio. Los `400` de valores no convertibles ahora salen por ruta de campo y sin nombres internos. LLD v1.14 con el entregable regenerado.
+- Evidencia: 135 pruebas en verde (36 nuevas: `ActivityUploadTests`, `ActivityUploadSizeLimitTests` sobre Kestrel real, y 2 casos más en el OpenAPI), incluidas MT-09, subidas simultáneas con el mismo `clientId` y superpuestas, y 30.000 puntos guardados en pocos segundos; `dotnet format` limpio. Migración aplicada en una rama temporal de Neon copiada de `qa` (`btree_gist`, la restricción, las 5 tablas y 22 settings) y rama borrada.
+- Decisiones: D-34 (duración máxima de 24 h y no exigir el correo verificado, decididos por la usuaria).
+- A tener en cuenta (quedan fuera de CTZ-30):
+  - **Para Jorge (CTZ-34, cola de subida):** `202` y `200` son éxito (el `200` es un reintento de una actividad ya guardada) y ambos traen `id` y `status`. Se reintenta con el mismo `clientId` solo ante error de red, `429` (respetar `Retry-After`) o `5xx`. `400`, `409 ACTIVITY_OVERLAP` y `413` son definitivos: sacarlos de la cola y avisar al corredor, porque reintentarlos nunca va a funcionar. Reglas que el tracker tiene que cumplir: `seq` creciente, `segment` desde 0 que sube en cada pausa, `recordedAt` entre `startedAt` y `endedAt`, máximo 24 h y 30.000 puntos (unos 4 MB; el límite del cuerpo es 8 MB).
+  - **CTZ-104:** la subida deja la actividad `pending` pero todavía no la pone en la cola en memoria (`Channel`); eso y el arranque que procesa las `pending` rezagadas son parte de CTZ-104.
+  - **CTZ-31a/31b:** los puntos llegan con `is_discarded = false`; los motivos de descarte son `accuracy`, `timestamp` y `jump`. Las métricas, la ruta, `elapsed_time_s` y los resultados quedan nulos hasta que los calcula el procesador.
+  - **CTZ-32:** `GET /activities/{id}` todavía no existe; P-09 (CTZ-34) lo necesita para el sondeo.
+  - **CTZ-17 (Rowlis):** puede usar `SystemSettingsReader` para `/settings/public`; `activity.max_duration_h` ya es público.
+  - El 8 MB lo aplica Kestrel: si un cliente manda más sin `Expect: 100-continue`, ve un corte de conexión en vez del `413`. No le pasa a la app (30.000 puntos son unos 4 MB).
+  - Falta verificar en QA después del merge (la migración se aplica al arrancar).
+- Siguiente paso: PR a `development`; después del merge, verificar en QA.
+
 ## 2026-11-24 — Ashley — CTZ-106 Respuestas de error en el OpenAPI
 - Hecho: esquema `ApiProblem` (RFC 7807 + `code` como enum del catálogo §3.4 + `traceId` + `errors`) y transformador que declara en cada operación `400`, `429` y `500`; `413` y `415` si recibe cuerpo; `401` si está protegida. Atributo `[ApiError]` con los errores propios de `/auth/*` y `/me`. Regla agregada a los estándares §4, a la DoD y a la plantilla de PR; LLD v1.13 (§3.1) con el entregable regenerado.
 - Evidencia: 99 pruebas en verde (13 nuevas en `OpenApiErrorResponsesTests`, incluidas las que comprueban que el 401 sin token y el 415 escriben de verdad el `ApiProblem` declarado); `dotnet format` limpio; tipos generados con `openapi-typescript` 7.13 desde el OpenAPI local compilan con `tsc --strict` y un `code` fuera del catálogo no compila.

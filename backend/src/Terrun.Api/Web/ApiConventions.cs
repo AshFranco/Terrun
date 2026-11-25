@@ -22,7 +22,8 @@ internal static class ApiConventions
                 options.Conventions.Add(new GlobalRoutePrefixConvention(RoutePrefix));
                 options.Filters.Add<FluentValidationFilter>();
             })
-            .AddJsonOptions(options => UseSnakeCaseEnums(options.JsonSerializerOptions));
+            .AddJsonOptions(options => UseSnakeCaseEnums(options.JsonSerializerOptions))
+            .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = ValidationProblemResponse.Create);
         services.ConfigureHttpJsonOptions(options => UseSnakeCaseEnums(options.SerializerOptions));
         services.AddValidatorsFromAssemblyContaining<Program>(includeInternalTypes: true);
 

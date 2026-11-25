@@ -7,6 +7,7 @@ internal static class ProblemDetailsSetup
 {
     public const string CodeKey = "code";
     public const string TraceIdKey = "traceId";
+    public const string ErrorsKey = "errors";
 
     // Every error response carries a code from the LLD §3.4 catalog and the traceId that support uses to find the log.
     // It is the same TraceId the JSON log writes in its scope, so one search finds the request

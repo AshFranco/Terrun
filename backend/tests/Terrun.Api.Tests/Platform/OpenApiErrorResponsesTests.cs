@@ -82,6 +82,8 @@ public sealed class OpenApiErrorResponsesTests : IAsyncLifetime
     [InlineData("/api/v1/auth/verify-email", "post", "400", "VERIFICATION_CODE_INVALID", "VALIDATION_ERROR")]
     [InlineData("/api/v1/me", "get", "404", "NOT_FOUND")]
     [InlineData("/api/v1/me/profile", "patch", "409", "HANDLE_TAKEN")]
+    [InlineData("/api/v1/activities", "post", "409", "ACTIVITY_OVERLAP")]
+    [InlineData("/api/v1/activities", "post", "413", "PAYLOAD_TOO_LARGE")]
     public void Operation_WithItsOwnErrors_ListsTheirCodes(string path, string method, string status, params string[] codes)
     {
         var description = _document.GetProperty("paths").GetProperty(path).GetProperty(method)

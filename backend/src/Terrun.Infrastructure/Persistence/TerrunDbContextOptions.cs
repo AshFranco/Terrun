@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Terrun.Domain.Activities;
 using Terrun.Domain.Common;
 using Terrun.Domain.Identity;
 using Terrun.Domain.Profiles;
@@ -20,7 +21,11 @@ internal static class TerrunDbContextOptions
             .MapEnum<ConsentMethod>("consent_method")
             .MapEnum<Sex>("sex")
             .MapEnum<UnitSystem>("unit_system")
-            .MapEnum<Visibility>("visibility"))
+            .MapEnum<Visibility>("visibility")
+            .MapEnum<ActivityType>("activity_type")
+            .MapEnum<ActivityStatus>("activity_status")
+            .MapEnum<DiscardReason>("discard_reason")
+            .MapEnum<RecordType>("record_type"))
         .UseSnakeCaseNamingConvention();
 
     // No environment uses Kerberos, and the runtime image lacks libgssapi: skip the GSS negotiation on every connection

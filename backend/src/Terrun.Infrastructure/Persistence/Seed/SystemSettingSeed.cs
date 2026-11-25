@@ -9,6 +9,8 @@ internal static class SystemSettingSeed
 
     private static readonly DateTimeOffset _routeTrimAddedAt = new(2026, 11, 17, 0, 0, 0, TimeSpan.Zero);
 
+    private static readonly DateTimeOffset _maxDurationAddedAt = new(2026, 11, 24, 0, 0, 0, TimeSpan.Zero);
+
     public static readonly SystemSetting[] All =
     [
         Setting("territory.zone_resolution", "9", "H3 resolution of a zone", isPublic: true),
@@ -23,6 +25,7 @@ internal static class SystemSettingSeed
         Setting("anticheat.min_duration_s", "180", "Minimum duration to add territory, in seconds"),
         Setting("anticheat.max_jump_m", "200", "Maximum jump in less than 5 seconds, in meters"),
         Setting("activity.max_points", "30000", "Maximum points per activity", isPublic: true),
+        Setting("activity.max_duration_h", "24", "Maximum duration of an activity, in hours (D-34)", isPublic: true, updatedAt: _maxDurationAddedAt),
         Setting("activity.auto_pause_speed_mps", "0.5", "Auto-pause speed threshold used by the app, in m/s", isPublic: true),
         Setting("xp.per_km", "10", "XP per kilometer"),
         Setting("xp.conquest", "50", "XP per conquered zone"),

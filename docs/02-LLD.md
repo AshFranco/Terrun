@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.13
+version: 1.14
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.14 | 24/11/2026 | Subida de actividades (CTZ-30, D-34): tablas M3/M4, restricción `EXCLUDE` contra la superposición (extensión `btree_gist`), `activity.max_duration_h`, contrato y validaciones de `POST /activities`, `record_type` con `km1`/`km5`/`km10` | Ashley |
 | 1.13 | 24/11/2026 | Errores en el OpenAPI (CTZ-106, D-33): esquema `ApiProblem` y respuestas de error declaradas en cada operación (§3.1) | Ashley |
 | 1.12 | 24/11/2026 | Perfil propio (CTZ-16, D-32): contrato de `GET /me` y `PATCH /me/profile` con semántica de *JSON merge patch*, validaciones del perfil, auditoría del cambio de `@handle` y módulo `Profiles/` | Ashley |
 | 1.10 | 15/11/2026 | Autenticación (CTZ-14, D-26): contrato de registro, login, refresh, logout y verificación por código; errores `VERIFICATION_CODE_INVALID` y `CONSENT_REQUIRED`; evidencia del consentimiento; variables SMTP | Ashley |
@@ -114,7 +115,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 
 ## 2.1 Convenciones
 
-- PostgreSQL 16 con las extensiones `postgis`, `citext` y `pgcrypto`.
+- PostgreSQL 16 con las extensiones `postgis`, `citext`, `pgcrypto` y `btree_gist` (esta última para la restricción `EXCLUDE` de `activity`, D-34).
 - Tablas en singular y `snake_case`; las convenciones completas están en `docs/04-ESTANDARES-DESARROLLO.md` §2.3.
 - Claves primarias `uuid` (`gen_random_uuid()`), salvo las tablas de alto volumen (`bigint` identity) y las zonas (índice H3 `bigint`).
 - Fechas `timestamptz` en UTC con sufijo `_at`. Distancias en metros, tiempos en segundos, ritmos en segundos por km.
@@ -152,10 +153,10 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
-| `activity` | `id uuid`, `user_id uuid`, `client_id uuid`, `type activity_type` (run, jog, walk), `title varchar(80)`, `description varchar(500)`, `visibility visibility`, `status activity_status` (pending, processing, processed, in_review, rejected, failed), `status_reason text`, `started_at`, `ended_at`, `elapsed_time_s int`, `moving_time_s int`, `distance_m numeric(10,2)`, `avg_pace_s_per_km int`, `max_speed_mps numeric(5,2)`, `elevation_gain_m numeric(7,1)`, `elevation_loss_m numeric(7,1)`, `calories int`, `route geography(LineString)` (simplificada), `shoe_id uuid null`, `new_zones smallint`, `xp_earned int`, `attempts smallint`, `device text`, `app_version text`, `created_at`, `processed_at`, `updated_at` | UK (`user_id`, `client_id`) → idempotencia; índices (`user_id`, `started_at` desc), parcial (`created_at`) WHERE `status = 'pending'`, GIST (`route`) |
+| `activity` | `id uuid`, `user_id uuid`, `client_id uuid`, `type activity_type` (run, jog, walk), `title varchar(80)`, `description varchar(500)`, `visibility visibility`, `status activity_status` (pending, processing, processed, in_review, rejected, failed), `status_reason text`, `started_at`, `ended_at`, `elapsed_time_s int`, `moving_time_s int`, `distance_m numeric(10,2)`, `avg_pace_s_per_km int`, `max_speed_mps numeric(5,2)`, `elevation_gain_m numeric(7,1)`, `elevation_loss_m numeric(7,1)`, `calories int`, `route geography(LineString)` (simplificada), `shoe_id uuid null`, `new_zones smallint`, `xp_earned int`, `attempts smallint`, `device text`, `app_version text`, `created_at`, `processed_at`, `updated_at` | UK (`user_id`, `client_id`) → idempotencia; índices (`user_id`, `started_at` desc), parcial (`created_at`) WHERE `status = 'pending'`, GIST (`route`); CHECK `ended_at > started_at`; `EXCLUDE USING gist (user_id WITH =, tstzrange(started_at, ended_at) WITH &&) WHERE status NOT IN ('rejected', 'failed')` → sin superposición (D-34). Las métricas, la ruta y los resultados quedan nulos hasta que los calcula el procesador |
 | `gps_point` | `activity_id uuid`, `seq int`, `segment smallint`, `recorded_at timestamptz`, `lat double precision`, `lon double precision`, `altitude_m real`, `accuracy_m real`, `speed_mps real`, `is_discarded bool`, `discard_reason discard_reason` | PK (`activity_id`, `seq`); FK cascade; `segment` cambia en cada pausa |
 | `split` | `activity_id uuid`, `number smallint`, `distance_m numeric(7,2)`, `duration_s int`, `pace_s_per_km int`, `elevation_m numeric(6,1)` | PK (`activity_id`, `number`); el último split puede ser parcial |
-| `personal_record` | `id uuid`, `user_id uuid`, `type record_type` (km_1, km_5, km_10, half_marathon, marathon, longest), `value numeric(10,2)` (segundos o metros), `activity_id uuid`, `achieved_at` | UK (`user_id`, `type`); conserva el récord vigente |
+| `personal_record` | `id uuid`, `user_id uuid`, `type record_type` (km1, km5, km10, half_marathon, marathon, longest), `value numeric(10,2)` (segundos o metros), `activity_id uuid`, `achieved_at` | UK (`user_id`, `type`); conserva el récord vigente |
 
 ### M4 — Equipamiento
 
@@ -248,6 +249,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | `anticheat.min_duration_s` | 180 | Duración mínima para sumar territorio |
 | `anticheat.max_jump_m` | 200 | Salto máximo en menos de 5 s |
 | `activity.max_points` | 30000 | Máximo de puntos por actividad |
+| `activity.max_duration_h` | 24 | Duración máxima de una actividad, en horas (D-34); público |
 | `activity.auto_pause_speed_mps` | 0.5 | Umbral de auto-pausa (lo usa la app) |
 | `xp.per_km` | 10 | XP por kilómetro |
 | `xp.conquest` | 50 | XP por zona conquistada |
@@ -454,7 +456,16 @@ Columna **P**: prioridad. **Rol**: `pub` = público, `aut` = cualquier usuario a
 }
 ```
 
-Respuestas: `202 Accepted` con `{ "id": "...", "status": "pending" }`; si el `clientId` ya existe, `200 OK` con la actividad existente (idempotencia); `409 ACTIVITY_OVERLAP`; `413 PAYLOAD_TOO_LARGE`; `400 VALIDATION_ERROR`.
+Respuestas: `202 Accepted` con `{ "id": "...", "status": "pending" }`; si el `clientId` ya existe, `200 OK` con el mismo cuerpo y el estado actual de la actividad (idempotencia, MT-09; se comprueba antes que cualquier otra regla); `409 ACTIVITY_OVERLAP`; `413 PAYLOAD_TOO_LARGE`; `400 VALIDATION_ERROR`.
+
+Reglas (CTZ-30, D-34):
+
+- `clientId` (UUID del teléfono, no vacío) y `type` (`run`, `jog`, `walk`) obligatorios. `endedAt` posterior a `startedAt`, no más de 5 minutos en el futuro y con una duración de hasta `activity.max_duration_h` horas.
+- `points`: de 2 a `activity.max_points` (por encima, `413`). Cada punto lleva `lat` (−90 a 90) y `lon` (−180 a 180); `seq` crece estrictamente; `segment` empieza en 0 y nunca baja (cambia en cada pausa, §5.1); `recordedAt` dentro de [`startedAt`, `endedAt`]; `altitudeM`, `accuracyM` y `speedMps` son opcionales y no negativos. Si un punto falla, `errors.points` dice el primero que falla.
+- `shoeId` opcional; si no es una zapatilla del corredor, `400` con `errors.shoeId`. `device` hasta 100 caracteres y `appVersion` hasta 20.
+- Superposición: una actividad no puede solaparse en el tiempo con otra del mismo corredor, salvo las `rejected` o `failed`; puede empezar justo cuando termina otra. La garantiza la restricción `EXCLUDE`, así que dos subidas simultáneas no pasan las dos.
+- La visibilidad de la actividad se toma de `user_preference.default_visibility` al subirla. Las métricas oficiales las calcula el procesador (§4.1).
+- Cuerpo de hasta 8 MB (§7.3); 30.000 puntos ocupan unos 4 MB. Un `400` por un valor que no se puede convertir (por ejemplo, una fecha mal escrita) se reporta en `errors` con la ruta del campo (`startedAt`, `points[3].lat`) y un mensaje neutro, sin detalles internos.
 
 **POST `/auth/register`** (CTZ-14, D-26)
 
