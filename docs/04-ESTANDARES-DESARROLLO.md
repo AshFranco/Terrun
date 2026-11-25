@@ -144,6 +144,7 @@ EF Core se configura con `UseSnakeCaseNamingConvention()`: `DistanceM` en C# se 
 - `Nullable` activado y `TreatWarningsAsErrors` en todos los proyectos (`Directory.Build.props`).
 - Formato con `dotnet format`, que respeta `.editorconfig`; la CI lo verifica.
 - **Controladores delgados:** reciben, validan (FluentValidation) y delegan en un servicio. Ninguna consulta a la BD dentro de un controlador.
+- **Errores declarados en el OpenAPI:** cada acción declara con `[ApiError(StatusCodes.StatusXXX, ErrorCodes.Xxx)]` los errores propios que su servicio puede lanzar (los comunes los agrega solo `OpenApiErrorResponses`, D-33). Un código nuevo se agrega primero a `ErrorCodes` y al catálogo del LLD §3.4.
 - **Lecturas con `AsNoTracking()`** y proyección a DTO con `Select`. Nunca se devuelven entidades de EF por la API.
 - **Toda lista se pagina** (cursor, máximo 50).
 - **Sin consultas N+1.**

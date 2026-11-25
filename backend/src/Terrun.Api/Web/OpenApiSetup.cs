@@ -26,6 +26,8 @@ internal static class OpenApiSetup
                 };
                 return Task.CompletedTask;
             });
+            options.AddDocumentTransformer(OpenApiErrorResponses.AddProblemSchemaAsync);
+            options.AddOperationTransformer(OpenApiErrorResponses.AddErrorResponsesAsync);
             options.AddOperationTransformer((operation, context, _) =>
             {
                 if (context.Description.ActionDescriptor is ControllerActionDescriptor action

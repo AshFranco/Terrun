@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Terrun.Api.Modules.Identity.Contracts;
 using Terrun.Api.Modules.Identity.Services;
 using Terrun.Api.Web;
+using Terrun.Domain.Errors;
 
 namespace Terrun.Api.Modules.Identity.Controllers;
 
@@ -17,6 +18,8 @@ public sealed class AuthController(AuthService auth, EmailVerificationService em
     [HttpPost("register")]
     [AllowAnonymous]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status201Created)]
+    [ApiError(StatusCodes.Status400BadRequest, ErrorCodes.ConsentRequired)]
+    [ApiError(StatusCodes.Status409Conflict, ErrorCodes.EmailAlreadyRegistered, ErrorCodes.HandleTaken)]
     public async Task<ActionResult<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
     {
         var response = await auth.RegisterAsync(request, HttpContext.Connection.RemoteIpAddress, cancellationToken);
@@ -25,11 +28,15 @@ public sealed class AuthController(AuthService auth, EmailVerificationService em
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [ApiError(StatusCodes.Status401Unauthorized, ErrorCodes.InvalidCredentials)]
+    [ApiError(StatusCodes.Status403Forbidden, ErrorCodes.UserSuspended)]
     public Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken) =>
         auth.LoginAsync(request, HttpContext.Connection.RemoteIpAddress, cancellationToken);
 
     [HttpPost("refresh")]
     [AllowAnonymous]
+    [ApiError(StatusCodes.Status401Unauthorized, ErrorCodes.InvalidToken)]
+    [ApiError(StatusCodes.Status403Forbidden, ErrorCodes.UserSuspended)]
     public Task<AuthResponse> RefreshAsync(RefreshRequest request, CancellationToken cancellationToken) =>
         auth.RefreshAsync(request, HttpContext.Connection.RemoteIpAddress, cancellationToken);
 
@@ -44,6 +51,7 @@ public sealed class AuthController(AuthService auth, EmailVerificationService em
 
     [HttpPost("verify-email")]
     [AllowAnonymous]
+    [ApiError(StatusCodes.Status400BadRequest, ErrorCodes.VerificationCodeInvalid)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> VerifyEmailAsync(VerifyEmailRequest request, CancellationToken cancellationToken)
     {

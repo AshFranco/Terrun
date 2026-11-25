@@ -14,6 +14,26 @@ Formato:
 
 ---
 
+## 2026-11-24 — Ashley — CTZ-106 Respuestas de error en el OpenAPI
+- Hecho: esquema `ApiProblem` (RFC 7807 + `code` como enum del catálogo §3.4 + `traceId` + `errors`) y transformador que declara en cada operación `400`, `429` y `500`; `413` y `415` si recibe cuerpo; `401` si está protegida. Atributo `[ApiError]` con los errores propios de `/auth/*` y `/me`. Regla agregada a los estándares §4, a la DoD y a la plantilla de PR; LLD v1.13 (§3.1) con el entregable regenerado.
+- Evidencia: 99 pruebas en verde (13 nuevas en `OpenApiErrorResponsesTests`, incluidas las que comprueban que el 401 sin token y el 415 escriben de verdad el `ApiProblem` declarado); `dotnet format` limpio; tipos generados con `openapi-typescript` 7.13 desde el OpenAPI local compilan con `tsc --strict` y un `code` fuera del catálogo no compila.
+- Decisiones: D-33.
+- A tener en cuenta (quedan fuera de CTZ-106):
+  - **Para Rowlis (CTZ-19 y CTZ-22): regenerar e integrar los tipos de error.**
+    1. Después del merge, abrir `https://terrun-api-qa.onrender.com/health` y esperar `Healthy` (Render duerme tras 15 min), confirmar que `/openapi/v1.json` trae `ApiProblem` y correr en `mobile/`: `OPENAPI_URL=https://terrun-api-qa.onrender.com/openapi/v1.json npm run api:types`. Nunca editar `src/api/schema.d.ts` a mano.
+    2. Exportar el tipo desde `src/api/index.ts`: `export type ApiProblem = components['schemas']['ApiProblem'];` y `export type ErrorCode = ApiProblem['code'];`.
+    3. En el cliente de CTZ-22: toda respuesta no 2xx con `content-type: application/problem+json` se lee como `ApiProblem` y se lanza como un error propio (por ejemplo `ApiError` con `status`, `code`, `traceId` y `errors`). Las pantallas nunca leen el cuerpo crudo.
+    4. Traducir por `code`, no por `status` ni por el texto: una clave `errors.<CODE>` en `src/i18n/es.json` por cada valor de `ErrorCode` (si se agrega un código al catálogo y falta su clave, que falle una prueba). `detail` es para desarrolladores y no se muestra.
+    5. `VALIDATION_ERROR`: `errors` trae los mensajes por campo en `camelCase` (`handle`, `birthDate`…), con los mismos nombres de los campos del cuerpo; se usa para marcar el campo del formulario, con texto propio en español.
+    6. `401 INVALID_TOKEN`: renovar una sola vez con `/auth/refresh` y repetir; si falla, cerrar sesión (criterio de CTZ-22). En `/auth/login` el 401 es `INVALID_CREDENTIALS` y no dispara el refresh.
+    7. `429 RATE_LIMITED`: respetar el encabezado `Retry-After`. `500 INTERNAL_ERROR`: mensaje genérico y mostrar el `traceId` para que soporte encuentre el log.
+    8. Los errores posibles de cada endpoint están en el OpenAPI (la descripción de cada respuesta lista los códigos); si el backend responde un código no declarado, es un defecto del backend: avisar a Ashley.
+  - 405 (método no permitido) no se declara: la app genera sus llamadas desde el contrato y no usa métodos inexistentes.
+  - `403 EMAIL_NOT_VERIFIED` aún no lo usa ningún endpoint; se declara con `[ApiError]` cuando alguno lo exija (regla de los estándares §4).
+  - Todas las operaciones declaran 400, aunque sean GET sin parámetros (criterio del issue #136).
+  - Falta verificar en QA que el OpenAPI desplegado trae `ApiProblem` (Ashley, tras el merge).
+- Siguiente paso: PR #139 a `development` (revisa Rowlis); tras el merge, Rowlis genera los tipos en CTZ-19 desde QA siguiendo los pasos de arriba.
+
 ## 2026-11-24 — Ashley — CTZ-16 GET /me y PATCH /me/profile
 - Hecho: módulo `Profiles/` con `GET /me` (usuario, perfil, preferencias y estadísticas en una consulta) y `PATCH /me/profile` con semántica de *JSON merge patch*; validaciones del perfil (edad mínima 18, peso, estatura, país ISO, longitudes); cambio de `@handle` con 409 `HANDLE_TAKEN` y auditoría `handle_changed`; la foto queda para `/me/photo/upload-url` (P1). LLD v1.12 (§1.2, §3.3, §7.3) y entregable LLD regenerado (docx + pdf).
 - Evidencia: 86 pruebas en verde (23 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
