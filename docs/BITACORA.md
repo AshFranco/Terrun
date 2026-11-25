@@ -27,7 +27,7 @@ Formato:
   - **CTZ-40 y CTZ-51:** al borrar una actividad hay que revertir también su territorio y su XP (§4.5, MT-13); hoy solo se restan los totales.
   - **Moderación (#142):** al aprobar una revisión, la actividad tiene que sumarse a `user_stats`.
   - Falta verificar en QA después del merge.
-- Siguiente paso: PR a `development`.
+- Siguiente paso: PR #145 a `development` (revisan Jorge y Rowlis); después del merge, verificar en QA.
 
 ## 2026-11-24 — Ashley — CTZ-31b Métricas oficiales, splits y ruta
 - Hecho: motor `Terrun.Engine/Tracks` con `MetricsCalculator` (distancia, tiempo en movimiento, ritmo, velocidad máxima, elevación con media móvil de 5 puntos e histéresis de 3 m, calorías por tabla MET y peso, *splits* cada 1000 m interpolados) y la ruta simplificada con Douglas-Peucker en metros (`RouteSimplifier`), además de `RouteTrimmer` para lo que ven terceros (MT-21). Etapa `MetricsStep`: guarda las métricas, los *splits* y la ruta (`LineString` SRID 4326), y marca `too_short` (MT-05). **`CleaningStep` y `MetricsStep` quedan registradas en producción:** las subidas ya se procesan solas. `StatsStep` suma cada actividad procesada a los totales de `user_stats` que muestra `GET /me`. Cálculos a mano de MT-05, MT-15 y MT-21 en `docs/qa/04-CASOS/`. LLD v1.17 con el entregable regenerado.
