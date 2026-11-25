@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.14
+version: 1.15
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.15 | 24/11/2026 | Programador de trabajos (CTZ-104, D-35): `job_run.last_finished_at` y reserva de 30 min, zona horaria AST, respuesta de `/internal/jobs/run`, tubería de procesamiento por etapas, `TokenCleanupJob`, variable `Jobs__Key`; subidas de un corredor serializadas con *advisory lock* (D-34) | Ashley |
 | 1.14 | 24/11/2026 | Subida de actividades (CTZ-30, D-34): tablas M3/M4, restricción `EXCLUDE` contra la superposición (extensión `btree_gist`), `activity.max_duration_h`, contrato y validaciones de `POST /activities`, `record_type` con `km1`/`km5`/`km10` | Ashley |
 | 1.13 | 24/11/2026 | Errores en el OpenAPI (CTZ-106, D-33): esquema `ApiProblem` y respuestas de error declaradas en cada operación (§3.1) | Ashley |
 | 1.12 | 24/11/2026 | Perfil propio (CTZ-16, D-32): contrato de `GET /me` y `PATCH /me/profile` con semántica de *JSON merge patch*, validaciones del perfil, auditoría del cambio de `@handle` y módulo `Profiles/` | Ashley |
@@ -229,7 +230,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 | Tabla | Columnas | Restricciones e índices |
 |---|---|---|
 | `system_setting` | `key varchar(80)`, `value jsonb`, `description text`, `is_public bool`, `updated_by uuid`, `updated_at` | PK `key`; los parámetros con `is_public = true` se exponen a la app |
-| `job_run` | `name varchar(60)`, `last_started_at`, `last_succeeded_at`, `last_error text` | PK `name`; lo actualiza el programador de trabajos (§6, D-25) |
+| `job_run` | `name varchar(60)`, `last_started_at`, `last_finished_at`, `last_succeeded_at`, `last_error text` | PK `name`; lo actualiza el programador de trabajos (§6, D-25, D-35). Un trabajo está en curso si `last_started_at` es posterior a `last_finished_at` y tiene menos de 30 minutos |
 
 **Total: 42 tablas.**
 
@@ -757,6 +758,8 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 - **Procesamiento de actividades:** `POST /activities` guarda la actividad como `pending` y deja su `id` en una cola en memoria (`Channel`) que un `BackgroundService` procesa de inmediato (§4.1); la subida es tráfico entrante, así que la API está despierta. Al arrancar, la API procesa las `pending` que hayan quedado (`FOR UPDATE SKIP LOCKED`), y la corrida programada recoge cualquier rezagada.
 - **Programador:** el workflow `.github/workflows/jobs.yml` de GitHub Actions corre cada hora en el minuto 17 (lejos del minuto 00, cuando GitHub más retrasa los programados) y llama a `POST /internal/jobs/run` con la cabecera `X-Jobs-Key` (secreto en GitHub Actions y en la variable `Jobs__Key` de Render). Espera hasta 3 minutos para cubrir el arranque en frío.
 - **Idempotencia:** el endpoint ejecuta solo los trabajos vencidos según `job_run` (último inicio, último éxito y último error de cada trabajo) y la expresión cron de cada uno (librería Cronos). Si GitHub retrasa o salta una corrida, la siguiente recupera lo pendiente.
+- **Detalle (CTZ-104, D-35):** `POST /api/v1/internal/jobs/run` es anónimo pero exige la cabecera `X-Jobs-Key` igual a `Jobs__Key` (comparación en tiempo constante); sin la clave correcta, o si `Jobs__Key` no está configurada, responde `401 INVALID_TOKEN`. No aparece en el OpenAPI. Responde `200` con `{ "jobs": [{ "name", "outcome" }] }`, donde `outcome` es `succeeded`, `failed`, `not_due` o `already_running`. Un trabajo vence cuando su cron (en la hora de República Dominicana, `America/Santo_Domingo`) tiene una ocurrencia posterior a su último éxito; uno que nunca tuvo éxito siempre está vencido, así que un error se reintenta en la siguiente corrida. Se reserva con un único `UPDATE` condicional, así que dos llamadas simultáneas no lo ejecutan dos veces; una reserva de más de 30 minutos sin terminar se retoma (el proceso que la tenía murió).
+- **Procesamiento por etapas (D-35):** el procesador toma cada actividad `pending` con `FOR UPDATE SKIP LOCKED` y ejecuta, en orden y en una sola transacción, las etapas registradas (`IActivityProcessingStep`: limpieza y veredicto en CTZ-31a, métricas en CTZ-31b, territorio y progresión después). Si ninguna etapa decide otro estado, la actividad queda `processed`. Un error deshace todo y suma un intento; al tercero queda `failed` con `status_reason = processing_failed`. Mientras no haya etapas registradas, no toma ninguna actividad y las subidas siguen `pending`.
 
 | Trabajo | Disparo | Qué hace |
 |---|---|---|
@@ -767,7 +770,7 @@ uploading ──error──▶ queued (exponential backoff: 5 s, 30 s, 2 min, 10
 | `LeaderboardSnapshotJob` | Primera corrida después del lunes 00:05 y del día 1 de cada mes | Guarda el ranking del periodo cerrado |
 | `ChallengeCloseJob` | Cada corrida horaria | Cierra los retos vencidos y notifica los resultados |
 | `AccountDeletionJob` | Cada corrida horaria | Ejecuta las eliminaciones de cuenta pendientes (§4.5), dentro de las 24 h |
-| `TokenCleanupJob` | Primera corrida de cada día | Borra refresh tokens y tokens de verificación vencidos |
+| `TokenCleanupJob` | Primera corrida de cada día | Borra refresh tokens y tokens de verificación vencidos (un refresh revocado pero no vencido se conserva para detectar su reutilización, §7.1) |
 
 - **Pruebas de campo y demo (RNF-08):** antes de empezar se despierta la API con `GET /health`; la app ya reintenta las subidas pendientes (CTZ-34), así que un arranque en frío no pierde datos.
 - **Producción (S4):** proyecto de Neon aparte (`terrun-prod`), con su propia cuota de cómputo, y servicio propio en Render. Con un despertar por hora, cada servicio usa cerca de 180 de las 750 horas gratis de la cuenta.
@@ -820,6 +823,7 @@ Toda consulta por `id` verifica la propiedad o la visibilidad dentro de la misma
 | `Email__SmtpHost`, `Email__SmtpPort`, `Email__SmtpUsername`, `Email__SmtpPassword`, `Email__Sender`, `Email__SenderName` | Envío por SMTP con cualquier proveedor (D-26). Sin `Email__SmtpHost` no se envían correos: en `Development` el código aparece en el log y en los demás ambientes solo se registra que no se envió |
 | `Expo__AccessToken` | Envío de push |
 | `R2__Endpoint`, `R2__AccessKey`, `R2__SecretKey`, `R2__Bucket` | Almacenamiento de fotos |
+| `Jobs__Key` | Clave de al menos 32 caracteres que exige `POST /internal/jobs/run` (§6); **secreta**, en Render y como secreto `JOBS_KEY` del repositorio. Sin ella la API arranca, pero no ejecuta trabajos programados. El workflow `jobs.yml` también necesita la variable de repositorio `JOBS_API_URL` |
 | `Jobs__Key` | Clave que exige `POST /internal/jobs/run`; la misma va como secreto en GitHub Actions (§6) |
 | `ASPNETCORE_ENVIRONMENT` | `Development` en local, `Staging` en QA (con Swagger) y `Production` en producción (sin Swagger) |
 | `ASPNETCORE_FORWARDEDHEADERS_ENABLED` | `true` en Render: la API respeta el `X-Forwarded-Proto` del proxy (HTTPS) |

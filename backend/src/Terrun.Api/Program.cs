@@ -1,3 +1,4 @@
+using Terrun.Api.Jobs;
 using Terrun.Api.Modules.Activities;
 using Terrun.Api.Modules.Identity;
 using Terrun.Api.Modules.Platform;
@@ -18,6 +19,7 @@ builder.Services.AddPlatformModule();
 builder.AddIdentityModule();
 builder.Services.AddProfilesModule();
 builder.Services.AddActivitiesModule();
+builder.AddJobsModule();
 
 var app = builder.Build();
 

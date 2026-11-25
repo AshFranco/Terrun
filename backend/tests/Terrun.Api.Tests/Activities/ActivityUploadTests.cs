@@ -80,7 +80,7 @@ public sealed class ActivityUploadTests(MigratedDatabaseFixture database) : IAsy
         var runner = await RunnerAsync();
         var upload = ActivityUpload.At(Today(10), points: 2000);
 
-        var responses = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ => PostAsync(runner.Token, upload.Body())));
+        var responses = await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => PostAsync(runner.Token, upload.Body())));
         var ids = await Task.WhenAll(responses.Select(async r => (await r.Content.ReadFromJsonAsync<JsonElement>(AuthTestApp.Ct)).GetProperty("id").GetGuid()));
 
         Assert.All(responses, r => Assert.True(r.StatusCode is HttpStatusCode.Accepted or HttpStatusCode.OK, $"Unexpected {r.StatusCode}"));
@@ -174,18 +174,22 @@ public sealed class ActivityUploadTests(MigratedDatabaseFixture database) : IAsy
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
     }
 
-    // Two different activities of the same time uploaded at once: the exclusion constraint lets only one in
+    // Different activities of the same time uploaded at once: only one gets in and the rest answer 409, never 500
+    // (concurrent inserts waiting on an EXCLUDE constraint can deadlock; D-34). Several rounds, because it is a race
     [Fact]
-    public async Task Upload_TwoOverlappingActivitiesAtTheSameTime_AcceptsOnlyOne()
+    public async Task Upload_OverlappingActivitiesAtTheSameTime_AcceptsOnlyOneAndTheRestGet409()
     {
-        var runner = await RunnerAsync();
+        for (var round = 0; round < 3; round++)
+        {
+            var runner = await RunnerAsync();
 
-        var responses = await Task.WhenAll(Enumerable.Range(0, 4)
-            .Select(i => PostAsync(runner.Token, ActivityUpload.At(Today(16).AddSeconds(i), points: 1500).Body())));
+            var responses = await Task.WhenAll(Enumerable.Range(0, 8)
+                .Select(i => PostAsync(runner.Token, ActivityUpload.At(Today(16).AddSeconds(i), points: 1500).Body())));
 
-        Assert.Equal(1, responses.Count(r => r.StatusCode == HttpStatusCode.Accepted));
-        Assert.All(responses.Where(r => r.StatusCode != HttpStatusCode.Accepted), r => Assert.Equal(HttpStatusCode.Conflict, r.StatusCode));
-        Assert.Equal(1, await CountActivitiesAsync(runner.Id));
+            Assert.Equal(1, responses.Count(r => r.StatusCode == HttpStatusCode.Accepted));
+            Assert.All(responses.Where(r => r.StatusCode != HttpStatusCode.Accepted), r => Assert.Equal(HttpStatusCode.Conflict, r.StatusCode));
+            Assert.Equal(1, await CountActivitiesAsync(runner.Id));
+        }
     }
 
     [Fact]

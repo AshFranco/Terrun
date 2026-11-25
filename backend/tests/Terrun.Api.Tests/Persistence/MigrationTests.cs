@@ -11,7 +11,7 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
 
     private static readonly string[] _expectedTables =
     [
-        "activity", "app_user", "audit_log", "consent", "external_login", "gps_point", "legal_document",
+        "activity", "app_user", "audit_log", "consent", "external_login", "gps_point", "job_run", "legal_document",
         "personal_record", "privacy_zone", "profile", "refresh_token", "shoe", "split", "system_setting",
         "user_preference", "user_stats", "verification_token",
     ];
