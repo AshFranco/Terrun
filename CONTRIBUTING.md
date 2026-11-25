@@ -72,7 +72,7 @@ Una historia se cierra solo si:
 - [ ] Tiene pruebas automatizadas (unitarias o de integración) y pasan.
 - [ ] Si toca el motor: hay casos calculados a mano (LLD §9).
 - [ ] Ningún parámetro del juego está fijo en el código.
-- [ ] Endpoints documentados en Swagger y tipos de la app regenerados.
+- [ ] Endpoints documentados en Swagger, con sus errores propios declarados con `[ApiError]` (D-33), y tipos de la app regenerados.
 - [ ] Probado en Android **y** en iOS si toca la app.
 - [ ] Sin `console.log`, `TODO`, credenciales ni coordenadas reales de usuarios en el código.
 - [ ] `docs/ESTADO.md` y `docs/BITACORA.md` actualizados.

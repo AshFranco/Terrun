@@ -24,7 +24,7 @@ Closes #
 - [ ] Pruebas automatizadas agregadas y en verde
 - [ ] Si toca el motor: casos calculados a mano (LLD §9)
 - [ ] Ningún parámetro del juego fijo en el código
-- [ ] Endpoints documentados en Swagger y tipos de la app regenerados
+- [ ] Endpoints documentados en Swagger, con sus errores propios declarados con `[ApiError]` (D-33), y tipos de la app regenerados
 - [ ] Probado en Android e iOS (si toca la app)
 - [ ] Sin `console.log`, `TODO` ni credenciales
 - [ ] `docs/ESTADO.md` y `docs/BITACORA.md` actualizados

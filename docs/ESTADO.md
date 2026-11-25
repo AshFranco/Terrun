@@ -19,7 +19,9 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - 👀 **CTZ-13** Migración inicial: tablas de M1, M2 y M13 + datos iniciales de `system_setting` y `legal_document`. *Bloquea CTZ-14 y CTZ-17.*
 - 👀 **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.* *En revisión (PR #124).*
 - 👀 **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.* *En revisión (PR #138); contrato en LLD §3.3 (v1.12, D-32). Pendientes: #135, #136, #137.*
-- ⬜ **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16 y CTZ-08.*
+- 🔄 **CTZ-106** Respuestas de error en el OpenAPI (`ApiProblem` + `[ApiError]`, D-33). *Va antes de CTZ-19 para que los tipos traigan la forma del error (issue #136).*
+- ⬜ **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16, CTZ-106 y CTZ-08.*
+- ⬜ **CTZ-105** Foto de perfil: bucket R2 y `POST /me/photo/upload-url` (issue #135). *Sprint por decidir (Diana). La necesita CTZ-24.*
 - Revisar los PR de backend de Rowlis: CTZ-15 y CTZ-17.
 
 ### Diana — Product Owner

@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.12
+version: 1.13
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.13 | 24/11/2026 | Errores en el OpenAPI (CTZ-106, D-33): esquema `ApiProblem` y respuestas de error declaradas en cada operación (§3.1) | Ashley |
 | 1.12 | 24/11/2026 | Perfil propio (CTZ-16, D-32): contrato de `GET /me` y `PATCH /me/profile` con semántica de *JSON merge patch*, validaciones del perfil, auditoría del cambio de `@handle` y módulo `Profiles/` | Ashley |
 | 1.10 | 15/11/2026 | Autenticación (CTZ-14, D-26): contrato de registro, login, refresh, logout y verificación por código; errores `VERIFICATION_CODE_INVALID` y `CONSENT_REQUIRED`; evidencia del consentimiento; variables SMTP | Ashley |
 
@@ -265,6 +266,7 @@ Los tipos TypeScript de la API se **generan desde el OpenAPI** del backend (`npm
 - Autenticación: `Authorization: Bearer <jwt>`, salvo los endpoints marcados como públicos.
 - Paginación por cursor: `?cursor=<opaque>&limit=20` (máximo 50). Respuesta: `{ "items": [...], "nextCursor": "..." | null }`.
 - Errores en formato RFC 7807 (`application/problem+json`) con la extensión `code`, que es estable (§3.4).
+- El OpenAPI declara los errores de cada operación con el esquema `ApiProblem` (`status`, `code` como enum del catálogo §3.4, `traceId` y `errors` por campo en los 400), para que los tipos de la app los incluyan (D-33). Toda operación declara `400`, `429` y `500`; las que reciben cuerpo, `413` y `415`; las protegidas, `401` (`INVALID_TOKEN`). Los errores propios de cada acción se declaran con `[ApiError(estado, códigos…)]` en el controlador, y la descripción de cada respuesta lista sus códigos.
 - Límite de tasa: 100 solicitudes/min por usuario; `/auth/*`: 10/min por IP. Al excederlo se responde 429 con `Retry-After`.
 - Documentación viva en `/swagger` (OpenAPI 3.1). El OpenAPI es la fuente de los tipos de la app.
 

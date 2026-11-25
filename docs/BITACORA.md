@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-24 — Ashley — CTZ-106 Respuestas de error en el OpenAPI
+- Hecho: esquema `ApiProblem` (RFC 7807 + `code` como enum del catálogo §3.4 + `traceId` + `errors`) y transformador que declara en cada operación `400`, `429` y `500`; `413` y `415` si recibe cuerpo; `401` si está protegida. Atributo `[ApiError]` con los errores propios de `/auth/*` y `/me`. Regla agregada a los estándares §4, a la DoD y a la plantilla de PR; LLD v1.13 (§3.1) con el entregable regenerado.
+- Evidencia: 99 pruebas en verde (13 nuevas en `OpenApiErrorResponsesTests`, incluidas las que comprueban que el 401 sin token y el 415 escriben de verdad el `ApiProblem` declarado); `dotnet format` limpio; tipos generados con `openapi-typescript` 7.13 desde el OpenAPI local compilan con `tsc --strict` y un `code` fuera del catálogo no compila.
+- Decisiones: D-33.
+- Siguiente paso: PR a `development`; tras el merge, Rowlis genera los tipos en CTZ-19 desde QA.
+
 ## 2026-11-24 — Ashley — CTZ-16 GET /me y PATCH /me/profile
 - Hecho: módulo `Profiles/` con `GET /me` (usuario, perfil, preferencias y estadísticas en una consulta) y `PATCH /me/profile` con semántica de *JSON merge patch*; validaciones del perfil (edad mínima 18, peso, estatura, país ISO, longitudes); cambio de `@handle` con 409 `HANDLE_TAKEN` y auditoría `handle_changed`; la foto queda para `/me/photo/upload-url` (P1). LLD v1.12 (§1.2, §3.3, §7.3) y entregable LLD regenerado (docx + pdf).
 - Evidencia: 86 pruebas en verde (23 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
