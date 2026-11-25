@@ -11,18 +11,19 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
 
     private static readonly string[] _expectedTables =
     [
-        "app_user", "audit_log", "consent", "external_login", "legal_document", "privacy_zone", "profile",
-        "refresh_token", "system_setting", "user_preference", "user_stats", "verification_token",
+        "activity", "app_user", "audit_log", "consent", "external_login", "gps_point", "legal_document",
+        "personal_record", "privacy_zone", "profile", "refresh_token", "shoe", "split", "system_setting",
+        "user_preference", "user_stats", "verification_token",
     ];
 
     private static readonly string[] _publicSettings =
     [
-        "activity.auto_pause_speed_mps", "activity.max_points", "privacy.route_trim_m", "territory.conquest_threshold",
+        "activity.auto_pause_speed_mps", "activity.max_duration_h", "activity.max_points", "privacy.route_trim_m", "territory.conquest_threshold",
         "territory.zone_resolution", "xp.level_curve",
     ];
 
     [Fact]
-    public async Task Migrate_EmptyDatabase_CreatesTheTablesOfM1M2M13AndAuditLog()
+    public async Task Migrate_EmptyDatabase_CreatesTheTablesOfM1M2M3M4M13AndAuditLog()
     {
         await using var scope = database.CreateScope();
         var db = MigratedDatabaseFixture.Db(scope);
@@ -46,18 +47,19 @@ public sealed class MigrationTests(MigratedDatabaseFixture database)
         var extensions = await db.Database.SqlQuery<string>($"""SELECT extname AS "Value" FROM pg_extension""")
             .ToListAsync(TestContext.Current.CancellationToken);
 
-        Assert.Subset(extensions.ToHashSet(), new HashSet<string> { "postgis", "citext", "pgcrypto" });
+        Assert.Subset(extensions.ToHashSet(), new HashSet<string> { "postgis", "citext", "pgcrypto", "btree_gist" });
     }
 
     [Fact]
-    public async Task Migrate_EmptyDatabase_SeedsTheTwentyOneSystemSettings()
+    public async Task Migrate_EmptyDatabase_SeedsTheTwentyTwoSystemSettings()
     {
         await using var scope = database.CreateScope();
         var db = MigratedDatabaseFixture.Db(scope);
 
         var settings = await db.SystemSettings.AsNoTracking().ToListAsync(TestContext.Current.CancellationToken);
 
-        Assert.Equal(21, settings.Count);
+        Assert.Equal(22, settings.Count);
+        Assert.Equal("24", settings.Single(s => s.Key == "activity.max_duration_h").Value);
         Assert.Equal("5", settings.Single(s => s.Key == "territory.conquest_threshold").Value);
         Assert.Equal("200", settings.Single(s => s.Key == "privacy.route_trim_m").Value);
         Assert.Equal("30", settings.Single(s => s.Key == "territory.ownership_window_days").Value);

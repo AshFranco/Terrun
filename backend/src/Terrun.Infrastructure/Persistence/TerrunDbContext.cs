@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Terrun.Domain.Activities;
+using Terrun.Domain.Equipment;
 using Terrun.Domain.Identity;
 using Terrun.Domain.Moderation;
 using Terrun.Domain.Platform;
@@ -28,6 +30,16 @@ public sealed class TerrunDbContext(DbContextOptions<TerrunDbContext> options) :
 
     public DbSet<UserStats> UserStats => Set<UserStats>();
 
+    public DbSet<Activity> Activities => Set<Activity>();
+
+    public DbSet<GpsPoint> GpsPoints => Set<GpsPoint>();
+
+    public DbSet<Split> Splits => Set<Split>();
+
+    public DbSet<PersonalRecord> PersonalRecords => Set<PersonalRecord>();
+
+    public DbSet<Shoe> Shoes => Set<Shoe>();
+
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
@@ -38,6 +50,9 @@ public sealed class TerrunDbContext(DbContextOptions<TerrunDbContext> options) :
         modelBuilder.HasPostgresExtension("postgis");
         modelBuilder.HasPostgresExtension("citext");
         modelBuilder.HasPostgresExtension("pgcrypto");
+
+        // D-34: lets the EXCLUDE constraint of activity compare user_id (=) together with the time range (&&)
+        modelBuilder.HasPostgresExtension("btree_gist");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TerrunDbContext).Assembly);
     }

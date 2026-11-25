@@ -17,7 +17,7 @@ internal sealed class DomainExceptionHandler(IProblemDetailsService problemDetai
         }
 
         httpContext.Response.StatusCode = status;
-        return await problemDetails.TryWriteAsync(new ProblemDetailsContext
+        var context = new ProblemDetailsContext
         {
             HttpContext = httpContext,
             ProblemDetails =
@@ -26,12 +26,19 @@ internal sealed class DomainExceptionHandler(IProblemDetailsService problemDetai
                 Detail = detail,
                 Extensions = { [ProblemDetailsSetup.CodeKey] = code },
             },
-        });
+        };
+        if (exception is FieldValidationException fieldError)
+        {
+            context.ProblemDetails.Extensions[ProblemDetailsSetup.ErrorsKey] = fieldError.Errors;
+        }
+
+        return await problemDetails.TryWriteAsync(context);
     }
 
     private static (int Status, string Code, string? Detail) Map(Exception exception) => exception switch
     {
         InvalidRequestException e => (StatusCodes.Status400BadRequest, e.Code, e.Message),
+        FieldValidationException e => (StatusCodes.Status400BadRequest, e.Code, e.Message),
         NotFoundException e => (StatusCodes.Status404NotFound, e.Code, e.Message),
         ConflictException e => (StatusCodes.Status409Conflict, e.Code, e.Message),
         ForbiddenException e => (StatusCodes.Status403Forbidden, e.Code, e.Message),

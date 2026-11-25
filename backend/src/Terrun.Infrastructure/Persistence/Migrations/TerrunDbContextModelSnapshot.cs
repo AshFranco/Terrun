@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Terrun.Domain.Activities;
 using Terrun.Domain.Common;
 using Terrun.Domain.Identity;
 using Terrun.Domain.Profiles;
@@ -25,19 +26,383 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "activity_status", new[] { "failed", "in_review", "pending", "processed", "processing", "rejected" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "activity_type", new[] { "jog", "run", "walk" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "consent_method", new[] { "registration", "settings" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "discard_reason", new[] { "accuracy", "jump", "timestamp" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "legal_document_type", new[] { "privacy", "terms" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "login_provider", new[] { "apple", "google" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "record_type", new[] { "half_marathon", "km1", "km10", "km5", "longest", "marathon" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "sex", new[] { "female", "male", "other", "undisclosed" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "token_type", new[] { "email_verification", "password_reset" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "unit_system", new[] { "imperial", "metric" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_role", new[] { "admin", "moderator", "runner" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_status", new[] { "active", "deleted", "suspended" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "visibility", new[] { "followers", "private", "public" });
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "btree_gist");
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "citext");
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pgcrypto");
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Terrun.Domain.Activities.Activity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("AppVersion")
+                        .HasColumnType("text")
+                        .HasColumnName("app_version");
+
+                    b.Property<short>("Attempts")
+                        .HasColumnType("smallint")
+                        .HasColumnName("attempts");
+
+                    b.Property<int?>("AvgPaceSPerKm")
+                        .HasColumnType("integer")
+                        .HasColumnName("avg_pace_s_per_km");
+
+                    b.Property<int?>("Calories")
+                        .HasColumnType("integer")
+                        .HasColumnName("calories");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Device")
+                        .HasColumnType("text")
+                        .HasColumnName("device");
+
+                    b.Property<decimal?>("DistanceM")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("distance_m");
+
+                    b.Property<int?>("ElapsedTimeS")
+                        .HasColumnType("integer")
+                        .HasColumnName("elapsed_time_s");
+
+                    b.Property<decimal?>("ElevationGainM")
+                        .HasPrecision(7, 1)
+                        .HasColumnType("numeric(7,1)")
+                        .HasColumnName("elevation_gain_m");
+
+                    b.Property<decimal?>("ElevationLossM")
+                        .HasPrecision(7, 1)
+                        .HasColumnType("numeric(7,1)")
+                        .HasColumnName("elevation_loss_m");
+
+                    b.Property<DateTimeOffset>("EndedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ended_at");
+
+                    b.Property<decimal?>("MaxSpeedMps")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("max_speed_mps");
+
+                    b.Property<int?>("MovingTimeS")
+                        .HasColumnType("integer")
+                        .HasColumnName("moving_time_s");
+
+                    b.Property<short>("NewZones")
+                        .HasColumnType("smallint")
+                        .HasColumnName("new_zones");
+
+                    b.Property<DateTimeOffset?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at");
+
+                    b.Property<LineString>("Route")
+                        .HasColumnType("geography (linestring, 4326)")
+                        .HasColumnName("route");
+
+                    b.Property<Guid?>("ShoeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("shoe_id");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<ActivityStatus>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("activity_status")
+                        .HasDefaultValue(ActivityStatus.Pending)
+                        .HasColumnName("status");
+
+                    b.Property<string>("StatusReason")
+                        .HasColumnType("text")
+                        .HasColumnName("status_reason");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("title");
+
+                    b.Property<ActivityType>("Type")
+                        .HasColumnType("activity_type")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Visibility>("Visibility")
+                        .HasColumnType("visibility")
+                        .HasColumnName("visibility");
+
+                    b.Property<int>("XpEarned")
+                        .HasColumnType("integer")
+                        .HasColumnName("xp_earned");
+
+                    b.HasKey("Id")
+                        .HasName("pk_activity");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_activity_pending_created_at")
+                        .HasFilter("status = 'pending'");
+
+                    b.HasIndex("Route")
+                        .HasDatabaseName("ix_activity_route");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Route"), "gist");
+
+                    b.HasIndex("ShoeId")
+                        .HasDatabaseName("ix_activity_shoe_id");
+
+                    b.HasIndex("UserId", "ClientId")
+                        .IsUnique()
+                        .HasDatabaseName("uk_activity_user_id_client_id");
+
+                    b.HasIndex("UserId", "StartedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_activity_user_id_started_at");
+
+                    b.ToTable("activity", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_activity_ended_after_started", "ended_at > started_at");
+                        });
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.GpsPoint", b =>
+                {
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id");
+
+                    b.Property<int>("Seq")
+                        .HasColumnType("integer")
+                        .HasColumnName("seq");
+
+                    b.Property<float?>("AccuracyM")
+                        .HasColumnType("real")
+                        .HasColumnName("accuracy_m");
+
+                    b.Property<float?>("AltitudeM")
+                        .HasColumnType("real")
+                        .HasColumnName("altitude_m");
+
+                    b.Property<DiscardReason?>("DiscardReason")
+                        .HasColumnType("discard_reason")
+                        .HasColumnName("discard_reason");
+
+                    b.Property<bool>("IsDiscarded")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_discarded");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("double precision")
+                        .HasColumnName("lat");
+
+                    b.Property<double>("Lon")
+                        .HasColumnType("double precision")
+                        .HasColumnName("lon");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at");
+
+                    b.Property<short>("Segment")
+                        .HasColumnType("smallint")
+                        .HasColumnName("segment");
+
+                    b.Property<float?>("SpeedMps")
+                        .HasColumnType("real")
+                        .HasColumnName("speed_mps");
+
+                    b.HasKey("ActivityId", "Seq")
+                        .HasName("pk_gps_point");
+
+                    b.ToTable("gps_point", (string)null);
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.PersonalRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTimeOffset>("AchievedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("achieved_at");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id");
+
+                    b.Property<RecordType>("Type")
+                        .HasColumnType("record_type")
+                        .HasColumnName("type");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id")
+                        .HasName("pk_personal_record");
+
+                    b.HasIndex("ActivityId")
+                        .HasDatabaseName("ix_personal_record_activity_id");
+
+                    b.HasIndex("UserId", "Type")
+                        .IsUnique()
+                        .HasDatabaseName("uk_personal_record_user_id_type");
+
+                    b.ToTable("personal_record", (string)null);
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.Split", b =>
+                {
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activity_id");
+
+                    b.Property<short>("Number")
+                        .HasColumnType("smallint")
+                        .HasColumnName("number");
+
+                    b.Property<decimal>("DistanceM")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("numeric(7,2)")
+                        .HasColumnName("distance_m");
+
+                    b.Property<int>("DurationS")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_s");
+
+                    b.Property<decimal?>("ElevationM")
+                        .HasPrecision(6, 1)
+                        .HasColumnType("numeric(6,1)")
+                        .HasColumnName("elevation_m");
+
+                    b.Property<int>("PaceSPerKm")
+                        .HasColumnType("integer")
+                        .HasColumnName("pace_s_per_km");
+
+                    b.HasKey("ActivityId", "Number")
+                        .HasName("pk_split");
+
+                    b.ToTable("split", (string)null);
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Equipment.Shoe", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("brand");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<int>("InitialDistanceM")
+                        .HasColumnType("integer")
+                        .HasColumnName("initial_distance_m");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_default");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("model");
+
+                    b.Property<string>("Nickname")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("nickname");
+
+                    b.Property<DateTimeOffset?>("RetiredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("retired_at");
+
+                    b.Property<short>("RetirementKm")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)700)
+                        .HasColumnName("retirement_km");
+
+                    b.Property<long>("TotalDistanceM")
+                        .HasColumnType("bigint")
+                        .HasColumnName("total_distance_m");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_shoe");
+
+                    b.HasIndex(new[] { "UserId" }, "uk_shoe_user_id_default")
+                        .IsUnique()
+                        .HasDatabaseName("ix_shoe_user_id")
+                        .HasFilter("is_default");
+
+                    b.ToTable("shoe", (string)null);
+                });
 
             modelBuilder.Entity("Terrun.Domain.Identity.AppUser", b =>
                 {
@@ -566,6 +931,14 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Key = "activity.max_duration_h",
+                            Description = "Maximum duration of an activity, in hours (D-34)",
+                            IsPublic = true,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 11, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Value = "24"
+                        },
+                        new
+                        {
                             Key = "activity.auto_pause_speed_mps",
                             Description = "Auto-pause speed threshold used by the app, in m/s",
                             IsPublic = true,
@@ -913,6 +1286,69 @@ namespace Terrun.Infrastructure.Persistence.Migrations
                         .HasName("pk_user_stats");
 
                     b.ToTable("user_stats", (string)null);
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.Activity", b =>
+                {
+                    b.HasOne("Terrun.Domain.Equipment.Shoe", null)
+                        .WithMany()
+                        .HasForeignKey("ShoeId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_activity_shoes_shoe_id");
+
+                    b.HasOne("Terrun.Domain.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_activity_users_user_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.GpsPoint", b =>
+                {
+                    b.HasOne("Terrun.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gps_point_activity_activity_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.PersonalRecord", b =>
+                {
+                    b.HasOne("Terrun.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_personal_record_activity_activity_id");
+
+                    b.HasOne("Terrun.Domain.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_personal_record_app_user_user_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Activities.Split", b =>
+                {
+                    b.HasOne("Terrun.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_split_activity_activity_id");
+                });
+
+            modelBuilder.Entity("Terrun.Domain.Equipment.Shoe", b =>
+                {
+                    b.HasOne("Terrun.Domain.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_shoe_app_user_user_id");
                 });
 
             modelBuilder.Entity("Terrun.Domain.Identity.Consent", b =>

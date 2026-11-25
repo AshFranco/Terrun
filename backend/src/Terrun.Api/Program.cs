@@ -1,3 +1,4 @@
+using Terrun.Api.Modules.Activities;
 using Terrun.Api.Modules.Identity;
 using Terrun.Api.Modules.Platform;
 using Terrun.Api.Modules.Profiles;
@@ -16,6 +17,7 @@ builder.Services.AddInfrastructure(connectionString, builder.Configuration);
 builder.Services.AddPlatformModule();
 builder.AddIdentityModule();
 builder.Services.AddProfilesModule();
+builder.Services.AddActivitiesModule();
 
 var app = builder.Build();
 
