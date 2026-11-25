@@ -32,7 +32,7 @@ Formato:
   - `403 EMAIL_NOT_VERIFIED` aún no lo usa ningún endpoint; se declara con `[ApiError]` cuando alguno lo exija (regla de los estándares §4).
   - Todas las operaciones declaran 400, aunque sean GET sin parámetros (criterio del issue #136).
   - Falta verificar en QA que el OpenAPI desplegado trae `ApiProblem` (Ashley, tras el merge).
-- Siguiente paso: PR a `development`; tras el merge, Rowlis genera los tipos en CTZ-19 desde QA siguiendo los pasos de arriba.
+- Siguiente paso: PR #139 a `development` (revisa Rowlis); tras el merge, Rowlis genera los tipos en CTZ-19 desde QA siguiendo los pasos de arriba.
 
 ## 2026-11-24 — Ashley — CTZ-16 GET /me y PATCH /me/profile
 - Hecho: módulo `Profiles/` con `GET /me` (usuario, perfil, preferencias y estadísticas en una consulta) y `PATCH /me/profile` con semántica de *JSON merge patch*; validaciones del perfil (edad mínima 18, peso, estatura, país ISO, longitudes); cambio de `@handle` con 409 `HANDLE_TAKEN` y auditoría `handle_changed`; la foto queda para `/me/photo/upload-url` (P1). LLD v1.12 (§1.2, §3.3, §7.3) y entregable LLD regenerado (docx + pdf).
