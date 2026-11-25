@@ -204,6 +204,20 @@ public sealed class MeTests(MigratedDatabaseFixture database) : IAsyncLifetime
         Assert.Equal(68m, me.GetProperty("profile").GetProperty("weightKg").GetDecimal());
     }
 
+    // LLD §2.1: updated_at follows the injectable clock on every change
+    [Fact]
+    public async Task PatchProfile_AnyChange_StampsUpdatedAtWithTheClock()
+    {
+        var token = await RegisterAsync(AuthTestApp.NewEmail());
+        _app.Clock.Advance(TimeSpan.FromHours(3));
+
+        var response = await PatchAsync(token, """{ "city": "La Romana" }""");
+        var updatedAt = (await response.Content.ReadFromJsonAsync<JsonElement>(AuthTestApp.Ct))
+            .GetProperty("profile").GetProperty("updatedAt").GetDateTimeOffset();
+
+        Assert.True((_app.Clock.GetUtcNow() - updatedAt).Duration() < TimeSpan.FromMilliseconds(1));
+    }
+
     [Fact]
     public async Task PatchProfile_PhotoUrlInBody_IsIgnored()
     {

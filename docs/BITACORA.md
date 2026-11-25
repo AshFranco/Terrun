@@ -16,7 +16,7 @@ Formato:
 
 ## 2026-11-24 — Ashley — CTZ-16 GET /me y PATCH /me/profile
 - Hecho: módulo `Profiles/` con `GET /me` (usuario, perfil, preferencias y estadísticas en una consulta) y `PATCH /me/profile` con semántica de *JSON merge patch*; validaciones del perfil (edad mínima 18, peso, estatura, país ISO, longitudes); cambio de `@handle` con 409 `HANDLE_TAKEN` y auditoría `handle_changed`; la foto queda para `/me/photo/upload-url` (P1). LLD v1.12 (§1.2, §3.3, §7.3) y entregable LLD regenerado (docx + pdf).
-- Evidencia: 85 pruebas en verde (22 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
+- Evidencia: 86 pruebas en verde (23 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
 - Decisiones: D-32 (merge patch, `@handle` libre con auditoría, foto fuera del PATCH, módulo `Profiles/`).
 - Siguiente paso: PR a `development`; tras el merge, verificar en QA y avisar a Rowlis (CTZ-24) y arrancar CTZ-19 con él.
 
