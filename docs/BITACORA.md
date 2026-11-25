@@ -14,6 +14,19 @@ Formato:
 
 ---
 
+## 2026-11-24 — Ashley — CTZ-31b Métricas oficiales, splits y ruta
+- Hecho: motor `Terrun.Engine/Tracks` con `MetricsCalculator` (distancia, tiempo en movimiento, ritmo, velocidad máxima, elevación con media móvil de 5 puntos e histéresis de 3 m, calorías por tabla MET y peso, *splits* cada 1000 m interpolados) y la ruta simplificada con Douglas-Peucker en metros (`RouteSimplifier`), además de `RouteTrimmer` para lo que ven terceros (MT-21). Etapa `MetricsStep`: guarda las métricas, los *splits* y la ruta (`LineString` SRID 4326), y marca `too_short` (MT-05). **`CleaningStep` y `MetricsStep` quedan registradas en producción:** las subidas ya se procesan solas. Cálculos a mano de MT-05, MT-15 y MT-21 en `docs/qa/04-CASOS/`. LLD v1.17 con el entregable regenerado.
+- Evidencia: 197 pruebas en verde (23 más: 17 del motor y 6 de punta a punta en `MetricsStepTests`, incluida una hora a 1 punto/s procesada en menos de 10 s, RNF-04); las clases de actividades y trabajos repetidas 3 veces sin fallas; `dotnet format` limpio. Se ajustaron las pruebas que daban por hecho que una subida quedaba `pending`.
+- Decisiones: D-37.
+- A tener en cuenta (quedan fuera de CTZ-31b):
+  - **Al fusionar, QA procesa todas las `pending`** (las de las pruebas de humo) en el arranque.
+  - **CTZ-32:** los endpoints de lectura aplican `RouteTrimmer.TrimForOthers` con `privacy.route_trim_m` a cualquiera que no sea el dueño; el dueño ve `activity.route` completa. `GET /activities/{id}` tiene que exponer `status_reason` (`anticheat`, `too_short`, `processing_failed`) para que P-09 lo explique.
+  - **CTZ-40 (territorio):** usar solo los tramos válidos (`context.Cleaning`) y respetar `context.IsEligibleForTerritory` (falso para `in_review` y `too_short`).
+  - **Totales del corredor (`user_stats`), récords (MT-16) y kilómetros de la zapatilla** son de las historias de progresión (§4.4), no de CTZ-31b.
+  - Zonas de privacidad (P1): el recorte de §7.2 también tiene que ocultar los puntos dentro de ellas cuando existan.
+  - Falta verificar en QA después del merge.
+- Siguiente paso: PR a `development`; después, CTZ-32.
+
 ## 2026-11-24 — Ashley — CTZ-31a Limpieza de GPS y antitrampas
 - Hecho: motor puro `Terrun.Engine/Tracks` (`Geo.HaversineM`, `TrackCleaner` y `AntiCheatJudge`): descarta puntos por precisión, tiempo repetido o hacia atrás y saltos; mide los tramos entre puntos conservados del mismo segmento; marca inválidos los tramos sobre `anticheat.max_speed_kmh`; calcula la distancia válida e inválida y el tiempo en movimiento; y emite las violaciones `min_pace` e `invalid_distance`. Etapa `CleaningStep`: lee los límites de `system_setting` en una consulta, marca `gps_point.is_discarded` y `discard_reason`, y deja la actividad `in_review` (`status_reason = anticheat`) con su `activity_review`. Tabla `activity_review` y parámetros nuevos `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`. Cálculos a mano de MT-01, MT-02, MT-03, MT-04 y MT-14 en `docs/qa/04-CASOS/`. LLD v1.16 con el entregable regenerado.
 - Evidencia: 174 pruebas en verde (19 nuevas: 14 del motor con `[Trait("Case", "MT-NN")]` y 5 de la etapa contra PostGIS real); `dotnet format` limpio.

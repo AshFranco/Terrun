@@ -6,7 +6,7 @@ Cada caso MT del LLD §9 tiene aquí su entrada, el cálculo paso a paso y el re
 
 - **Coordenadas inventadas** (estándares §6): origen en `lat 10.0, lon -60.0`, en medio del mar Caribe. Los puntos avanzan hacia el norte por el meridiano, porque ahí la distancia de Haversine es exactamente `R × Δφ` y el cálculo a mano es directo.
 - **Radio de la Tierra:** `R = 6.371.008,8 m` (radio medio de la IUGG). Para avanzar `d` metros al norte: `Δlat = d / R × 180 / π` grados.
-- **Parámetros:** los de la semilla de `system_setting` (LLD §2.4): `anticheat.max_accuracy_m = 30`, `anticheat.max_jump_m = 200`, `anticheat.jump_window_s = 5`, `anticheat.max_speed_kmh = 25`, `anticheat.min_pace_s_per_km = 150`, `anticheat.max_invalid_distance_pct = 20` y `activity.auto_pause_speed_mps = 0,5` (umbral de "en movimiento").
+- **Parámetros:** los de la semilla de `system_setting` (LLD §2.4): `anticheat.max_accuracy_m = 30`, `anticheat.max_jump_m = 200`, `anticheat.jump_window_s = 5`, `anticheat.max_speed_kmh = 25`, `anticheat.min_pace_s_per_km = 150`, `anticheat.max_invalid_distance_pct = 20` `activity.auto_pause_speed_mps = 0,5` (umbral de "en movimiento"), `anticheat.min_duration_s = 180`, `privacy.route_trim_m = 200` y `calories.default_weight_kg = 70`.
 - **Velocidad de un tramo:** `v = d / Δt` en m/s; en km/h, `v × 3,6`.
 
 ## Casos
@@ -19,3 +19,6 @@ Cada caso MT del LLD §9 tiene aquí su entrada, el cálculo paso a paso y el re
 | MT-04 | CTZ-31a | [MT-04.md](MT-04.md) | `AntiCheatJudgeTests.Judge_PaceOf2m10sPerKmFor20Minutes_SendsTheActivityToReview` |
 | MT-09 | CTZ-30 | — (no es un cálculo) | `ActivityUploadTests` con `[Trait("Case", "MT-09")]` |
 | MT-14 | CTZ-31a | [MT-14.md](MT-14.md) | `TrackCleanerTests.Clean_PauseOf10MinutesBetweenSegments_AddsNoDistanceAndNoMovingTime` |
+| MT-05 | CTZ-31b | [MT-05.md](MT-05.md) | `MetricsStepTests.Upload_ActivityOf2Minutes_IsProcessedWithoutTerritory` |
+| MT-15 | CTZ-31b | [MT-15.md](MT-15.md) | `MetricsCalculatorTests.Calculate_RunOf5Point4Km_HasFiveFullSplitsAndAPartialOf400Meters` |
+| MT-21 | CTZ-31b (motor) y CTZ-32 (lectura) | [MT-21.md](MT-21.md) | `RouteTrimmerTests` |

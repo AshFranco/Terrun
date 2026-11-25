@@ -3,20 +3,16 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Terrun.Api.Modules.Activities.Processing;
-using Terrun.Api.Modules.Platform.Services;
 using Terrun.Api.Tests.Identity;
 using Terrun.Api.Tests.Persistence;
 using Terrun.Domain.Activities;
 using Terrun.Domain.Moderation;
-using Terrun.Infrastructure.Persistence;
 
 namespace Terrun.Api.Tests.Activities;
 
 // CTZ-31a (LLD §4.1, D-36): the cleaning stage marks the discarded points in gps_point and sends cheating activities to
-// review with an activity_review, reading every limit from system_setting
+// review with an activity_review, reading every limit from system_setting. Runs through the production pipeline
 [Collection(MigratedDatabaseCollection.Name)]
 public sealed class CleaningStepTests(MigratedDatabaseFixture database) : IAsyncLifetime
 {
@@ -103,15 +99,6 @@ public sealed class CleaningStepTests(MigratedDatabaseFixture database) : IAsync
         Assert.Contains("invalid_distance", review.ViolatedRules, StringComparison.Ordinal);
     }
 
-    // D-36: the stage goes live together with the metrics of CTZ-31b; until then production registers no stage
-    [Fact]
-    public void Production_BeforeCtz31b_RegistersNoProcessingStage()
-    {
-        using var scope = _app.Services.CreateScope();
-
-        Assert.Empty(scope.ServiceProvider.GetServices<IActivityProcessingStep>());
-    }
-
     private sealed record RawPoint(double Seconds, double MetersNorth, double AccuracyM = 5);
 
     private static List<RawPoint> Run(double speedMps, double intervalS, int points) =>
@@ -143,14 +130,15 @@ public sealed class CleaningStepTests(MigratedDatabaseFixture database) : IAsync
         return (await response.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("id").GetGuid();
     }
 
+    // Since CTZ-31b the stages run in production: the upload is processed by the queue right away (D-36)
     private async Task ProcessAsync(Guid id)
     {
-        await using var scope = _app.Services.CreateAsyncScope();
-        var provider = scope.ServiceProvider;
-        var step = new CleaningStep(provider.GetRequiredService<SystemSettingsReader>());
-        var processor = new ActivityProcessor(
-            provider.GetRequiredService<TerrunDbContext>(), [step], _app.Clock, NullLogger<ActivityProcessor>.Instance);
-        Assert.True(await processor.ProcessAsync(id, Ct));
+        var deadline = DateTimeOffset.UtcNow.AddSeconds(15);
+        while (await _app.QueryAsync(db => db.Activities.AnyAsync(a => a.Id == id && a.Status == ActivityStatus.Pending, Ct)))
+        {
+            Assert.True(DateTimeOffset.UtcNow < deadline, "The activity was not processed in 15 s.");
+            await Task.Delay(TimeSpan.FromMilliseconds(100), Ct);
+        }
     }
 
     private Task<Activity> LoadAsync(Guid id) =>

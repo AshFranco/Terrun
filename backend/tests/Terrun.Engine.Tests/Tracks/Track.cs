@@ -22,8 +22,8 @@ internal static class Track
 
     public static double LatAtMetersNorth(double meters) => OriginLat + (meters / Geo.EarthRadiusM * 180 / Math.PI);
 
-    public static TrackPoint At(int seq, double metersNorth, double seconds, int segment = 0, double? accuracyM = 5) =>
-        new(seq, segment, Start.AddSeconds(seconds), LatAtMetersNorth(metersNorth), OriginLon, accuracyM);
+    public static TrackPoint At(int seq, double metersNorth, double seconds, int segment = 0, double? accuracyM = 5, double? altitudeM = null) =>
+        new(seq, segment, Start.AddSeconds(seconds), LatAtMetersNorth(metersNorth), OriginLon, accuracyM, altitudeM);
 
     // A steady run: one point every intervalS seconds at speedMps, starting at the origin
     public static List<TrackPoint> Steady(double speedMps, double intervalS, int points) =>

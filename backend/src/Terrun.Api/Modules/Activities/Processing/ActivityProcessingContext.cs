@@ -12,6 +12,12 @@ public sealed class ActivityProcessingContext(Activity activity, TerrunDbContext
 
     public TerrunDbContext Db { get; } = db;
 
-    // Set by the cleaning stage (CTZ-31a) and read by the later ones: metrics (CTZ-31b) and territory use only valid legs
+    // Loaded once by the cleaning stage (CTZ-31a) and read by the later ones
+    public IReadOnlyList<TrackPoint> Points { get; set; } = [];
+
+    // Set by the cleaning stage and read by the later ones: metrics (CTZ-31b) and territory use only valid legs
     public CleaningResult? Cleaning { get; set; }
+
+    // LLD §4.1 step 3: an activity in review or shorter than anticheat.min_duration_s adds no territory (MT-05)
+    public bool IsEligibleForTerritory { get; set; } = true;
 }

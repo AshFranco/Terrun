@@ -10,8 +10,10 @@ public static class ActivitiesModule
     {
         services.AddScoped<ActivityUploadService>();
 
-        // LLD §4.1 and §6. The processing stages (IActivityProcessingStep) arrive with CTZ-31a and CTZ-31b; until then the
-        // processor takes nothing and uploads stay pending (D-35)
+        // LLD §4.1 and §6. The cleaning and the metrics go live together, so no activity is processed without its
+        // metrics (D-36); territory and progression add their own stages later
+        services.AddScoped<IActivityProcessingStep, CleaningStep>();
+        services.AddScoped<IActivityProcessingStep, MetricsStep>();
         services.AddSingleton<ActivityQueue>();
         services.AddScoped<ActivityProcessor>();
         services.AddScoped<IScheduledJob, ActivityProcessorJob>();

@@ -55,9 +55,8 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
     [Fact]
     public async Task Process_StageThatFails_RollsBackAndFailsTheActivityAfterThreeAttempts()
     {
-        await using var uploader = new AuthTestApp(database);
-        var runner = await RunnerAsync(uploader);
-        var id = await UploadAsync(uploader, runner, hoursAgo: 32);
+        await using var uploader = AppWithoutWorker();
+        var id = await InsertPendingAsync(uploader, hoursAgo: 32);
         var stage = new TestStage();
         stage.FailFor.Add(id);
 
@@ -79,9 +78,8 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
     [Fact]
     public async Task Startup_PendingActivityLeftBehind_IsProcessedBySweep()
     {
-        await using var uploader = new AuthTestApp(database);
-        var runner = await RunnerAsync(uploader);
-        var id = await UploadAsync(uploader, runner, hoursAgo: 33);
+        await using var uploader = AppWithoutWorker();
+        var id = await InsertPendingAsync(uploader, hoursAgo: 33);
 
         await using var app = AppWith(new TestStage());
         var activity = await WaitUntilAsync(app, id, a => a.Status != ActivityStatus.Pending);
@@ -92,9 +90,8 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
     [Fact]
     public async Task Process_SameActivityTwiceAtTheSameTime_ProcessesItOnce()
     {
-        await using var uploader = new AuthTestApp(database);
-        var runner = await RunnerAsync(uploader);
-        var id = await UploadAsync(uploader, runner, hoursAgo: 34);
+        await using var uploader = AppWithoutWorker();
+        var id = await InsertPendingAsync(uploader, hoursAgo: 34);
         var stage = new TestStage { Delay = TimeSpan.FromMilliseconds(300) };
 
         var results = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => ProcessWithAsync(uploader, stage, id)));
@@ -104,25 +101,42 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
         Assert.Equal(ActivityStatus.Processed, (await LoadAsync(uploader, id)).Status);
     }
 
-    // D-35: until CTZ-31a registers the first stage, uploads stay pending and no attempt is counted
+    // D-35: a processor without stages takes nothing and counts no attempt
     [Fact]
-    public async Task Upload_WithoutStages_StaysPendingWithoutAttempts()
+    public async Task Process_WithoutStages_LeavesTheActivityPendingWithoutAttempts()
     {
-        await using var app = new AuthTestApp(database);
-        var runner = await RunnerAsync(app);
+        await using var app = AppWithoutWorker();
+        var id = await InsertPendingAsync(app, hoursAgo: 35);
 
-        var id = await UploadAsync(app, runner, hoursAgo: 35);
-        await Task.Delay(TimeSpan.FromMilliseconds(500), Ct);
+        await using var scope = app.Services.CreateAsyncScope();
+        var processor = new ActivityProcessor(
+            scope.ServiceProvider.GetRequiredService<TerrunDbContext>(), [], app.Clock, NullLogger<ActivityProcessor>.Instance);
+        var processed = await processor.ProcessAsync(id, Ct);
         var activity = await LoadAsync(app, id);
-        var processed = await ProcessAsync(app, id);
 
+        Assert.False(processed);
         Assert.Equal(ActivityStatus.Pending, activity.Status);
         Assert.Equal(0, activity.Attempts);
-        Assert.False(processed);
+    }
+
+    // CTZ-31b (D-36): production processes with the cleaning first and the metrics after it
+    [Fact]
+    public async Task Production_RegistersCleaningThenMetrics()
+    {
+        await using var app = new AuthTestApp(database);
+        await using var scope = app.Services.CreateAsyncScope();
+
+        var stages = scope.ServiceProvider.GetServices<IActivityProcessingStep>().OrderBy(s => s.Order).Select(s => s.GetType());
+
+        Assert.Equal([typeof(CleaningStep), typeof(MetricsStep)], stages);
     }
 
     private AuthTestApp AppWith(TestStage stage) =>
         new(database, services => services.AddSingleton<IActivityProcessingStep>(stage));
+
+    // Without the background worker, so nothing processes a pending activity while the test processes it by hand
+    private AuthTestApp AppWithoutWorker() =>
+        new(database, ActivityTestServices.RemoveQueueWorker);
 
     private static async Task<string> RunnerAsync(AuthTestApp app) =>
         (await app.RegisterOkAsync(AuthTestApp.NewEmail())).GetProperty("accessToken").GetString()!;
@@ -140,10 +154,37 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
         return (await response.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("id").GetGuid();
     }
 
-    private static async Task<bool> ProcessAsync(AuthTestApp app, Guid id)
+    // A pending activity written straight to the database, so no queue processes it before the test does
+    private static async Task<Guid> InsertPendingAsync(AuthTestApp app, int hoursAgo)
     {
-        await using var scope = app.Services.CreateAsyncScope();
-        return await scope.ServiceProvider.GetRequiredService<ActivityProcessor>().ProcessAsync(id, Ct);
+        var userId = (await app.RegisterOkAsync(AuthTestApp.NewEmail())).GetProperty("user").GetProperty("id").GetGuid();
+        var startedAt = new DateTimeOffset(app.Clock.GetUtcNow().UtcDateTime, TimeSpan.Zero).AddHours(-hoursAgo);
+        var upload = ActivityUpload.At(startedAt, points: 20);
+        return await app.QueryAsync(async db =>
+        {
+            var activity = new Activity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = userId,
+                ClientId = upload.ClientId,
+                Type = ActivityType.Run,
+                StartedAt = upload.StartedAt,
+                EndedAt = upload.EndedAt,
+            };
+            db.Activities.Add(activity);
+            db.GpsPoints.AddRange(upload.Points.Select(p => new GpsPoint
+            {
+                ActivityId = activity.Id,
+                Seq = p.Seq,
+                Segment = p.Segment,
+                RecordedAt = p.RecordedAt,
+                Lat = p.Lat,
+                Lon = p.Lon,
+                AccuracyM = 5,
+            }));
+            await db.SaveChangesAsync(Ct);
+            return activity.Id;
+        });
     }
 
     // A processor with the given stage on an app without the queue worker stages, so no startup sweep runs beside the test
