@@ -17,6 +17,8 @@ public sealed class SystemSettingsReader(TerrunDbContext db)
     public const string AntiCheatMaxSpeedKmh = "anticheat.max_speed_kmh";
     public const string AntiCheatMinPaceSPerKm = "anticheat.min_pace_s_per_km";
     public const string AntiCheatMaxInvalidDistancePct = "anticheat.max_invalid_distance_pct";
+    public const string AntiCheatMinDurationS = "anticheat.min_duration_s";
+    public const string CaloriesDefaultWeightKg = "calories.default_weight_kg";
 
     public async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken)
     {

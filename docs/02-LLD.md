@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.16
+version: 1.17
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.17 | 24/11/2026 | Métricas oficiales (CTZ-31b, D-37): duración de los splits, tabla MET fuera de rango y caminata, ruta de una sola línea, `status_reason = too_short` (MT-05), recorte de terceros en el motor (`RouteTrimmer`) y etapas activas en producción | Ashley |
 | 1.16 | 24/11/2026 | Limpieza y antitrampas (CTZ-31a, D-36): parámetros `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`, umbral de movimiento = `activity.auto_pause_speed_mps`, motor puro `Terrun.Engine/Tracks`, casos MT en `docs/qa/04-CASOS/` y nota sobre MT-04 | Ashley |
 | 1.15 | 24/11/2026 | Programador de trabajos (CTZ-104, D-35): `job_run.last_finished_at` y reserva de 30 min, zona horaria AST, respuesta de `/internal/jobs/run`, tubería de procesamiento por etapas, `TokenCleanupJob`, variable `Jobs__Key`; subidas de un corredor serializadas con *advisory lock* (D-34) | Ashley |
 | 1.14 | 24/11/2026 | Subida de actividades (CTZ-30, D-34): tablas M3/M4, restricción `EXCLUDE` contra la superposición (extensión `btree_gist`), `activity.max_duration_h`, contrato y validaciones de `POST /activities`, `record_type` con `km1`/`km5`/`km10` | Ashley |
@@ -613,6 +614,18 @@ Notas de la limpieza y el veredicto (CTZ-31a, D-36):
 - El ritmo promedio se mide sobre la distancia válida. Con los parámetros actuales, la regla de ritmo mínimo solo salta sola entre 2:24 min/km (25 km/h) y 2:30 min/km; más rápido, todos los tramos son inválidos y lo que manda a revisión es la distancia inválida (así ocurre en MT-04, ver `docs/qa/04-CASOS/MT-04.md`).
 - `activity_review.violated_rules` guarda `[{ "rule", "value", "limit" }]` con nombres estables: `min_pace` e `invalid_distance`. La actividad queda `in_review` con `status_reason = anticheat`.
 - El cálculo vive en el proyecto puro `Terrun.Engine` (`Tracks/`: `Geo`, `TrackCleaner`, `AntiCheatJudge`), sin EF ni HTTP; la etapa `CleaningStep` lo conecta con la base.
+
+Notas de las métricas (CTZ-31b, D-37):
+
+- Las etapas activas en producción son `CleaningStep` (orden 100), `MetricsStep` (orden 200) y `StatsStep` (orden 900); las dos primeras entraron juntas (D-36). Una actividad `in_review` también recibe sus métricas, para que la revise un moderador.
+- `StatsStep` suma cada actividad `processed` a `user_stats` (`total_distance_m`, `total_time_s` con el tiempo en movimiento, `total_activities` y `last_activity_at`), dentro de la misma transacción, así que nunca cuenta dos veces. Una actividad `in_review` no suma hasta que se apruebe. Eliminar una actividad (CTZ-32) y aprobar una revisión tienen que ajustar estos totales. XP, nivel y rachas siguen en CTZ-51.
+- `elapsed_time_s = ended_at − started_at` (incluye las pausas); `moving_time_s` y el ritmo, solo los tramos válidos en movimiento; `max_speed_mps`, el tramo válido más rápido.
+- *Splits*: la duración de un kilómetro es la de sus tramos válidos, así que una pausa entre segmentos no lo vuelve más lento; su `elevation_m` es el cambio neto de la altitud suavizada (nulo si el teléfono no dio altitud). Los cortes se interpolan dentro del tramo que cruza cada 1000 m.
+- Elevación: media móvil centrada de 5 puntos (recortada en los bordes) e histéresis de 3 m, por segmento: lo que se sube durante una pausa no cuenta.
+- Calorías: una velocidad fuera de la tabla MET toma la fila más cercana; `walk` usa la tabla de caminata y `run`/`jog` la de carrera. El peso sale del perfil o, si no está, de `calories.default_weight_kg`. Solo cuentan los tramos válidos en movimiento.
+- Ruta: Douglas-Peucker con 5 m de tolerancia (en metros, con una proyección local) sobre los puntos conservados de cada segmento; los segmentos se unen en orden en un solo `LineString`.
+- MT-05: si `elapsed_time_s < anticheat.min_duration_s`, la actividad queda `processed` con `status_reason = too_short` y no es elegible para territorio (`ActivityProcessingContext.IsEligibleForTerritory`, que también es falso para una actividad `in_review`).
+- El recorte para terceros (§7.2, MT-21) es `RouteTrimmer.TrimForOthers` del motor; lo aplican los endpoints de lectura de CTZ-32.
 
 Tabla MET usada para las calorías (carrera): 8 km/h → 8,3; 9,7 km/h → 9,8; 11,3 km/h → 11,0; 12,9 km/h → 11,8; 14,5 km/h → 12,8; 16,1 km/h → 14,5. Caminata: 5 km/h → 3,5; 6,4 km/h → 5,0. Entre valores se interpola linealmente.
 

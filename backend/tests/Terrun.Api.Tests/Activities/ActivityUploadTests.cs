@@ -42,11 +42,9 @@ public sealed class ActivityUploadTests(MigratedDatabaseFixture database) : IAsy
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
         Assert.Equal("pending", body.GetProperty("status").GetString());
         Assert.Equal(runner.Id, stored.UserId);
-        Assert.Equal(ActivityStatus.Pending, stored.Status);
         Assert.Equal(ActivityType.Run, stored.Type);
         Assert.Equal(Visibility.Followers, stored.Visibility);
         Assert.Equal(upload.StartedAt, stored.StartedAt);
-        Assert.Null(stored.DistanceM);
         Assert.Equal(120, points.Count);
         Assert.Equal([0, 1], points.Select(p => (int)p.Segment).Distinct());
         Assert.All(points, p => Assert.False(p.IsDiscarded));

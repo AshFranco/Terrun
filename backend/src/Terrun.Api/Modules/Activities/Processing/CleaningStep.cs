@@ -33,9 +33,10 @@ public sealed class CleaningStep(SystemSettingsReader settings) : IActivityProce
         var activity = context.Activity;
         var points = await context.Db.GpsPoints.AsNoTracking()
             .Where(p => p.ActivityId == activity.Id)
-            .Select(p => new TrackPoint(p.Seq, p.Segment, p.RecordedAt, p.Lat, p.Lon, p.AccuracyM))
+            .Select(p => new TrackPoint(p.Seq, p.Segment, p.RecordedAt, p.Lat, p.Lon, p.AccuracyM, p.AltitudeM))
             .ToListAsync(cancellationToken);
 
+        context.Points = points;
         var cleaning = TrackCleaner.Clean(points, rules);
         context.Cleaning = cleaning;
         await MarkDiscardedAsync(context, cleaning.Discarded, cancellationToken);
@@ -45,6 +46,7 @@ public sealed class CleaningStep(SystemSettingsReader settings) : IActivityProce
         {
             activity.Status = ActivityStatus.InReview;
             activity.StatusReason = InReviewReason;
+            context.IsEligibleForTerritory = false;
             context.Db.ActivityReviews.Add(new ActivityReview
             {
                 Id = Guid.CreateVersion7(),
