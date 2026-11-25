@@ -20,7 +20,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - 👀 **CTZ-14** Registro, verificación de correo, login, refresh rotativo y logout. *Depende de CTZ-13. Bloquea CTZ-15, CTZ-16 y CTZ-23.* *En revisión (PR #124).*
 - 👀 **CTZ-16** `GET /me` y `PATCH /me/profile`. *Depende de CTZ-14. Bloquea CTZ-19 y CTZ-24.* *En revisión (PR #138); contrato en LLD §3.3 (v1.12, D-32). Pendientes: #135, #136, #137.*
 - 👀 **CTZ-106** Respuestas de error en el OpenAPI (`ApiProblem` + `[ApiError]`, D-33). *En revisión (PR #139). Va antes de CTZ-19 para que los tipos traigan la forma del error (issue #136).*
-- 🔄 **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16, CTZ-106 y CTZ-08.*
+- 👀 **CTZ-19** OpenAPI publicado y tipos de la app (`npm run api:types`), con Rowlis. *Depende de CTZ-16, CTZ-106 y CTZ-08.* *En revisión (PR #146).*
 - 👀 **CTZ-32** (S2) `GET`/`PATCH`/`DELETE /activities/{id}`, `/route`, `/splits`, `/me/activities` y `/me/summary` (D-38). *En revisión (PR #145). Desbloquea CTZ-34, CTZ-35 y CTZ-36. Issue #41.*
 - 👀 **CTZ-31b** (S2) Métricas oficiales, splits, ruta simplificada, calorías, MT-05 y recorte de terceros en el motor (D-37). *En revisión (PR #144). Activa en producción el procesamiento. Issue #40.*
 - 👀 **CTZ-31a** (S2) Limpieza de GPS y antitrampas: motor puro, etapa `CleaningStep`, `activity_review` y casos MT en `docs/qa/04-CASOS/` (D-36). *En revisión (PR #143). La etapa se activa con CTZ-31b. Issue #39.*
@@ -47,7 +47,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Desbloqueada: CTZ-13 y CTZ-27 hechas.*
 - ⬜ **CTZ-23** Pantallas P-01 a P-04 contra QA. *Depende de CTZ-22 y CTZ-14.*
 - ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16 (la foto queda para CTZ-105).*
-- 🔄 **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley. *Issue #26.*
+- 👀 **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley. *En revisión (PR #146, issue #26).*
 - ⬜ **CTZ-15** (P1) Recuperar y restablecer contraseña (revisa Ashley). *Depende de CTZ-14.*
 - ⬜ **CTZ-23b** (P1) Pantalla P-05 recuperar contraseña. *Depende de CTZ-23 y CTZ-15.*
 
