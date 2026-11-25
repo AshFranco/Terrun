@@ -1,5 +1,6 @@
 using Terrun.Api.Modules.Identity;
 using Terrun.Api.Modules.Platform;
+using Terrun.Api.Modules.Profiles;
 using Terrun.Api.Web;
 using Terrun.Infrastructure;
 using Terrun.Infrastructure.Persistence;
@@ -14,6 +15,7 @@ builder.Services.AddApiOpenApi();
 builder.Services.AddInfrastructure(connectionString, builder.Configuration);
 builder.Services.AddPlatformModule();
 builder.AddIdentityModule();
+builder.Services.AddProfilesModule();
 
 var app = builder.Build();
 
