@@ -26,7 +26,7 @@ Formato:
   - **CTZ-17 (Rowlis):** puede usar `SystemSettingsReader` para `/settings/public`; `activity.max_duration_h` ya es público.
   - El 8 MB lo aplica Kestrel: si un cliente manda más sin `Expect: 100-continue`, ve un corte de conexión en vez del `413`. No le pasa a la app (30.000 puntos son unos 4 MB).
   - Falta verificar en QA después del merge (la migración se aplica al arrancar).
-- Siguiente paso: PR a `development`; después del merge, verificar en QA.
+- Siguiente paso: PR #140 a `development` (revisa Jorge); después del merge, verificar en QA.
 
 ## 2026-11-24 — Ashley — CTZ-106 Respuestas de error en el OpenAPI
 - Hecho: esquema `ApiProblem` (RFC 7807 + `code` como enum del catálogo §3.4 + `traceId` + `errors`) y transformador que declara en cada operación `400`, `429` y `500`; `413` y `415` si recibe cuerpo; `401` si está protegida. Atributo `[ApiError]` con los errores propios de `/auth/*` y `/me`. Regla agregada a los estándares §4, a la DoD y a la plantilla de PR; LLD v1.13 (§3.1) con el entregable regenerado.
