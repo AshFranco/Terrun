@@ -14,6 +14,21 @@ Formato:
 
 ---
 
+## 2026-11-25 — Ashley — CTZ-32 Lectura y edición de actividades
+- Hecho: `GET /activities/{id}`, `/route` (GeoJSON, con el recorte de 200 m para terceros), `/splits`, `GET /me/activities` (cursor y filtros por tipo y fechas), `GET /me/summary` (semana, mes y año en AST, con el periodo anterior), `PATCH /activities/{id}` (*merge patch*; recalcula las calorías si cambia el tipo) y `DELETE /activities/{id}` (borra en cascada y resta de `user_stats`). La visibilidad va dentro de la consulta SQL (`ActivityVisibility`). Se extrajo `ProcessingSettings`, que comparten las etapas y el recálculo. LLD v1.18 (§3.3) con el entregable regenerado.
+- Hallazgos corregidos al generar los tipos de la app: los parámetros de consulta salían en PascalCase en el OpenAPI (`Limit`) y también en las claves de los errores, y los mensajes de validación seguían el idioma del servidor; además, `type` de la ruta GeoJSON salía opcional. Los tipos generados con `openapi-typescript` 7.13 ahora compilan con `tsc --strict`.
+- Evidencia: 232 pruebas en verde (34 más, en `ActivityEndpointsTests` y en las pruebas del OpenAPI, incluida una que vigila los parámetros en camelCase); las clases de actividades repetidas 3 veces sin fallas; `dotnet format` limpio.
+- Decisiones: D-38 (`followers` solo del dueño por ahora y recálculo de calorías al cambiar el tipo, decididos por la usuaria).
+- A tener en cuenta (quedan fuera de CTZ-32):
+  - **Parte social (P1):** ampliar `ActivityVisibility.VisibleTo` con los seguidores aceptados (`followers`) y excluir a los bloqueados en los dos sentidos (§7.2). Es un solo lugar.
+  - **Zonas de privacidad (P1):** el recorte de `/route` también tiene que ocultar los puntos dentro de ellas.
+  - **Jorge (CTZ-34, P-09):** sondear `GET /activities/{id}` hasta que `status` deje de ser `pending`; explicar en español `statusReason` (`anticheat` → en revisión, `too_short` → sin territorio, `processing_failed`); `/route` puede traer `geometry: null`.
+  - **Rowlis (CTZ-35, CTZ-36):** P-10 con `/me/activities` (pasar `nextCursor` tal cual); P-15 con `/me/summary`, cuyos totales salen de las `processed` y coinciden con `GET /me` `stats`; `DELETE` responde `204`. Los tipos se generan en CTZ-19.
+  - **CTZ-40 y CTZ-51:** al borrar una actividad hay que revertir también su territorio y su XP (§4.5, MT-13); hoy solo se restan los totales.
+  - **Moderación (#142):** al aprobar una revisión, la actividad tiene que sumarse a `user_stats`.
+  - Falta verificar en QA después del merge.
+- Siguiente paso: PR a `development`.
+
 ## 2026-11-24 — Ashley — CTZ-31b Métricas oficiales, splits y ruta
 - Hecho: motor `Terrun.Engine/Tracks` con `MetricsCalculator` (distancia, tiempo en movimiento, ritmo, velocidad máxima, elevación con media móvil de 5 puntos e histéresis de 3 m, calorías por tabla MET y peso, *splits* cada 1000 m interpolados) y la ruta simplificada con Douglas-Peucker en metros (`RouteSimplifier`), además de `RouteTrimmer` para lo que ven terceros (MT-21). Etapa `MetricsStep`: guarda las métricas, los *splits* y la ruta (`LineString` SRID 4326), y marca `too_short` (MT-05). **`CleaningStep` y `MetricsStep` quedan registradas en producción:** las subidas ya se procesan solas. `StatsStep` suma cada actividad procesada a los totales de `user_stats` que muestra `GET /me`. Cálculos a mano de MT-05, MT-15 y MT-21 en `docs/qa/04-CASOS/`. LLD v1.17 con el entregable regenerado.
 - Evidencia: 198 pruebas en verde (24 más: 17 del motor y 7 de punta a punta en `MetricsStepTests`, incluida una hora a 1 punto/s procesada en menos de 10 s, RNF-04); las clases de actividades y trabajos repetidas 3 veces sin fallas; `dotnet format` limpio. Se ajustaron las pruebas que daban por hecho que una subida quedaba `pending`.

@@ -2,7 +2,7 @@
 titulo: Terrun
 subtitulo: Documento de Diseño de Bajo Nivel (LLD)
 asignatura: Construcción de Software
-version: 1.17
+version: 1.18
 fecha: 17 de noviembre de 2026
 ---
 
@@ -21,6 +21,7 @@ fecha: 17 de noviembre de 2026
 | 1.8 | 15/11/2026 | Convenciones transversales de la API (D-24): carpeta `Web/`, logs JSON con el logger nativo en lugar de Serilog y variables de límites | Ashley |
 | 1.9 | 15/11/2026 | Trabajos en segundo plano para los planes gratis (D-25): programador externo con GitHub Actions, procesamiento al subir, tabla `job_run` y `POST /internal/jobs/run` | Ashley |
 | 1.11 | 17/11/2026 | Recorte de privacidad de la ruta (D-29): se ocultan a terceros los primeros y últimos `privacy.route_trim_m` metros (200, público); caso MT-21 | Ashley |
+| 1.18 | 25/11/2026 | Lectura y edición de actividades (CTZ-32, D-38): contrato de `/activities/{id}`, `/route`, `/splits`, `/me/activities`, `/me/summary`, `PATCH` y `DELETE`; visibilidad provisional de `followers`; recálculo de calorías al cambiar el tipo | Ashley |
 | 1.17 | 24/11/2026 | Métricas oficiales (CTZ-31b, D-37): duración de los splits, tabla MET fuera de rango y caminata, ruta de una sola línea, `status_reason = too_short` (MT-05), recorte de terceros en el motor (`RouteTrimmer`) y etapas activas en producción | Ashley |
 | 1.16 | 24/11/2026 | Limpieza y antitrampas (CTZ-31a, D-36): parámetros `anticheat.jump_window_s` y `anticheat.max_invalid_distance_pct`, umbral de movimiento = `activity.auto_pause_speed_mps`, motor puro `Terrun.Engine/Tracks`, casos MT en `docs/qa/04-CASOS/` y nota sobre MT-04 | Ashley |
 | 1.15 | 24/11/2026 | Programador de trabajos (CTZ-104, D-35): `job_run.last_finished_at` y reserva de 30 min, zona horaria AST, respuesta de `/internal/jobs/run`, tubería de procesamiento por etapas, `TokenCleanupJob`, variable `Jobs__Key`; subidas de un corredor serializadas con *advisory lock* (D-34) | Ashley |
@@ -522,6 +523,18 @@ Errores: `401 INVALID_CREDENTIALS` (login), `401 INVALID_TOKEN` (refresh vencido
 - `displayName`: hasta 60 caracteres, no se puede borrar. `handle`: mismas reglas del registro, no se puede borrar; puede cambiarse cuando esté libre y cada cambio queda en `audit_log` (`handle_changed`). `bio` hasta 300 y `city` hasta 80 caracteres. `country`: ISO 3166-1 alfa-2 (se guarda en mayúsculas). `birthDate`: desde 1900 y con 18 años cumplidos (D-28). `sex`: `female`, `male`, `other` o `undisclosed`, no se puede borrar. `weightKg`: de 25 a 300 con hasta 2 decimales. `heightCm`: de 100 a 250. `isPrivate`: no se puede borrar.
 - La foto **no** se cambia aquí: llega con `/me/photo/upload-url` (P1), para no aceptar URL externas. Un `photoUrl` en el cuerpo se ignora.
 - Errores: `400 VALIDATION_ERROR` (con `errors` por campo), `409 HANDLE_TAKEN`, `401` sin token.
+
+**Lectura y edición de actividades** (CTZ-32, D-38)
+
+- **Visibilidad (§7.2):** el dueño ve todas sus actividades, en cualquier estado. Los demás solo ven las `processed` con visibilidad `public`; `followers` es solo del dueño hasta que exista `follow` (parte social, P1). Lo que no existe y lo que no se puede ver responden igual: `404 NOT_FOUND`.
+- **GET `/activities/{id}`:** `200` con `id`, `owner { id, displayName, handle }`, `isOwner`, `type`, `title`, `description`, `visibility`, `status`, `statusReason` (`anticheat`, `too_short`, `processing_failed` o `null`), `startedAt`, `endedAt`, las métricas (`elapsedTimeS`, `movingTimeS`, `distanceM`, `avgPaceSPerKm`, `maxSpeedMps`, `elevationGainM`, `elevationLossM`, `calories`; nulas mientras la actividad está `pending`), `newZones`, `xpEarned`, `createdAt` y `processedAt`. `shoeId`, `device` y `appVersion` solo se le devuelven al dueño.
+- **GET `/activities/{id}/route`:** GeoJSON `{ "type": "Feature", "geometry": { "type": "LineString", "coordinates": [[lon, lat], …] } | null, "properties": { "isTrimmed", "trimM" } }`. El dueño recibe la ruta completa; los demás, sin los primeros ni los últimos `privacy.route_trim_m` metros, y `geometry: null` si la ruta mide `2 × privacy.route_trim_m` o menos (MT-21). También es `null` mientras la actividad no está procesada.
+- **GET `/activities/{id}/splits`:** `[{ number, distanceM, durationS, paceSPerKm, elevationM }]` en orden.
+- **GET `/me/activities?type=&from=&to=&limit=&cursor=`:** historial propio (todos los estados), del más reciente al más antiguo; `from` incluido y `to` excluido sobre `startedAt`; `limit` de 1 a 50 (20 por defecto); `{ items, nextCursor }`. Un `cursor` inválido responde `400` en `errors.cursor`.
+- **GET `/me/summary?period=week|month|year`** (obligatorio): `{ period, current, previous }`, cada uno con `from`, `to`, `activities`, `distanceM`, `movingTimeS`, `elevationGainM`, `calories` y `avgPaceSPerKm`. Solo cuentan las `processed`. Los periodos siguen el calendario del juego (`America/Santo_Domingo`): la semana empieza el lunes a las 00:00 AST; `previous` es el periodo anterior del mismo tipo.
+- **PATCH `/activities/{id}`:** *JSON merge patch* con `title` (hasta 80), `description` (hasta 500), `type`, `visibility` y `shoeId` (una zapatilla del dueño); `null` borra `title`, `description` o `shoeId`, pero no `type` ni `visibility`. Si cambia el tipo de una actividad ya procesada, se recalculan sus calorías (la caminata usa otra tabla MET). Responde `200` con el cuerpo de `GET /activities/{id}`.
+- **DELETE `/activities/{id}`:** `204`. Se borran sus puntos, *splits* y revisión; si estaba `processed`, se resta de `user_stats` y se recalcula `last_activity_at` (§4.5). Bloquea la fila antes, así que una actividad que se está procesando se borra después de sumarse, nunca antes.
+- **Errores:** a quien ve la actividad pero no es su dueño, `PATCH` y `DELETE` le responden `403 FORBIDDEN`; si ni siquiera la ve, `404`.
 
 **GET `/zones?bbox=-69.95,18.44,-69.88,18.50`**
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
@@ -26,6 +27,10 @@ internal static class ApiConventions
             .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = ValidationProblemResponse.Create);
         services.ConfigureHttpJsonOptions(options => UseSnakeCaseEnums(options.SerializerOptions));
         services.AddValidatorsFromAssemblyContaining<Program>(includeInternalTypes: true);
+
+        // Validation messages are for developers and always in English; the app shows its own Spanish text per field.
+        // Without this, FluentValidation follows the culture of the server
+        ValidatorOptions.Global.LanguageManager.Culture = CultureInfo.InvariantCulture;
 
         services.AddProblemDetails(options => options.CustomizeProblemDetails = ProblemDetailsSetup.Customize);
         services.AddExceptionHandler<DomainExceptionHandler>();

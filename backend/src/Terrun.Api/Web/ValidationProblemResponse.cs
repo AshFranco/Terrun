@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -5,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Terrun.Api.Web;
 
 // LLD §3.4 and §7.3: every 400 VALIDATION_ERROR has "errors" keyed by the camelCase path of the field, as the app sends
-// it ("type", "points[3].lat"). JSON that cannot be converted comes from the serializer keyed "$.type", with a message
+// it ("type", "points[3].lat", "limit"). JSON that cannot be converted comes from the serializer keyed "$.type", with a message
 // that names internal .NET types and an extra "the request field is required"; this rewrites both
 internal static class ValidationProblemResponse
 {
@@ -35,10 +36,14 @@ internal static class ValidationProblemResponse
         return new BadRequestObjectResult(problem) { ContentTypes = { "application/problem+json" } };
     }
 
+    // Query parameters bind under their C# names ("Limit"); ModelState keys ignore case, so a validation error for "limit"
+    // lands on that entry. Every segment is camelCased here, the same as the JSON the app sends
     private static string FieldOf(string key, HashSet<string> parameterNames)
     {
         var field = key.StartsWith("$.", StringComparison.Ordinal) ? key[2..] : key.TrimStart('$');
-        return field.Length == 0 || parameterNames.Contains(field) ? _bodyKey : field;
+        return field.Length == 0 || parameterNames.Contains(field)
+            ? _bodyKey
+            : string.Join('.', field.Split('.').Select(JsonNamingPolicy.CamelCase.ConvertName));
     }
 
     private static string MessageOf(ModelError error) =>

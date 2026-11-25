@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
-using Terrun.Api.Modules.Platform.Services;
 using Terrun.Domain.Activities;
 using Terrun.Engine.Tracks;
 
@@ -10,19 +9,12 @@ namespace Terrun.Api.Modules.Activities.Processing;
 // LLD §4.1 step 2 (CTZ-31b): stores the official metrics, the splits and the simplified route computed by the engine
 // from what the cleaning kept. The route is stored complete; the privacy trim for other runners is applied on read
 // (§7.2, MT-21). An activity shorter than anticheat.min_duration_s is processed without territory (MT-05)
-public sealed class MetricsStep(SystemSettingsReader settings) : IActivityProcessingStep
+public sealed class MetricsStep(ProcessingSettings settings) : IActivityProcessingStep
 {
     public const string TooShortReason = "too_short";
     private const int _wgs84Srid = 4326;
 
     private static readonly GeometryFactory _geometry = NtsGeometryServices.Instance.CreateGeometryFactory(_wgs84Srid);
-
-    private static readonly string[] _settingKeys =
-    [
-        SystemSettingsReader.ActivityAutoPauseSpeedMps,
-        SystemSettingsReader.AntiCheatMinDurationS,
-        SystemSettingsReader.CaloriesDefaultWeightKg,
-    ];
 
     public int Order => 200;
 
@@ -31,21 +23,13 @@ public sealed class MetricsStep(SystemSettingsReader settings) : IActivityProces
         var cleaning = context.Cleaning
             ?? throw new InvalidOperationException("The metrics stage needs the result of the cleaning stage.");
         var activity = context.Activity;
-        var values = await settings.GetNumbersAsync(_settingKeys, cancellationToken);
-        var weightKg = await context.Db.Profiles.AsNoTracking()
-            .Where(p => p.UserId == activity.UserId)
-            .Select(p => p.WeightKg)
-            .SingleOrDefaultAsync(cancellationToken);
-        var options = new MetricsOptions(
-            IsWalk: activity.Type == ActivityType.Walk,
-            WeightKg: (double?)weightKg ?? values[SystemSettingsReader.CaloriesDefaultWeightKg],
-            MovingSpeedMps: values[SystemSettingsReader.ActivityAutoPauseSpeedMps]);
+        var (options, minDurationS) = await settings.MetricsOptionsAsync(activity, cancellationToken);
 
         var metrics = MetricsCalculator.Calculate(context.Points, cleaning, activity.StartedAt, activity.EndedAt, options);
         Apply(activity, metrics);
         await ReplaceSplitsAsync(context, metrics.Splits, cancellationToken);
 
-        if (metrics.ElapsedTimeS < values[SystemSettingsReader.AntiCheatMinDurationS])
+        if (metrics.ElapsedTimeS < minDurationS)
         {
             context.IsEligibleForTerritory = false;
             if (activity.Status == ActivityStatus.Pending)

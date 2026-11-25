@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Terrun.Api.Modules.Platform.Services;
 using Terrun.Domain.Activities;
 using Terrun.Domain.Moderation;
 using Terrun.Engine.Tracks;
@@ -10,31 +9,17 @@ namespace Terrun.Api.Modules.Activities.Processing;
 // LLD §4.1 steps 1 and 3 (CTZ-31a): cleans the GPS signal with the engine, marks the discarded points and, when an
 // anti-cheat rule is violated, leaves the activity in review with an activity_review for the moderators (MT-04).
 // Registered together with the metrics stage of CTZ-31b, so no activity is ever processed without its metrics (D-36)
-public sealed class CleaningStep(SystemSettingsReader settings) : IActivityProcessingStep
+public sealed class CleaningStep(ProcessingSettings settings) : IActivityProcessingStep
 {
     public const string InReviewReason = "anticheat";
-
-    private static readonly string[] _ruleKeys =
-    [
-        SystemSettingsReader.AntiCheatMaxAccuracyM,
-        SystemSettingsReader.AntiCheatMaxJumpM,
-        SystemSettingsReader.AntiCheatJumpWindowS,
-        SystemSettingsReader.AntiCheatMaxSpeedKmh,
-        SystemSettingsReader.ActivityAutoPauseSpeedMps,
-        SystemSettingsReader.AntiCheatMinPaceSPerKm,
-        SystemSettingsReader.AntiCheatMaxInvalidDistancePct,
-    ];
 
     public int Order => 100;
 
     public async Task RunAsync(ActivityProcessingContext context, CancellationToken cancellationToken)
     {
-        var rules = await LoadRulesAsync(cancellationToken);
+        var rules = await settings.CleaningRulesAsync(cancellationToken);
         var activity = context.Activity;
-        var points = await context.Db.GpsPoints.AsNoTracking()
-            .Where(p => p.ActivityId == activity.Id)
-            .Select(p => new TrackPoint(p.Seq, p.Segment, p.RecordedAt, p.Lat, p.Lon, p.AccuracyM, p.AltitudeM))
-            .ToListAsync(cancellationToken);
+        var points = await settings.PointsAsync(activity.Id, cancellationToken);
 
         context.Points = points;
         var cleaning = TrackCleaner.Clean(points, rules);
@@ -54,19 +39,6 @@ public sealed class CleaningStep(SystemSettingsReader settings) : IActivityProce
                 ViolatedRules = JsonSerializer.Serialize(violations, JsonSerializerOptions.Web),
             });
         }
-    }
-
-    private async Task<CleaningRules> LoadRulesAsync(CancellationToken cancellationToken)
-    {
-        var values = await settings.GetNumbersAsync(_ruleKeys, cancellationToken);
-        return new CleaningRules(
-            MaxAccuracyM: values[SystemSettingsReader.AntiCheatMaxAccuracyM],
-            MaxJumpM: values[SystemSettingsReader.AntiCheatMaxJumpM],
-            JumpWindowS: values[SystemSettingsReader.AntiCheatJumpWindowS],
-            MaxSpeedKmh: values[SystemSettingsReader.AntiCheatMaxSpeedKmh],
-            MovingSpeedMps: values[SystemSettingsReader.ActivityAutoPauseSpeedMps],
-            MinPaceSPerKm: values[SystemSettingsReader.AntiCheatMinPaceSPerKm],
-            MaxInvalidDistancePct: values[SystemSettingsReader.AntiCheatMaxInvalidDistancePct]);
     }
 
     // One UPDATE per reason, inside the processing transaction; reprocessing an activity first clears the old marks
