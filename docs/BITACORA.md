@@ -22,7 +22,7 @@ Formato:
   - **Al fusionar, QA procesa todas las `pending`** (las de las pruebas de humo) en el arranque.
   - **CTZ-32:** los endpoints de lectura aplican `RouteTrimmer.TrimForOthers` con `privacy.route_trim_m` a cualquiera que no sea el dueño; el dueño ve `activity.route` completa. `GET /activities/{id}` tiene que exponer `status_reason` (`anticheat`, `too_short`, `processing_failed`) para que P-09 lo explique.
   - **CTZ-40 (territorio):** usar solo los tramos válidos (`context.Cleaning`) y respetar `context.IsEligibleForTerritory` (falso para `in_review` y `too_short`).
-  - **Totales del corredor (`user_stats`), récords (MT-16) y kilómetros de la zapatilla** son de las historias de progresión (§4.4), no de CTZ-31b.
+  - **Totales del corredor (`user_stats`)**: los actualiza CTZ-51 (P1, depende de CTZ-40). Hasta entonces `GET /me` devuelve `stats` en 0 aunque haya carreras procesadas; P-15 (CTZ-36, Rowlis) debe tomar los totales de `/me/summary` (CTZ-32), que es lo que pide su criterio. Récords (MT-16) y kilómetros de la zapatilla también son de progresión (§4.4).
   - Zonas de privacidad (P1): el recorte de §7.2 también tiene que ocultar los puntos dentro de ellas cuando existan.
   - Falta verificar en QA después del merge.
 - Siguiente paso: PR a `development`; después, CTZ-32.
