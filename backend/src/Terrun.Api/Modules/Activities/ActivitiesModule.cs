@@ -14,6 +14,7 @@ public static class ActivitiesModule
         // metrics (D-36); territory and progression add their own stages later
         services.AddScoped<IActivityProcessingStep, CleaningStep>();
         services.AddScoped<IActivityProcessingStep, MetricsStep>();
+        services.AddScoped<IActivityProcessingStep, StatsStep>();
         services.AddSingleton<ActivityQueue>();
         services.AddScoped<ActivityProcessor>();
         services.AddScoped<IScheduledJob, ActivityProcessorJob>();

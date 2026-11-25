@@ -105,6 +105,27 @@ public sealed class MetricsStepTests(MigratedDatabaseFixture database) : IAsyncL
         Assert.True(await _app.QueryAsync(db => db.Splits.AnyAsync(s => s.ActivityId == id, Ct)));
     }
 
+    // D-37: GET /me shows the totals of the processed activities; one in review adds nothing
+    [Fact]
+    public async Task Upload_TwoProcessedAndOneInReview_AddOnlyTheProcessedToTheTotalsOfMe()
+    {
+        var first = await UploadAsync(hoursAgo: 60, Run(speedMps: 3, intervalS: 10, points: 181));
+        var second = await UploadAsync(hoursAgo: 58, Run(speedMps: 3, intervalS: 10, points: 101));
+        var inReview = await UploadAsync(hoursAgo: 56, Run(speedMps: 1000.0 / 146, intervalS: 5, points: 241));
+        await WaitProcessedAsync(first);
+        var last = await WaitProcessedAsync(second);
+        await WaitProcessedAsync(inReview);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/me");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+        var stats = (await (await _app.Client.SendAsync(request, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("stats");
+
+        Assert.Equal(5400 + 3000, stats.GetProperty("totalDistanceM").GetInt64());
+        Assert.Equal(1800 + 1000, stats.GetProperty("totalTimeS").GetInt64());
+        Assert.Equal(2, stats.GetProperty("totalActivities").GetInt32());
+        Assert.Equal(last.EndedAt, stats.GetProperty("lastActivityAt").GetDateTimeOffset());
+    }
+
     // RNF-04: one hour recorded at one point per second is processed in less than 10 s
     [Fact]
     public async Task Process_OneHourAtOnePointPerSecond_TakesLessThanTenSeconds()

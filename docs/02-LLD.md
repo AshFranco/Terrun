@@ -617,7 +617,8 @@ Notas de la limpieza y el veredicto (CTZ-31a, D-36):
 
 Notas de las métricas (CTZ-31b, D-37):
 
-- Las etapas activas en producción son `CleaningStep` (orden 100) y `MetricsStep` (orden 200); entraron juntas (D-36). Una actividad `in_review` también recibe sus métricas, para que la revise un moderador.
+- Las etapas activas en producción son `CleaningStep` (orden 100), `MetricsStep` (orden 200) y `StatsStep` (orden 900); las dos primeras entraron juntas (D-36). Una actividad `in_review` también recibe sus métricas, para que la revise un moderador.
+- `StatsStep` suma cada actividad `processed` a `user_stats` (`total_distance_m`, `total_time_s` con el tiempo en movimiento, `total_activities` y `last_activity_at`), dentro de la misma transacción, así que nunca cuenta dos veces. Una actividad `in_review` no suma hasta que se apruebe. Eliminar una actividad (CTZ-32) y aprobar una revisión tienen que ajustar estos totales. XP, nivel y rachas siguen en CTZ-51.
 - `elapsed_time_s = ended_at − started_at` (incluye las pausas); `moving_time_s` y el ritmo, solo los tramos válidos en movimiento; `max_speed_mps`, el tramo válido más rápido.
 - *Splits*: la duración de un kilómetro es la de sus tramos válidos, así que una pausa entre segmentos no lo vuelve más lento; su `elevation_m` es el cambio neto de la altitud suavizada (nulo si el teléfono no dio altitud). Los cortes se interpolan dentro del tramo que cruza cada 1000 m.
 - Elevación: media móvil centrada de 5 puntos (recortada en los bordes) e histéresis de 3 m, por segmento: lo que se sube durante una pausa no cuenta.

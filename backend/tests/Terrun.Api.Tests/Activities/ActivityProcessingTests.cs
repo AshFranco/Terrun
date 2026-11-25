@@ -119,16 +119,16 @@ public sealed class ActivityProcessingTests(MigratedDatabaseFixture database)
         Assert.Equal(0, activity.Attempts);
     }
 
-    // CTZ-31b (D-36): production processes with the cleaning first and the metrics after it
+    // CTZ-31b (D-36, D-37): production processes with the cleaning first, then the metrics, then the runner's totals
     [Fact]
-    public async Task Production_RegistersCleaningThenMetrics()
+    public async Task Production_RegistersCleaningThenMetricsThenStats()
     {
         await using var app = new AuthTestApp(database);
         await using var scope = app.Services.CreateAsyncScope();
 
         var stages = scope.ServiceProvider.GetServices<IActivityProcessingStep>().OrderBy(s => s.Order).Select(s => s.GetType());
 
-        Assert.Equal([typeof(CleaningStep), typeof(MetricsStep)], stages);
+        Assert.Equal([typeof(CleaningStep), typeof(MetricsStep), typeof(StatsStep)], stages);
     }
 
     private AuthTestApp AppWith(TestStage stage) =>
