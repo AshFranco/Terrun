@@ -43,4 +43,21 @@ public sealed class OpenApiTests
         Assert.True(paths.GetProperty("/api/v1/auth/logout").GetProperty("post").TryGetProperty("security", out _));
         Assert.False(paths.GetProperty("/api/v1/auth/login").GetProperty("post").TryGetProperty("security", out _));
     }
+
+    // LLD §3.1: query parameters in camelCase and GeoJSON "type" always present, as the app types read them (CTZ-32)
+    [Fact]
+    public async Task GetOpenApiDocument_ActivityEndpoints_UseCamelCaseQueriesAndARequiredGeoJsonType()
+    {
+        await using var factory = new TerrunApiFactory(TerrunApiFactory.UnreachableDatabase);
+        using var client = factory.CreateClient();
+
+        var document = await client.GetFromJsonAsync<JsonElement>("/openapi/v1.json", TestContext.Current.CancellationToken);
+        var parameters = document.GetProperty("paths").GetProperty("/api/v1/me/activities").GetProperty("get").GetProperty("parameters")
+            .EnumerateArray().Select(p => p.GetProperty("name").GetString());
+        var routeRequired = document.GetProperty("components").GetProperty("schemas").GetProperty("RouteResponse").GetProperty("required")
+            .EnumerateArray().Select(r => r.GetString());
+
+        Assert.Equal(["type", "from", "to", "limit", "cursor"], parameters);
+        Assert.Contains("type", routeRequired);
+    }
 }
