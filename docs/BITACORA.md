@@ -19,7 +19,7 @@ Formato:
 - Evidencia: 86 pruebas en verde (23 nuevas en `MeTests`, incluido el criterio de CTZ-24: los cambios siguen tras un nuevo login); `dotnet format` sin cambios; OpenAPI revisado (bearer en ambos, `sex` como enum `snake_case`). Las pruebas hallaron un 500 con `"handle": null` (regla sin `Cascade(Stop)`), ya corregido.
 - Decisiones: D-32 (merge patch, `@handle` libre con auditoría, foto fuera del PATCH, módulo `Profiles/`).
 - Pendientes abiertos como issues (revisión de completitud): #135 CTZ-105 foto de perfil con R2 (CTZ-24 la pide y no tenía historia), #136 CTZ-106 respuestas de error en el OpenAPI (antes de CTZ-19), #137 pregunta a Diana sobre la prioridad de `PUT /me/preferences` y P-30 (LLD P0 vs CTZ-78 P1). Diana agrega CTZ-105 y CTZ-106 al backlog.
-- Siguiente paso: PR a `development`; tras el merge, verificar en QA y avisar a Rowlis (CTZ-24) y arrancar CTZ-19 con él.
+- Siguiente paso: PR #138 a `development` (revisa Rowlis); tras el merge, verificar en QA y avisar a Rowlis (CTZ-24) y arrancar CTZ-19 con él.
 
 ## 2026-11-21 — Ashley — Revisión y merge de CTZ-25 y CTZ-26
 - Hecho: revisé y mergeé los PR de Diana. PR #130 (CTZ-25): verifiqué que cada pregunta sume 28 respuestas, los promedios y el ranking (suma 28,00); decisión renumerada a D-31. PR #133 (CTZ-26): verifiqué las 22 historias contra el LLD tras dos rondas (`densify_step_m` 10 m, `409`/`413` del catálogo, umbral de auto-pausa desde `/settings/public`, `MT-15` solo en CTZ-31b, máscara de 7 bits) y resolví los conflictos con `development` en `BITACORA.md` y `ESTADO.md`.
