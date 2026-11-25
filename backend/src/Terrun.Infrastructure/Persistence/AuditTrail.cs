@@ -13,6 +13,7 @@ public static class AuditTrail
     public const string LoginFailed = "login_failed";
     public const string RefreshTokenReused = "refresh_token_reused";
     public const string LoggedOut = "logged_out";
+    public const string HandleChanged = "handle_changed";
 
     private const string _userEntity = "app_user";
 
