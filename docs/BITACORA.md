@@ -25,7 +25,7 @@ Formato:
   - **Rangelis (CTZ-38):** revisar los cálculos de `docs/qa/04-CASOS/`.
   - **Moderación en P2:** las actividades `in_review` solo se resuelven con CTZ-77 (cola de moderación), que es P2; en el MVP quedarían en revisión para siempre. Decisión pendiente de Diana (issue #142). P-09 (CTZ-34, Jorge) tiene que explicar en español que la actividad está en revisión.
   - Falta verificar en QA después del merge (migración de `activity_review` y de los 2 parámetros).
-- Siguiente paso: PR #NN a `development` (revisa Jorge); después, CTZ-31b.
+- Siguiente paso: PR #143 a `development` (revisa Jorge); después, CTZ-31b.
 
 ## 2026-11-24 — Ashley — CTZ-104 Programador de trabajos
 - Hecho: tabla `job_run` (con `last_finished_at`); `JobScheduler` que ejecuta solo los trabajos vencidos según su cron (Cronos, hora AST) y los reserva con un `UPDATE` condicional y 30 min de reserva; `POST /api/v1/internal/jobs/run` con `X-Jobs-Key` (401 sin clave, con una clave incorrecta o si `Jobs__Key` no está configurada; fuera del OpenAPI); workflow `.github/workflows/jobs.yml` cada hora en el minuto 17, que espera hasta 3 min el arranque en frío. Cola en memoria (`ActivityQueue`) que `POST /activities` alimenta, `ActivityQueueWorker` que barre las `pending` al arrancar y procesa cada subida, y `ActivityProcessor` por etapas (SKIP LOCKED, una transacción, 3 intentos y luego `failed`), sin etapas registradas hasta CTZ-31a (D-35). Trabajos registrados: `activity_processor` y `token_cleanup`. LLD v1.15 con el entregable regenerado.
