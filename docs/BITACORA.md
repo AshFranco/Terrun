@@ -20,13 +20,13 @@ Formato:
 - Evidencia: 155 pruebas en verde (20 nuevas: `JobSchedulerTests`, `JobsEndpointTests`, `TokenCleanupJobTests`, `ActivityProcessingTests`), y las clases nuevas repetidas 3 veces sin fallas; `dotnet format` limpio; YAML del workflow validado.
 - Decisiones: D-35 (tubería sin etapas decidida por la usuaria).
 - A tener en cuenta (quedan fuera de CTZ-104):
-  - **Antes de fusionar (Ashley):** crear `Jobs__Key` en Render (`terrun-api-qa`), el secreto `JOBS_KEY` (el mismo valor) y la variable `JOBS_API_URL` (`https://terrun-api-qa.onrender.com`) en el repositorio. `jobs.yml` empieza a correr cada hora en cuanto llega a `development` (rama por defecto); sin esa configuración falla cada hora.
+  - **Configurado el 24-nov antes del merge:** `Jobs__Key` en Render (`terrun-api-qa`), el secreto `JOBS_KEY` (el mismo valor) y la variable `JOBS_API_URL` en el repositorio. `jobs.yml` corre cada hora apenas llega a `development` (rama por defecto); si alguna vez se cambia la clave, hay que cambiarla en los dos lados.
   - **CTZ-31a:** registrar su etapa en `ActivitiesModule` (`services.AddScoped<IActivityProcessingStep, ...>()`); con eso las actividades pasan a procesarse solas, incluidas todas las `pending` que haya en QA. La etapa usa `context.Db` (misma transacción) y fija `context.Activity.Status` si el veredicto no es `processed`.
   - **Jorge (CTZ-34):** hasta CTZ-31a, las subidas quedan en `pending`; P-09 tiene que tolerar ese estado.
   - Producción (S4): `jobs.yml` solo despierta QA; producción necesita su propia URL y clave.
   - GitHub desactiva los workflows programados tras 60 días sin actividad en el repositorio; después de la entrega hay que reactivarlo a mano si se sigue usando.
   - Falta verificar en QA después del merge (migración de `job_run` y una corrida manual del workflow).
-- Siguiente paso: configurar la clave, PR a `development` y, tras el merge, correr `jobs.yml` a mano para verificar.
+- Siguiente paso: PR #NN a `development` (revisa Jorge); tras el merge, correr `jobs.yml` a mano para verificar.
 
 ## 2026-11-24 — Ashley — CTZ-30 Tablas M3/M4 y POST /activities
 - Hecho: tablas `activity`, `gps_point`, `split`, `personal_record` y `shoe` con sus enums e índices; restricción `EXCLUDE` contra la superposición (extensión `btree_gist`); parámetro `activity.max_duration_h` = 24 (público). `POST /activities`: idempotente por `clientId` (200 con la existente), 413 si pasa `activity.max_points`, 409 `ACTIVITY_OVERLAP`, validación de tiempos y puntos, zapatilla propia, visibilidad tomada de las preferencias y puntos guardados con `COPY` binario en la misma transacción. Lector `SystemSettingsReader` (Platform) y `FieldValidationException` para errores por campo desde un servicio. Los `400` de valores no convertibles ahora salen por ruta de campo y sin nombres internos. LLD v1.14 con el entregable regenerado.
