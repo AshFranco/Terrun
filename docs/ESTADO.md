@@ -44,7 +44,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ✅ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Mergeado (PR #131, D-30).*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
 - ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08 y CTZ-19. Bloquea CTZ-23.*
-- 🔄 **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Issue #24.*
+- 👀 **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *En revisión (PR #147, issue #24).*
 - ⬜ **CTZ-23** Pantallas P-01 a P-04 contra QA. *Depende de CTZ-22 y CTZ-14.*
 - ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16 (la foto queda para CTZ-105).*
 - 👀 **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley. *En revisión (PR #146, issue #26).*
