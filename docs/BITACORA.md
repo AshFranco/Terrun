@@ -14,6 +14,11 @@ Formato:
 
 ---
 
+## 2026-11-25 — Rowlis — CTZ-17 Endpoints legales vigentes, consentimientos y parámetros públicos
+- Hecho: implementados `GET /api/v1/legal/current` (público, última versión vigente por tipo según `TimeProvider`), `POST /api/v1/me/consents` (autenticado, registra aceptación de versiones vigentes con `method = settings` de forma idempotente sin sobrescribir la evidencia previa exigida por la Ley 172-13) y `GET /api/v1/settings/public` (público, esquema tipado por dominio vía `SystemSettingsReader` filtrando `is_public = true` sin exponer límites antitrampas). Verificado `/health` existente.
+- Evidencia: PR #147; compilación `Release` sin advertencias (`0 warnings`), formato verificado, pruebas del motor (`33/33`), contratos OpenAPI y convenciones en verde, y nuevas suites `LegalEndpointsTests` y `PublicSettingsEndpointTests`.
+- Siguiente paso: revisión y merge del PR #147 en `development` (cierra issue #24, revisa Ashley), y continuar con `CTZ-22`.
+
 ## 2026-11-25 — Ashley — CTZ-32 Lectura y edición de actividades
 - Hecho: `GET /activities/{id}`, `/route` (GeoJSON, con el recorte de 200 m para terceros), `/splits`, `GET /me/activities` (cursor y filtros por tipo y fechas), `GET /me/summary` (semana, mes y año en AST, con el periodo anterior), `PATCH /activities/{id}` (*merge patch*; recalcula las calorías si cambia el tipo) y `DELETE /activities/{id}` (borra en cascada y resta de `user_stats`). La visibilidad va dentro de la consulta SQL (`ActivityVisibility`). Se extrajo `ProcessingSettings`, que comparten las etapas y el recálculo. LLD v1.18 (§3.3) con el entregable regenerado.
 - Hallazgos corregidos al generar los tipos de la app: los parámetros de consulta salían en PascalCase en el OpenAPI (`Limit`) y también en las claves de los errores, y los mensajes de validación seguían el idioma del servidor; además, `type` de la ruta GeoJSON salía opcional. Los tipos generados con `openapi-typescript` 7.13 ahora compilan con `tsc --strict`.

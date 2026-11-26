@@ -60,4 +60,29 @@ public sealed class OpenApiTests
         Assert.Equal(["type", "from", "to", "limit", "cursor"], parameters);
         Assert.Contains("type", routeRequired);
     }
+
+    // CTZ-17 (LLD §3.2): public legal/settings endpoints have no bearer requirement, /me/consents requires bearer, and
+    // their typed schemas are published for npm run api:types
+    [Fact]
+    public async Task GetOpenApiDocument_LegalAndPublicSettingsEndpoints_DeclareExpectedSecurityAndSchemas()
+    {
+        await using var factory = new TerrunApiFactory(TerrunApiFactory.UnreachableDatabase);
+        using var client = factory.CreateClient();
+
+        var document = await client.GetFromJsonAsync<JsonElement>("/openapi/v1.json", TestContext.Current.CancellationToken);
+        var paths = document.GetProperty("paths");
+        var schemas = document.GetProperty("components").GetProperty("schemas");
+
+        Assert.False(paths.GetProperty("/api/v1/legal/current").GetProperty("get").TryGetProperty("security", out _));
+        Assert.False(paths.GetProperty("/api/v1/settings/public").GetProperty("get").TryGetProperty("security", out _));
+        Assert.True(paths.GetProperty("/api/v1/me/consents").GetProperty("post").TryGetProperty("security", out _));
+        Assert.True(schemas.TryGetProperty("LegalDocumentResponse", out _));
+        Assert.True(schemas.TryGetProperty("AcceptConsentsRequest", out _));
+        Assert.True(schemas.TryGetProperty("ConsentResponse", out _));
+        Assert.True(schemas.TryGetProperty("PublicSettingsResponse", out var publicSettings));
+        Assert.True(publicSettings.GetProperty("properties").TryGetProperty("territory", out _));
+        Assert.True(publicSettings.GetProperty("properties").TryGetProperty("activity", out _));
+        Assert.True(publicSettings.GetProperty("properties").TryGetProperty("xp", out _));
+        Assert.True(publicSettings.GetProperty("properties").TryGetProperty("privacy", out _));
+    }
 }

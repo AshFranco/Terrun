@@ -2,7 +2,7 @@
 
 > **Sprint en curso: S1 — Cuenta, perfil y prueba de GPS** · del sábado 14 al viernes 20 de noviembre de 2026
 > **Weekly:** viernes 20 de noviembre · **Hito:** GPS en segundo plano funcionando con la pantalla bloqueada en Android, viernes 20 de noviembre
-> **Última actualización:** 20/11/2026 — Rowlis
+> **Última actualización:** 25/11/2026 — Rowlis
 
 Tablero: [Terrun — Backlog y Sprints](https://github.com/users/AshFranco/projects/4) · columnas Pendiente / En curso / En revisión / Hecha.
 
@@ -41,13 +41,13 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 - ⬜ **CTZ-21** Mapa base MapLibre en la pestaña Mapa. *Depende de CTZ-08.*
 
 ### Rowlis — Front y apoyo puntual en Backend
-- 👀 **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Viene de S0. En revisión (PR #131). El ID del proyecto de Expo está en el issue #15.*
+- ✅ **CTZ-08** Esqueleto de la app Expo + TypeScript + Expo Router + lint + Jest. *Mergeado (PR #131, D-30).*
 - ⬜ **CTZ-09** Configuración de GPS y MapLibre, con Jorge. *Viene de S0. Depende de CTZ-08.*
-- ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08. Bloquea CTZ-23.*
-- ⬜ **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *Desbloqueada: CTZ-13 y CTZ-27 hechas.*
+- ⬜ **CTZ-22** Navegación, cliente API y sesión en `SecureStore` con refresh automático. *Depende de CTZ-08 y CTZ-19. Bloquea CTZ-23.*
+- 👀 **CTZ-17** `/legal/current`, `/me/consents` y `/settings/public` (revisa Ashley). *En revisión (PR #147, issue #24).*
 - ⬜ **CTZ-23** Pantallas P-01 a P-04 contra QA. *Depende de CTZ-22 y CTZ-14.*
-- ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16.*
-- ⬜ **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley.
+- ⬜ **CTZ-24** Pantalla P-17 perfil propio. *Depende de CTZ-16 (la foto queda para CTZ-105).*
+- 👀 **CTZ-19** Tipos de la app desde el OpenAPI, con Ashley. *En revisión (PR #146, issue #26).*
 - ⬜ **CTZ-15** (P1) Recuperar y restablecer contraseña (revisa Ashley). *Depende de CTZ-14.*
 - ⬜ **CTZ-23b** (P1) Pantalla P-05 recuperar contraseña. *Depende de CTZ-23 y CTZ-15.*
 
@@ -63,7 +63,7 @@ Cada lista está en el orden en que conviene hacerla: primero lo que bloquea a o
 
 | Desde | Bloqueo | Afecta a | Responsable de resolverlo |
 |---|---|---|---|
-| 15/11 | El esqueleto de la app (CTZ-08) no existe todavía | Jorge (CTZ-09, CTZ-20, CTZ-21), Rowlis (CTZ-22 a CTZ-24) y Jaime (CTZ-29) | Rowlis, antes del martes 17 |
+| — | Ninguno | — | — |
 
 ## Avance del sprint
 
