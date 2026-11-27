@@ -14,6 +14,12 @@ Formato:
 
 ---
 
+## 2026-11-27 — Diana — CTZ-37 Catálogo inicial de logros y retos
+- Hecho: definido el catálogo inicial de 20 logros (`achievement`) y 3 retos globales (`challenge`) en `docs/producto/logros-y-retos.md`, validado contra el esquema de `LLD §2.3` y las 9 métricas soportadas en `LLD §4.4` (con diseño motivacional *White Hat*, tono inclusivo sin sesgo de velocidad y criterios de accesibilidad para `P-24`/`P-25`); actualizado `docs/producto/README.md`.
+- Evidencia: rama `docs/CTZ-37-catalogo-logros-retos` → `development`, `docs/producto/logros-y-retos.md`.
+- Decisiones: ninguna nueva.
+- Siguiente paso: revisión de Ashley y carga en el seed de `CTZ-70`.
+
 ## 2026-11-25 — Ashley — CTZ-32 Lectura y edición de actividades
 - Hecho: `GET /activities/{id}`, `/route` (GeoJSON, con el recorte de 200 m para terceros), `/splits`, `GET /me/activities` (cursor y filtros por tipo y fechas), `GET /me/summary` (semana, mes y año en AST, con el periodo anterior), `PATCH /activities/{id}` (*merge patch*; recalcula las calorías si cambia el tipo) y `DELETE /activities/{id}` (borra en cascada y resta de `user_stats`). La visibilidad va dentro de la consulta SQL (`ActivityVisibility`). Se extrajo `ProcessingSettings`, que comparten las etapas y el recálculo. LLD v1.18 (§3.3) con el entregable regenerado.
 - Hallazgos corregidos al generar los tipos de la app: los parámetros de consulta salían en PascalCase en el OpenAPI (`Limit`) y también en las claves de los errores, y los mensajes de validación seguían el idioma del servidor; además, `type` de la ruta GeoJSON salía opcional. Los tipos generados con `openapi-typescript` 7.13 ahora compilan con `tsc --strict`.
